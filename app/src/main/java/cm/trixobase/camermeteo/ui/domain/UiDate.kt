@@ -63,7 +63,7 @@ class UiDate {
 
         fun getAll(): List<UiDate> {
             val dates = mutableListOf<UiDate>()
-            var date = Utils.time.currentDate()
+            val date = Utils.time.currentDate()
             repeat(6) {
                 date.add(Calendar.DAY_OF_MONTH, 1)
                 dates.add(builder()
@@ -72,12 +72,6 @@ class UiDate {
                     .build())
             }
             return dates
-        }
-
-        private fun computeHour(hour: Int): String {
-            return if (hour < 10)
-                "0$hour:00"
-            else "$hour:00"
         }
     }
 }
