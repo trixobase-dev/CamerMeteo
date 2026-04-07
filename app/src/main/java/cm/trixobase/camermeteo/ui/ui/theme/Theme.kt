@@ -1,5 +1,6 @@
-package cm.trixobase.camermeteo.ui.theme
+package cm.trixobase.camermeteo.ui.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -11,21 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Indigo,               //widget
+    primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = BlueDark,          //arriere plan
-    surface = BlueDark              //bar de notification et TopAppBar
+    tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Indigo,
+    primary = Purple40,
     secondary = PurpleGrey40,
-    tertiary = Pink40,
-    background = BlueDark,
-    surface = BlueDark
+    tertiary = Pink40
 
     /* Other default colors to override
+    background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
@@ -36,10 +34,10 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun CamerMeteoTheme(
+fun CamerMétéoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

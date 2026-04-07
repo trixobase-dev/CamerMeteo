@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CamerMétéo</string>
+    <string name="title_activity_town">TownActivity</string>
 </resources>
