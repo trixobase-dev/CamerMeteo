@@ -1,6 +1,7 @@
 package cm.trixobase.camermeteo.ui
 
 import android.content.Intent
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -236,7 +237,15 @@ class MainActivity : ComponentActivity() {
 
     @Preview(showBackground = true)
     @Composable
-    private fun GreetingPreview() {
+    private fun Preview() {
+        CamerMeteoTheme {
+            MyContent()
+        }
+    }
+
+    //@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+    @Composable
+    private fun PreviewDarkTheme() {
         CamerMeteoTheme {
             MyContent()
         }
