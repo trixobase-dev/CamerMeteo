@@ -48,7 +48,7 @@ class SettingActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize(),
         ) {
             Scaffold(
-                topBar = { MyToolbar("Paramètres") },
+                topBar = { MyToolbar(onBackPressedDispatcher, "Paramètres") },
                 content = { MyBody(Modifier.padding(it)) }
             )
         }

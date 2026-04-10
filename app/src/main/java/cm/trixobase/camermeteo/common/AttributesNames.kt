@@ -8,6 +8,25 @@ package cm.trixobase.camermeteo.common
 
 object AttributesNames {
 
+    const val KEY_APP_TOWN = "key_town_chosen"
+
     const val NAME = "name"
+
+    const val TOWN_ADAMAOUA = "Adamaoua"
+    const val TOWN_BAFANG = "Bafang"
+    const val TOWN_BAFOUSSAM = "Bafoussam"
+    const val TOWN_BANGANGTE = "Bangangté"
+    const val TOWN_BERTOUA = "Bertoua"
+    const val TOWN_EBOLOWA = "Ebolowa"
+    const val TOWN_EDEA = "Edéa"
+    const val TOWN_DOUALA = "Douala"
+    const val TOWN_DSCHANG = "Dschang"
+    const val TOWN_GAROUA = "Garoua"
+    const val TOWN_KOUSSERI = "Kousseri"
+    const val TOWN_KRIBI = "Kribi"
+    const val TOWN_LIMBE = "Limbé"
+    const val TOWN_MAROUA = "Maroua"
+    const val TOWN_NGAOUNDERE = "Ngaoundéré"
+    const val TOWN_YAOUNDE = "Yaoundé"
 
 }

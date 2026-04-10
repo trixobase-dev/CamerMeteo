@@ -3,7 +3,7 @@ package cm.trixobase.camermeteo.ui
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +49,7 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
  * Powered by Trixobase Enterprise on 01/04/26
  */
 
-class MainActivity : ComponentActivity() {
+class MainActivity : GlobalActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,19 +90,26 @@ class MainActivity : ComponentActivity() {
             Icon(
                 imageVector = Icons.Default.Place,
                 contentDescription = "Ville",
-                modifier = Modifier.clickable(onClick = { goToTownActivity() }))
+                modifier = Modifier.clickable(onClick = { goToTownActivity() })
+            )
             Text(
-                text = "Yaoundé",
-                fontSize = 16.sp)
+                text = doGetTownChosen(),
+                fontSize = 18.sp
+            )
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = "Paramètres",
-                modifier = Modifier.clickable(onClick = { goToSettingActivity() }))
+                modifier = Modifier.clickable(onClick = { goToSettingActivity() })
+            )
             /*
             Image(
-                modifier = Modifier.size(25.dp).clip(CircleShape),
+                modifier = Modifier.size(25.dp)
+                    .padding(2.dp)                      // retrait pour la bordure
+                    .clip(CircleShape)                  // forme de l'image
+                    .border(width = 2.dp, color = Color.Black, shape = CircleShape)
                 painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = "Paramètres"
+                contentDescription = "Paramètres",
+                contentScale = ContentScale.Crop,      //remplissage de l'image
             )
             */
         }
@@ -239,11 +247,11 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Preview() {
         CamerMeteoTheme {
-            MyContent()
+            MyToolbar(onBackPressedDispatcher, "Your town")
         }
     }
 
-    //@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
@@ -266,9 +274,24 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyToolbar(title: String) {
+fun MyToolbar(onBackPressedDispatcher: OnBackPressedDispatcher, title: String) {
     TopAppBar(
-        title = { Text(title) },
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(35.dp)
+                        .padding(end = 5.dp)
+                        .clickable(onClick = { onBackPressedDispatcher.onBackPressed() }),
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Retour"
+                )
+                Text(title)
+            }
+        },
         colors = TopAppBarDefaults.topAppBarColors(titleContentColor = Color.White),
     )
 }
