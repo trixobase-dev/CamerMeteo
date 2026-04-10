@@ -15,7 +15,8 @@ private val DarkColorScheme = darkColorScheme(
     secondary = PurpleGrey80,
     tertiary = Pink80,
     background = BlueDark,          //arriere plan
-    surface = BlueDark              //bar de notification et TopAppBar
+    surface = BlueDark,
+    onSurfaceVariant = GreenDark              //bar de notification et TopAppBar
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -23,7 +24,8 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = GreenDark,
-    surface = GreenDark
+    surface = GreenDark,
+    onSurfaceVariant = BlueDark
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),

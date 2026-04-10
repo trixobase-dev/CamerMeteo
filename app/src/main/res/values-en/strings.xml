@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="town_chosen">%s chosen</string>
+    <string name="warning_empty_message">Empty message.</string>
+    <string name="warning_available_soon">Available soon.</string>
+</resources>

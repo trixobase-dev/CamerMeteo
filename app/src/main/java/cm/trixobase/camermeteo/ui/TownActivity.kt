@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.ui.domain.UiTown
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 
@@ -46,7 +47,7 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
  * Powered by Trixobase Enterprise on 07/04/26
  */
 
-class TownActivity : GlobalActivity() {
+class TownActivity : ApplicationActivity() {
 
     private lateinit var towns: List<UiTown>
     private var myTown = ""
@@ -103,7 +104,7 @@ class TownActivity : GlobalActivity() {
     @Composable
     fun MyItemTown(town: UiTown) {
         Card(
-            modifier = Modifier.clickable(onClick = { doSetTownChosen(town.name) }),
+            modifier = Modifier.clickable(onClick = { setTownChosen(town.name) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray),
             shape = RoundedCornerShape(4.dp),
@@ -173,6 +174,12 @@ class TownActivity : GlobalActivity() {
                 }
             }
         }
+    }
+
+    private fun setTownChosen(townChose: String) {
+        doConfigTown(townChose)
+        showMessage(String.format(townChose, R.string.town_chosen))
+        onBackPressedDispatcher.onBackPressed()
     }
 
     @Preview(showSystemUi = true, showBackground = true)

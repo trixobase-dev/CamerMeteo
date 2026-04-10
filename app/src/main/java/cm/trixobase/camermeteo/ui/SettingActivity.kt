@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,7 +35,7 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
  * Powered by Trixobase Enterprise on 06/04/26
  */
 
-class SettingActivity : ComponentActivity() {
+class SettingActivity : ApplicationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,8 @@ class SettingActivity : ComponentActivity() {
 
     @Composable
     fun MyBody(modifier: Modifier) {
+        val songIsOn = remember { mutableStateOf(true) }
+        val autoRefreshIsOn = remember { mutableStateOf(true) }
         Surface(
             modifier = modifier.fillMaxSize(),
             contentColor = Color.White
@@ -80,7 +86,8 @@ class SettingActivity : ComponentActivity() {
                         )
                         Row(
                             modifier = Modifier.clickable(onClick = { doClickTemperature() }),
-                            verticalAlignment = Alignment.CenterVertically) {
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = "°C",
                                 color = Color.LightGray,
@@ -106,8 +113,16 @@ class SettingActivity : ComponentActivity() {
                             textAlign = TextAlign.Start
                         )
                         Switch(
-                            checked = true,
-                            onCheckedChange = { isOn -> doClickSongApp(isOn) })
+                            checked = songIsOn.value,
+                            onCheckedChange = {
+                                songIsOn.value = it
+                                doClickSongApp(it)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        )
                     }
                     MyLine()
                     Row(
@@ -122,8 +137,16 @@ class SettingActivity : ComponentActivity() {
                             textAlign = TextAlign.Start
                         )
                         Switch(
-                            checked = true,
-                            onCheckedChange = { isOn -> doClickRefreshApp(isOn) })
+                            checked = autoRefreshIsOn.value,
+                            onCheckedChange = {
+                                autoRefreshIsOn.value = it
+                                doClickRefreshApp(it)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        )
                     }
                     MyLine()
                 }
@@ -132,18 +155,18 @@ class SettingActivity : ComponentActivity() {
     }
 
     private fun doClickTemperature() {
-
+        showAvailableSoon()
     }
 
     private fun doClickSongApp(isOn: Boolean) {
-
+        doConfigSong(isOn)
     }
 
     private fun doClickRefreshApp(isOn: Boolean) {
-
+        doConfigRefreshAuto(isOn)
     }
 
-    @Preview(showBackground = true, showSystemUi = true)
+    @Preview(showBackground = true, showSystemUi = true, uiMode = UI_MODE_NIGHT_YES)
     @Composable
     private fun GreetingPreview() {
         CamerMeteoTheme {

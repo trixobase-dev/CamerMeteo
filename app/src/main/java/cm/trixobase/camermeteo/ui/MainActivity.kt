@@ -49,7 +49,7 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
  * Powered by Trixobase Enterprise on 01/04/26
  */
 
-class MainActivity : GlobalActivity() {
+class MainActivity : ApplicationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

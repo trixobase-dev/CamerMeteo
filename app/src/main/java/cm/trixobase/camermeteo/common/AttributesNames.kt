@@ -8,6 +8,8 @@ package cm.trixobase.camermeteo.common
 
 object AttributesNames {
 
+    const val KEY_APP_REFRESH_AUTO = "key_refresh_auto"
+    const val KEY_APP_SONG = "key_song_activated"
     const val KEY_APP_TOWN = "key_town_chosen"
 
     const val NAME = "name"
