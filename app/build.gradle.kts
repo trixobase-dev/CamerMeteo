@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -31,8 +33,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -55,4 +57,30 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.rxjava2)
+    implementation(libs.androidx.room.rxjava3)
+    implementation(libs.androidx.room.guava)
+    testImplementation(libs.androidx.room.testing)
+    implementation(libs.androidx.room.paging)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation("androidx.compose.material:material:1.6.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.10.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

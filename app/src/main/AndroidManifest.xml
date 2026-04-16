@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CamerMétéo">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,10 +20,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.SettingActivity"
+            android:name=".ui.view.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.TownActivity"
+            android:name=".ui.view.TownActivity"
             android:exported="false"/>
     </application>
 

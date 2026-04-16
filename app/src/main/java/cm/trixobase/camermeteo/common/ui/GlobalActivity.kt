@@ -1,18 +1,17 @@
-package cm.trixobase.camermeteo.ui
+@file:Suppress("unused")
+
+package cm.trixobase.camermeteo.common.ui
 
 import androidx.activity.ComponentActivity
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.widget.SnakeBox
 import cm.trixobase.camermeteo.common.widget.ToastBox
 
-/*
- * Powered by Trixobase Enterprise on 09/04/26
- */
-
 abstract class GlobalActivity : ComponentActivity() {
 
     open fun showAvailableSoon() {
-        ToastBox.builder(applicationContext).withMessage(getString(R.string.warning_available_soon)).showShort()
+        ToastBox.builder(applicationContext).withMessage(getString(R.string.warning_available_soon))
+            .showLong()
     }
 
     open fun showError(message: String) {

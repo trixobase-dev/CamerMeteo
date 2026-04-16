@@ -17,6 +17,7 @@ class ToastBox {
     }
 
     private lateinit var message: String
+    private var duration: Int = 0
 
     class Builder {
 
@@ -25,6 +26,7 @@ class ToastBox {
         internal constructor(context: Context) {
             instance = ToastBox(context)
             instance.message = context.getString(R.string.warning_empty_message)
+            instance.duration = Toast.LENGTH_SHORT
         }
 
         fun withMessage(message: String) : Builder{
@@ -32,8 +34,14 @@ class ToastBox {
             return this
         }
 
+        fun showLong() {
+            instance.duration = Toast.LENGTH_LONG
+            instance.display()
+        }
+
         fun showShort() {
-            instance.displayShort()
+            instance.duration = Toast.LENGTH_SHORT
+            instance.display()
         }
 
     }
@@ -46,8 +54,8 @@ class ToastBox {
 
     }
 
-    private fun displayShort() {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    private fun display() {
+        Toast.makeText(context, message, duration).show()
     }
 
 }

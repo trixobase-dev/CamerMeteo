@@ -1,4 +1,4 @@
-package cm.trixobase.camermeteo.ui.domain
+package cm.trixobase.camermeteo.ui
 
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.AttributesNames
@@ -63,10 +63,30 @@ class UiTown {
                 builder()
                     .withName(AttributesNames.TOWN_YAOUNDE)
                     .withDescription("Partiellement nuageux")
-                    .withTemperature(27)
-                    .withPicture(R.drawable.iv_yaounde)
-                    .build()
-            )
+                    .withTemperature(29)
+                    .withPicture(R.drawable.iv_town_yaounde)
+                    .build())
+            towns.add(
+                builder()
+                    .withName(AttributesNames.TOWN_DSCHANG)
+                    .withDescription("Nuageux, ensolleillé")
+                    .withTemperature(30)
+                    .withPicture(R.drawable.iv_town_dschang)
+                    .build())
+            towns.add(
+                builder()
+                    .withName(AttributesNames.TOWN_DOUALA)
+                    .withDescription("Pluvieux")
+                    .withTemperature(24)
+                    .withPicture(R.drawable.iv_town_douala)
+                    .build())
+            towns.add(
+                builder()
+                    .withName(AttributesNames.TOWN_NGAOUNDERE)
+                    .withDescription("Temps sec")
+                    .withTemperature(30)
+                    .withPicture(R.drawable.iv_town_ngaoundere)
+                    .build())
             return towns
         }
     }

@@ -11,23 +11,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
+    /*
     primary = Indigo,               //widget
     secondary = PurpleGrey80,
     tertiary = Pink80,
     background = BlueDark,          //arriere plan
     surface = BlueDark,
     onSurfaceVariant = GreenDark              //bar de notification et TopAppBar
+
+    */
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Indigo,
+    /*primary = Indigo,
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = GreenDark,
     surface = GreenDark,
     onSurfaceVariant = BlueDark
 
-    /* Other default colors to override
+     Other default colors to override
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,

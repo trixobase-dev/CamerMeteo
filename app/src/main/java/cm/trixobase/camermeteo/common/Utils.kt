@@ -20,6 +20,10 @@ object Utils {
             return stringToCalendar(date)
         }
 
+        fun computeDateLittle(calendar: Calendar): String {
+            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${monthName(calendar).lowercase().substring(0, 4)}."
+        }
+
         private fun stringToCalendar(date: String): Calendar {
             return Calendar.Builder()
                 .setDate(year(date), month(date) - 1, day(date)).build()
@@ -70,10 +74,6 @@ object Utils {
                 11 -> "Décembre"
                 else -> "Error in ://Utils.time.monthName(calendar: Calendar)"
             }
-        }
-
-        fun computeDateLittle(calendar: Calendar): String {
-            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${monthName(calendar).lowercase().substring(0, 4)}."
         }
 
     }

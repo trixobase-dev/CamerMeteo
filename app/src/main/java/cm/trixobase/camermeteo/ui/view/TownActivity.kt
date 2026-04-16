@@ -1,5 +1,6 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo.ui.view
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -9,23 +10,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
+
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,8 +40,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import cm.trixobase.camermeteo.R
-import cm.trixobase.camermeteo.ui.domain.UiTown
+import cm.trixobase.camermeteo.common.widget.MyLine
+import cm.trixobase.camermeteo.common.widget.MyToolbar
+import cm.trixobase.camermeteo.ui.ApplicationActivity
+import cm.trixobase.camermeteo.ui.UiTown
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 
 /*
@@ -49,60 +54,57 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 
 class TownActivity : ApplicationActivity() {
 
-    private lateinit var towns: List<UiTown>
-    private var myTown = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CamerMeteoTheme {
-                MyContent(doGetTownChosen())
+                Scaffold(
+                    topBar = { MyToolbar(onBackPressedDispatcher, getString(R.string.your_town)) },
+                    content = {
+                        MyContent(
+                            Modifier.padding(it),
+                            doGetConfigTown(),
+                            UiTown.getAll()
+                        )
+                    }
+                )
             }
         }
     }
 
     @Composable
-    private fun MyContent(townChosen: String) {
-        towns = UiTown.getAll()
-        townChosen.also { myTown = it }
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Scaffold(
-                topBar = { MyToolbar(onBackPressedDispatcher, "Votre ville") },
-                content = { MyBody(Modifier.padding(it)) }
-            )
-        }
-    }
-
-    @Composable
-    fun MyBody(modifier: Modifier) {
+    private fun MyContent(
+        modifier: Modifier = Modifier,
+        myTown: String,
+        towns: List<UiTown> = UiTown.getAll()
+    ) {
         Surface(
             modifier = modifier.fillMaxSize(),
-            contentColor = Color.White
+            //contentColor = Color.White
         ) {
             Column {
                 MyLine(Color.White)
-                MyTowns()
+                MyTowns(myTown, towns)
             }
         }
     }
 
     @Composable
-    fun MyTowns() {
+    fun MyTowns(myTown: String, towns: List<UiTown>) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 15.dp, vertical = 10.dp)
+            contentPadding = PaddingValues(15.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(towns.sortedBy { it.name }) { town ->
-                MyItemTown(town)
+            items(towns.sortedBy { it.name }) {
+                MyItemTown(myTown, it)
             }
         }
     }
 
     @Composable
-    fun MyItemTown(town: UiTown) {
+    fun MyItemTown(myTown: String, town: UiTown) {
         Card(
             modifier = Modifier.clickable(onClick = { setTownChosen(town.name) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -133,7 +135,7 @@ class TownActivity : ApplicationActivity() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(
-                        modifier = Modifier,
+                        modifier = Modifier.width(180.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
@@ -147,13 +149,13 @@ class TownActivity : ApplicationActivity() {
                             modifier = Modifier
                                 .size(25.dp)
                                 .padding(start = 8.dp),
-                            imageVector = Icons.Default.LocationOn,
+                            painter = painterResource(id = R.drawable.ic_my_location),
                             contentDescription = "Ville sélectionné",
                             tint = if (myTown == town.name) Color.Black else Color.LightGray
                         )
                     }
                     Column(
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -176,17 +178,25 @@ class TownActivity : ApplicationActivity() {
         }
     }
 
-    private fun setTownChosen(townChose: String) {
-        doConfigTown(townChose)
-        showMessage(String.format(townChose, R.string.town_chosen))
+    private fun setTownChosen(townChosen: String) {
+        doConfigTown(townChosen)
+        showMessage(String.format(getString(R.string.town_chosen), townChosen))
         onBackPressedDispatcher.onBackPressed()
     }
 
-    @Preview(showSystemUi = true, showBackground = true)
+    @Preview
     @Composable
-    private fun Preview() {
+    private fun TownActivityPreview() {
         CamerMeteoTheme {
-            MyContent("Yaoundé")
+            MyContent(myTown = "Limbé")
+        }
+    }
+
+    @Preview(uiMode = UI_MODE_NIGHT_YES)
+    @Composable
+    private fun TownActivityDarkPreview() {
+        CamerMeteoTheme {
+            MyContent(myTown = "Yaoundé")
         }
     }
 
