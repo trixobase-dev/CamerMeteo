@@ -62,7 +62,6 @@ class MainActivity : ApplicationActivity() {
     fun MyContent(townChosen: String) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            //contentColor = Color.White
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -88,7 +87,11 @@ class MainActivity : ApplicationActivity() {
             Icon(
                 painterResource(R.drawable.ic_town),
                 contentDescription = "Ville",
-                modifier = Modifier.clickable(onClick = { goToTownActivity() })
+                modifier = Modifier.clickable(onClick = {
+                    val intent = Intent(applicationContext, TownActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    applicationContext.startActivity(intent)
+                })
             )
             Text(
                 text = myTown, fontSize = 22.sp
@@ -96,7 +99,11 @@ class MainActivity : ApplicationActivity() {
             Icon(
                 painter = painterResource(R.drawable.ic_setting),
                 contentDescription = "Paramètres",
-                modifier = Modifier.clickable(onClick = { goToSettingActivity() })
+                modifier = Modifier.clickable(onClick = {
+                    val intent = Intent(applicationContext, SettingActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    applicationContext.startActivity(intent)
+                })
             )/*
             Image(
                 modifier = Modifier.size(25.dp)
@@ -111,7 +118,6 @@ class MainActivity : ApplicationActivity() {
         }
     }
 
-    @Suppress("SpellCheckingInspection")
     @Composable
     private fun MyDegree() {
         Column(
@@ -257,23 +263,7 @@ class MainActivity : ApplicationActivity() {
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
             MyContent("Yaoundé")
-            /*
-            MyItemDate(Modifier, UiDate.builder()
-                    .withDate(Calendar.getInstance())
-                    .withTemperature(23))
-             */
         }
     }
 
-    private fun goToTownActivity() {
-        val intent = Intent(applicationContext, TownActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        applicationContext.startActivity(intent)
-    }
-
-    private fun goToSettingActivity() {
-        val intent = Intent(applicationContext, SettingActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        applicationContext.startActivity(intent)
-    }
 }
