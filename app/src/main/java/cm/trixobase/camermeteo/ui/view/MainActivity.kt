@@ -19,29 +19,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.widget.MyLine
 import cm.trixobase.camermeteo.ui.ApplicationActivity
 import cm.trixobase.camermeteo.ui.UiDate
 import cm.trixobase.camermeteo.ui.UiTemp
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
+import cm.trixobase.camermeteo.ui.viewmodel.MainViewModel
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26
@@ -49,17 +50,31 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 
 class MainActivity : ApplicationActivity() {
 
+    var viewModel = MainViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[MainViewModel::class]
+
         setContent {
             CamerMeteoTheme {
-                MyContent(doGetConfigTown())
+                MyContent()
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getMyTown(this)
+    }
+
     @Composable
-    fun MyContent(townChosen: String) {
+    fun MyContent() {
+        val myTown = viewModel.myTown.observeAsState()
+        val weather = viewModel.data.observeAsState()
+        val isLoading = viewModel.isLoading.observeAsState()
+
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -67,17 +82,22 @@ class MainActivity : ApplicationActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MyTop(townChosen)
+                MyTop(myTown.value!!)
                 MyDegree()
-                MyTemp()
+                if (isLoading.value == true) {
+                    CircularProgressIndicator(Modifier.padding(vertical = 10.dp))
+                    viewModel.getWeatherData()
+                }
+                else
+                    weather.value?.let { tempsHour ->
+                        MyTemp(tempsHour)
+                    }
             }
         }
     }
 
     @Composable
     private fun MyTop(townChosen: String) {
-        var myTown by remember { mutableStateOf(townChosen) }
-
         Row(
             modifier = Modifier
                 .padding(top = 10.dp, start = 15.dp, end = 15.dp)
@@ -94,7 +114,7 @@ class MainActivity : ApplicationActivity() {
                 })
             )
             Text(
-                text = myTown, fontSize = 22.sp
+                text = townChosen, fontSize = 22.sp
             )
             Icon(
                 painter = painterResource(R.drawable.ic_setting),
@@ -120,6 +140,8 @@ class MainActivity : ApplicationActivity() {
 
     @Composable
     private fun MyDegree() {
+        val comic = FontFamily(Font(R.font.comic))
+
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
 
@@ -133,20 +155,20 @@ class MainActivity : ApplicationActivity() {
                 text = "34°",
                 fontSize = 75.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif,
+                fontFamily = comic,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "Nuageux°",
                 fontSize = 23.sp,
                 fontWeight = FontWeight.Light,
-                fontFamily = FontFamily.Monospace,
-                textAlign = TextAlign.Center
+                fontFamily = comic,
+                textAlign = TextAlign.Center,
             )
             Text(
                 text = "30° / 24°",
                 fontSize = 18.sp,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = comic,
                 textAlign = TextAlign.Center
             )
             Spacer(
@@ -158,27 +180,27 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    fun MyTemp() {
+    fun MyTemp(tempsHour: List<UiTemp>) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
         ) {
             MyLine()
-            MyTempsByHour()
+            MyTempsByHour(tempsHour)
             MyLine()
             MyTempsByDate()
         }
     }
 
     @Composable
-    fun MyTempsByHour() {
+    fun MyTempsByHour(tempsHour: List<UiTemp>) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
         ) {
-            items(UiTemp.getAll()) { temp ->
+            items(tempsHour) { temp ->
                 MyItemHour(temp = temp)
             }
         }
@@ -254,7 +276,7 @@ class MainActivity : ApplicationActivity() {
     @Composable
     private fun PreviewTheme() {
         CamerMeteoTheme {
-            MyContent("Limbé")
+            MyContent()
         }
     }
 
@@ -262,7 +284,7 @@ class MainActivity : ApplicationActivity() {
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
-            MyContent("Yaoundé")
+            MyContent()
         }
     }
 
