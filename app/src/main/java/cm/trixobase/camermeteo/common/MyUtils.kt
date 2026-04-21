@@ -8,7 +8,7 @@ import java.util.Calendar
  * Powered by Trixobase Enterprise on 06/04/26
  */
 
-object Utils {
+object MyUtils {
 
     object time {
 

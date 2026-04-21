@@ -1,14 +1,8 @@
-@file:Suppress("DEPRECATION")
-
-package cm.trixobase.camermeteo.backend
+package cm.trixobase.camermeteo.common
 
 import android.content.Context
 import android.preference.PreferenceManager
 import androidx.core.content.edit
-
-/*
- * Powered by Trixobase Enterprise on 09/04/26
- */
 
 object Manager {
 

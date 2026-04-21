@@ -1,6 +1,7 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.common.Utils
+import cm.trixobase.camermeteo.common.MyUtils
+import cm.trixobase.camermeteo.ApplicationManager
 import java.util.Calendar
 
 /*
@@ -43,7 +44,7 @@ class UiTemp {
             this.hasRain = hasRain
             this.hasVent = hasVent
             this.hasSun = hasSun
-            instance.picture = ApplicationManager.getWeatherPicture(instance.temperature, hour, hasVent, hasRain, hasSun)
+            instance.picture = ApplicationManager.Companion.getWeatherPicture(instance.temperature, hour, hasVent, hasRain, hasSun)
             return instance
         }
 
@@ -66,7 +67,7 @@ class UiTemp {
         }
 
         fun getAll(): List<UiTemp> {
-            val cH = Utils.time.currentDate().get(Calendar.HOUR_OF_DAY)
+            val cH = MyUtils.time.currentDate().get(Calendar.HOUR_OF_DAY)
             val h = if (cH > 10) 10 else cH
             val temps = mutableListOf<UiTemp>()
             for (i in h..23) {

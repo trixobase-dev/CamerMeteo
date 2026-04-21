@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,28 +36,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.widget.MyLine
-import cm.trixobase.camermeteo.ui.ApplicationActivity
-import cm.trixobase.camermeteo.ui.UiDate
-import cm.trixobase.camermeteo.ui.UiTemp
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
-import cm.trixobase.camermeteo.ui.viewmodel.MainViewModel
+import cm.trixobase.camermeteo.ui.viewui.UiDate
+import cm.trixobase.camermeteo.ui.viewui.UiTemp
+import cm.trixobase.camermeteo.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26
  */
 
+@AndroidEntryPoint
 class MainActivity : ApplicationActivity() {
 
-    var viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(this)[MainViewModel::class]
-
+        //viewModel = hiltViewModels()
         setContent {
             CamerMeteoTheme {
                 MyContent()
@@ -86,7 +86,7 @@ class MainActivity : ApplicationActivity() {
                 MyDegree()
                 if (isLoading.value == true) {
                     CircularProgressIndicator(Modifier.padding(vertical = 10.dp))
-                    viewModel.getWeatherData()
+                    viewModel.getWeatherDemo()
                 }
                 else
                     weather.value?.let { tempsHour ->
@@ -124,17 +124,7 @@ class MainActivity : ApplicationActivity() {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     applicationContext.startActivity(intent)
                 })
-            )/*
-            Image(
-                modifier = Modifier.size(25.dp)
-                    .padding(2.dp)                      // retrait pour la bordure
-                    .clip(CircleShape)                  // form image
-                    .border(width = 2.dp, color = Color.Black, shape = CircleShape)
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = "Paramètres",
-                contentScale = ContentScale.Crop,      //remplissage de l'image
             )
-            */
         }
     }
 
@@ -270,14 +260,6 @@ class MainActivity : ApplicationActivity() {
             )
         }
         MyLine()
-    }
-
-    @Preview
-    @Composable
-    private fun PreviewTheme() {
-        CamerMeteoTheme {
-            MyContent()
-        }
     }
 
     @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)

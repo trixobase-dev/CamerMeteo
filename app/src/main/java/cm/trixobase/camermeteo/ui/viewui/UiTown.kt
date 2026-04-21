@@ -1,4 +1,4 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.AttributesNames

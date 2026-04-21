@@ -1,6 +1,6 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo
 
-import cm.trixobase.camermeteo.backend.Manager
+import cm.trixobase.camermeteo.common.Manager
 import cm.trixobase.camermeteo.common.AttributesNames
 import cm.trixobase.camermeteo.common.ui.GlobalActivity
 

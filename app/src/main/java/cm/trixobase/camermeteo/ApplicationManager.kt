@@ -1,12 +1,14 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo
 
-import cm.trixobase.camermeteo.R
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
 /*
  * Powered by Trixobase Enterprise on 16/04/26
  */
 
-class ApplicationManager {
+@HiltAndroidApp
+class ApplicationManager: Application() {
     companion object {
         fun getWeatherPicture(temperature: Int, hour: Int): Int {
             return if (hour < 18) lightPictures(temperature) else nightPictures(temperature)

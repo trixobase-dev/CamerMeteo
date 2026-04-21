@@ -1,6 +1,7 @@
-package cm.trixobase.camermeteo.ui
+package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.common.Utils
+import cm.trixobase.camermeteo.common.MyUtils
+import cm.trixobase.camermeteo.ApplicationManager
 import java.util.Calendar
 
 /*
@@ -31,14 +32,14 @@ class UiDate {
 
         fun withDate(date: Calendar): Builder {
             this.hour = date.get(Calendar.HOUR_OF_DAY)
-            instance.dateToDisplay = Utils.time.computeDateLittle(date)
+            instance.dateToDisplay = MyUtils.time.computeDateLittle(date)
             return this
         }
 
         fun withTemperature(temperature: Int): UiDate {
             this.temperature = temperature
             instance.temperatureToDisplay = "${temperature + 2}° / ${temperature - 2}°"
-            instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
+            instance.picture = ApplicationManager.Companion.getWeatherPicture(temperature, hour)
             return instance
         }
 
@@ -51,7 +52,7 @@ class UiDate {
 
         fun getAll(): List<UiDate> {
             val dates = mutableListOf<UiDate>()
-            val date = Utils.time.currentDate()
+            val date = MyUtils.time.currentDate()
             repeat(6) {
                 date.add(Calendar.DAY_OF_MONTH, 1)
                 dates.add(builder()

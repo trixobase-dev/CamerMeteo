@@ -44,8 +44,8 @@ import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.R
 import cm.trixobase.camermeteo.common.widget.MyLine
 import cm.trixobase.camermeteo.common.widget.MyToolbar
-import cm.trixobase.camermeteo.ui.ApplicationActivity
-import cm.trixobase.camermeteo.ui.UiTown
+import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.ui.viewui.UiTown
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 
 /*
