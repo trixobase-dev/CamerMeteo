@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.R
-import cm.trixobase.camermeteo.common.AttributesNames
+import cm.trixobase.library.common.AttributesNames
 
 /*
  * Powered by Trixobase Enterprise on 09/04/26
@@ -65,28 +65,32 @@ class UiTown {
                     .withDescription("Partiellement nuageux")
                     .withTemperature(29)
                     .withPicture(R.drawable.iv_town_yaounde)
-                    .build())
+                    .build()
+            )
             towns.add(
                 builder()
                     .withName(AttributesNames.TOWN_DSCHANG)
                     .withDescription("Nuageux, ensolleillé")
                     .withTemperature(30)
                     .withPicture(R.drawable.iv_town_dschang)
-                    .build())
+                    .build()
+            )
             towns.add(
                 builder()
                     .withName(AttributesNames.TOWN_DOUALA)
                     .withDescription("Pluvieux")
                     .withTemperature(24)
                     .withPicture(R.drawable.iv_town_douala)
-                    .build())
+                    .build()
+            )
             towns.add(
                 builder()
                     .withName(AttributesNames.TOWN_NGAOUNDERE)
                     .withDescription("Temps sec")
                     .withTemperature(30)
                     .withPicture(R.drawable.iv_town_ngaoundere)
-                    .build())
+                    .build()
+            )
             return towns
         }
     }

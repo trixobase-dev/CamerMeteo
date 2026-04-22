@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.common.MyUtils
 import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.library.common.MyUtils
 import java.util.Calendar
 
 /*
@@ -44,7 +44,13 @@ class UiTemp {
             this.hasRain = hasRain
             this.hasVent = hasVent
             this.hasSun = hasSun
-            instance.picture = ApplicationManager.Companion.getWeatherPicture(instance.temperature, hour, hasVent, hasRain, hasSun)
+            instance.picture = ApplicationManager.Companion.getWeatherPicture(
+                instance.temperature,
+                hour,
+                hasVent,
+                hasRain,
+                hasSun
+            )
             return instance
         }
 
@@ -63,7 +69,7 @@ class UiTemp {
         }
 
         private fun randomBoolean(): Boolean {
-            return ((1..10).random()%2 == 0)
+            return ((1..10).random() % 2 == 0)
         }
 
         fun getAll(): List<UiTemp> {
@@ -71,10 +77,16 @@ class UiTemp {
             val h = if (cH > 10) 10 else cH
             val temps = mutableListOf<UiTemp>()
             for (i in h..23) {
-                temps.add(builder()
-                    .withHour(i)
-                    .withTemperature((25..38).random())
-                    .withPrecipitation(hasRain = randomBoolean(), hasVent =  randomBoolean(), hasSun = randomBoolean()))
+                temps.add(
+                    builder()
+                        .withHour(i)
+                        .withTemperature((25..38).random())
+                        .withPrecipitation(
+                            hasRain = randomBoolean(),
+                            hasVent = randomBoolean(),
+                            hasSun = randomBoolean()
+                        )
+                )
             }
             return temps
         }

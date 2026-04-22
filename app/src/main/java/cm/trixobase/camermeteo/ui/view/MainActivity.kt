@@ -37,26 +37,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.ApplicationActivity
-import cm.trixobase.camermeteo.R
-import cm.trixobase.camermeteo.common.widget.MyLine
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.viewui.UiDate
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
+import cm.trixobase.camermeteo.ui.widget.MyLine
+import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.camermeteo.viewmodel.MainViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import cm.trixobase.library.common.R
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26
  */
 
-@AndroidEntryPoint
 class MainActivity : ApplicationActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //viewModel = hiltViewModels()
         setContent {
             CamerMeteoTheme {
                 MyContent()
@@ -74,6 +72,7 @@ class MainActivity : ApplicationActivity() {
         val myTown = viewModel.myTown.observeAsState()
         val weather = viewModel.data.observeAsState()
         val isLoading = viewModel.isLoading.observeAsState()
+        val error = viewModel.error.observeAsState()
 
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -83,15 +82,22 @@ class MainActivity : ApplicationActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 MyTop(myTown.value!!)
-                MyDegree()
+
                 if (isLoading.value == true) {
-                    CircularProgressIndicator(Modifier.padding(vertical = 10.dp))
+                    CircularProgressIndicator(Modifier.padding(top = 25.dp))
                     viewModel.getWeatherDemo()
+                } else {
+                    if (weather.value == null) {
+                        error.value?.let {
+                            Spacer(Modifier.height(30.dp).fillMaxWidth())
+                            MyTextError(error = getString(R.string.warning_internet_connection))
+                        }
+                    } else
+                        weather.value?.let { tempsHour ->
+                            MyDegree()
+                            MyTemp(tempsHour)
+                        }
                 }
-                else
-                    weather.value?.let { tempsHour ->
-                        MyTemp(tempsHour)
-                    }
             }
         }
     }

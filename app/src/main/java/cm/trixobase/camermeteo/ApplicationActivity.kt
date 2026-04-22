@@ -1,8 +1,8 @@
 package cm.trixobase.camermeteo
 
-import cm.trixobase.camermeteo.common.Manager
-import cm.trixobase.camermeteo.common.AttributesNames
-import cm.trixobase.camermeteo.common.ui.GlobalActivity
+import cm.trixobase.library.common.AttributesNames
+import cm.trixobase.library.common.Manager
+import cm.trixobase.library.common.ui.GlobalActivity
 
 /*
  * Powered by Trixobase Enterprise on 09/04/26

@@ -83,4 +83,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+    implementation(project(":common"))
+
 }

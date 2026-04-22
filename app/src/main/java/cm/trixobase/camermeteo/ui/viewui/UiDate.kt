@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.common.MyUtils
 import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.library.common.MyUtils
 import java.util.Calendar
 
 /*
@@ -20,7 +20,6 @@ class UiDate {
 
         private var hour: Int = 0
         private var temperature: Int = 0
-
 
 
         internal constructor() {
@@ -55,9 +54,11 @@ class UiDate {
             val date = MyUtils.time.currentDate()
             repeat(6) {
                 date.add(Calendar.DAY_OF_MONTH, 1)
-                dates.add(builder()
-                    .withDate(date)
-                    .withTemperature((24..28).random()))
+                dates.add(
+                    builder()
+                        .withDate(date)
+                        .withTemperature((24..28).random())
+                )
             }
             return dates
         }

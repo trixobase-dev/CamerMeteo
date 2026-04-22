@@ -37,12 +37,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cm.trixobase.camermeteo.R
-import cm.trixobase.camermeteo.common.AttributesNames
-import cm.trixobase.camermeteo.common.widget.MyLine
-import cm.trixobase.camermeteo.common.widget.MyToolbar
 import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
+import cm.trixobase.camermeteo.ui.widget.MyLine
+import cm.trixobase.camermeteo.ui.widget.MyToolbar
+import cm.trixobase.library.common.AttributesNames
+import cm.trixobase.library.common.R
 
 /*
  * Powered by Trixobase Enterprise on 06/04/26
@@ -78,7 +78,7 @@ class SettingActivity : ApplicationActivity() {
             modifier = modifier.fillMaxSize(),
         ) {
             Column {
-                MyLine(Color.White)
+                MyLine(color = Color.White)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
