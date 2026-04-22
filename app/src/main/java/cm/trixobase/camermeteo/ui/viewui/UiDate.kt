@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.ApplicationManager
-import cm.trixobase.library.common.MyUtils
+import cm.trixobase.library.common.Tools
 import java.util.Calendar
 
 /*
@@ -31,7 +31,7 @@ class UiDate {
 
         fun withDate(date: Calendar): Builder {
             this.hour = date.get(Calendar.HOUR_OF_DAY)
-            instance.dateToDisplay = MyUtils.time.computeDateLittle(date)
+            instance.dateToDisplay = Tools.time.computeDateLittle(date)
             return this
         }
 
@@ -51,7 +51,7 @@ class UiDate {
 
         fun getAll(): List<UiDate> {
             val dates = mutableListOf<UiDate>()
-            val date = MyUtils.time.currentDate()
+            val date = Tools.time.currentDate()
             repeat(6) {
                 date.add(Calendar.DAY_OF_MONTH, 1)
                 dates.add(

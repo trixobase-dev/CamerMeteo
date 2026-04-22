@@ -5,6 +5,9 @@ package cm.trixobase.camermeteo.data.model.weather
  */
 
 data class Weather (
-    val coord: Coordinate,
-    val temperature: Temperature
+    val temperature: Temperature,
+    val last_updated: String,
+    val temp_c: String,
+    val temp_f: String,
+    val condition: Condition
 )

@@ -1,7 +1,7 @@
-package cm.trixobase.camermeteo.ui.view
+package cm.trixobase.camermeteo.ui.view.main
 
 import android.content.Intent
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -38,11 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
+import cm.trixobase.camermeteo.ui.view.SettingActivity
+import cm.trixobase.camermeteo.ui.view.TownActivity
 import cm.trixobase.camermeteo.ui.viewui.UiDate
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyTextError
-import cm.trixobase.camermeteo.viewmodel.MainViewModel
 import cm.trixobase.library.common.R
 
 /*
@@ -69,10 +70,7 @@ class MainActivity : ApplicationActivity() {
 
     @Composable
     fun MyContent() {
-        val myTown = viewModel.myTown.observeAsState()
-        val weather = viewModel.data.observeAsState()
-        val isLoading = viewModel.isLoading.observeAsState()
-        val error = viewModel.error.observeAsState()
+        val uiState = viewModel.uiState.observeAsState()
 
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -81,19 +79,18 @@ class MainActivity : ApplicationActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MyTop(myTown.value!!)
+                MyTop(uiState.value?.city ?: "")
 
-                if (isLoading.value == true) {
+                if (uiState.value?.isLoading == true) {
                     CircularProgressIndicator(Modifier.padding(top = 25.dp))
                     viewModel.getWeatherDemo()
                 } else {
-                    if (weather.value == null) {
-                        error.value?.let {
-                            Spacer(Modifier.height(30.dp).fillMaxWidth())
+                    if (uiState.value?.temps?.isEmpty()?: true) {
+                        uiState.value?.error.let {
                             MyTextError(error = getString(R.string.warning_internet_connection))
                         }
                     } else
-                        weather.value?.let { tempsHour ->
+                        uiState.value?.temps?.let { tempsHour ->
                             MyDegree()
                             MyTemp(tempsHour)
                         }
@@ -103,7 +100,7 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyTop(townChosen: String) {
+    private fun MyTop(city: String) {
         Row(
             modifier = Modifier
                 .padding(top = 10.dp, start = 15.dp, end = 15.dp)
@@ -120,7 +117,7 @@ class MainActivity : ApplicationActivity() {
                 })
             )
             Text(
-                text = townChosen, fontSize = 22.sp
+                text = city, fontSize = 22.sp
             )
             Icon(
                 painter = painterResource(R.drawable.ic_setting),
@@ -139,7 +136,8 @@ class MainActivity : ApplicationActivity() {
         val comic = FontFamily(Font(R.font.comic))
 
         Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
             Spacer(
@@ -268,7 +266,7 @@ class MainActivity : ApplicationActivity() {
         MyLine()
     }
 
-    @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {

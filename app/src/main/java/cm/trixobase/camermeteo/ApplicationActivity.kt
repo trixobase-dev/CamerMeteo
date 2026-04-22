@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo
 
 import cm.trixobase.library.common.AttributesNames
-import cm.trixobase.library.common.Manager
+import cm.trixobase.library.common.Tools
 import cm.trixobase.library.common.ui.GlobalActivity
 
 /*
@@ -11,7 +11,7 @@ import cm.trixobase.library.common.ui.GlobalActivity
 abstract class ApplicationActivity : GlobalActivity() {
 
     open fun doGetConfigTown(): String {
-        return Manager.get(
+        return Tools.process.get(
             applicationContext,
             AttributesNames.KEY_APP_TOWN,
             AttributesNames.TOWN_YAOUNDE
@@ -19,7 +19,7 @@ abstract class ApplicationActivity : GlobalActivity() {
     }
 
     open fun doGetConfigTemperatureUnity(): String {
-        return Manager.get(
+        return Tools.process.get(
             applicationContext,
             AttributesNames.KEY_APP_TEMPERATURE_UNITY,
             AttributesNames.UNITY_TEMPERATURE_CELSIUS
@@ -27,7 +27,7 @@ abstract class ApplicationActivity : GlobalActivity() {
     }
 
     open fun doGetConfigSong(): Boolean {
-        return Manager.get(
+        return Tools.process.get(
             applicationContext,
             AttributesNames.KEY_APP_SONG,
             true
@@ -35,7 +35,7 @@ abstract class ApplicationActivity : GlobalActivity() {
     }
 
     open fun doGetConfigRefreshAuto(): Boolean {
-        return Manager.get(
+        return Tools.process.get(
             applicationContext,
             AttributesNames.KEY_APP_REFRESH_AUTO,
             true
@@ -43,19 +43,19 @@ abstract class ApplicationActivity : GlobalActivity() {
     }
 
     open fun doConfigTown(townChosen: String) {
-        Manager.set(applicationContext, AttributesNames.KEY_APP_TOWN, townChosen)
+        Tools.process.set(applicationContext, AttributesNames.KEY_APP_TOWN, townChosen)
     }
 
     open fun doConfigTemperatureUnity(unity: String) {
-        Manager.set(applicationContext, AttributesNames.KEY_APP_TEMPERATURE_UNITY, unity)
+        Tools.process.set(applicationContext, AttributesNames.KEY_APP_TEMPERATURE_UNITY, unity)
     }
 
     open fun doConfigSong(isOn: Boolean) {
-        Manager.set(applicationContext, AttributesNames.KEY_APP_SONG, isOn)
+        Tools.process.set(applicationContext, AttributesNames.KEY_APP_SONG, isOn)
     }
 
     open fun doConfigRefreshAuto(isOn: Boolean) {
-        Manager.set(applicationContext, AttributesNames.KEY_APP_REFRESH_AUTO, isOn)
+        Tools.process.set(applicationContext, AttributesNames.KEY_APP_REFRESH_AUTO, isOn)
     }
 
 }

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_tonalities">Tonalités de l\'application</string>
+    <string name="back">Retour</string>
+    <string name="settings">Paramètres</string>
+    <string name="refresh_automatic">Actualisation automatique</string>
+    <string name="town_chosen">%s séléctionné</string>
+    <string name="temperature_unity">Unité de température</string>
+    <string name="your_town">Votre ville</string>
+    <string name="warning_empty_message">Message vide.</string>
+    <string name="warning_available_soon">Bientôt disponible.</string>
+    <string name="warning_internet_connection">Veuillez vérifier votre connexion internet.</string>
+</resources>
