@@ -11,6 +11,7 @@ import android.app.Application
 class ApplicationManager: Application() {
 
     companion object {
+
         fun getWeatherPicture(temperature: Int, hour: Int): Int {
             return if (hour < 18) lightPictures(temperature) else nightPictures(temperature)
 

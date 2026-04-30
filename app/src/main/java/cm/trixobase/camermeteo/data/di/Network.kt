@@ -6,9 +6,8 @@ package cm.trixobase.camermeteo.data.di
 
 sealed class Network<T>(
     val data: T? = null,
-    val error: String = "Missing error"
+    val error: String = "No error"
 ) {
     class Success<T>(data: T?) : Network<T>(data = data)
     class Error<T>(error: String) : Network<T>(error = error)
-    class Loading<T> : Network<T>()
 }

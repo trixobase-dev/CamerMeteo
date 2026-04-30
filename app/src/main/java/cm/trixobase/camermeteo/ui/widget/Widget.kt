@@ -99,6 +99,6 @@ private fun PreviewMyLine() {
 @Composable
 private fun PreviewMyTextError() {
     CamerMeteoTheme {
-        MyTextError(error = "Exemple de error d\'erreur")
+        MyTextError(error = "Exemple de texte d\'erreur")
     }
 }

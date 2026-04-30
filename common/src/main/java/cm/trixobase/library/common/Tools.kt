@@ -1,10 +1,12 @@
-@file:Suppress("unused", "ClassName", "DEPRECATION")
+@file:Suppress("unused", "className", "constPropertyName", "spellCheckingInspection", "deprecation")
 
 package cm.trixobase.library.common
 
 import android.content.Context
+import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import java.util.Calendar
 
 /*
@@ -24,7 +26,7 @@ object Tools {
         }
 
         fun computeDateLittle(calendar: Calendar): String {
-            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${monthName(calendar).lowercase().substring(0, 4)}."
+            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${monthNameLittle(calendar).lowercase()}"
         }
 
         private fun stringToCalendar(date: String): Calendar {
@@ -79,6 +81,24 @@ object Tools {
             }
         }
 
+        private fun monthNameLittle(calendar: Calendar): String {
+            return  when(calendar.get(Calendar.MONTH)) {
+                0 -> "Jan."
+                1 -> "Févr."
+                2 -> "Mars."
+                3 -> "Avril"
+                4 -> "Mai"
+                5 -> "Juin"
+                6 -> "Juil."
+                7 -> "Août"
+                8 -> "Sept."
+                9 -> "Oct."
+                10 -> "Nov."
+                11 -> "Déc."
+                else -> "Error in ://Utils.time.monthName(calendar: Calendar)"
+            }
+        }
+
     }
 
     object process {
@@ -111,6 +131,37 @@ object Tools {
         fun set(context: Context, key: String, value: Boolean) {
             PreferenceManager.getDefaultSharedPreferences(context).edit {
                 putBoolean(key, value)
+            }
+        }
+
+    }
+
+    object phone {
+
+        private const val GooglePlayStore_Url = "https://play.google.com/"
+
+        fun shareApp(context: Context) {
+            val intent = Intent()
+            intent.action = Intent.ACTION_SEND
+            val shareMessage = String.format(context.getString(R.string.share_app_message), "$GooglePlayStore_Url?id=${context.packageName}")
+            intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+            intent.type = "text/plain"
+            val shareIntent = Intent.createChooser(intent, context.getString(R.string.share_app))
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(shareIntent)
+        }
+
+        fun rateApp(context: Context) {
+            try {
+                val uri = "market://details?id=${context.packageName}".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                val uri = "$GooglePlayStore_Url?id=${context.packageName}".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
             }
         }
 

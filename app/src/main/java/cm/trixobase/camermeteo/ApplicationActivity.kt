@@ -1,7 +1,9 @@
 package cm.trixobase.camermeteo
 
-import cm.trixobase.library.common.AttributesNames
+import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.library.common.Tools
+import cm.trixobase.library.common.constants.Region
+import cm.trixobase.library.common.constants.Town
 import cm.trixobase.library.common.ui.GlobalActivity
 
 /*
@@ -13,23 +15,39 @@ abstract class ApplicationActivity : GlobalActivity() {
     open fun doGetConfigTown(): String {
         return Tools.process.get(
             applicationContext,
-            AttributesNames.KEY_APP_TOWN,
-            AttributesNames.TOWN_YAOUNDE
+            AttributeNames.KEY_APP_TOWN,
+            Town.YAOUNDE.name
+        )
+    }
+
+    open fun doGetConfigRegion(): String {
+        return Tools.process.get(
+            applicationContext,
+            AttributeNames.KEY_APP_REGION,
+            Region.CENTRE.name
         )
     }
 
     open fun doGetConfigTemperatureUnity(): String {
         return Tools.process.get(
             applicationContext,
-            AttributesNames.KEY_APP_TEMPERATURE_UNITY,
-            AttributesNames.UNITY_TEMPERATURE_CELSIUS
+            AttributeNames.KEY_APP_TEMPERATURE_UNITS,
+            AttributeNames.TEMPERATURE_UNITS_CELSIUS
         )
     }
 
     open fun doGetConfigSong(): Boolean {
         return Tools.process.get(
             applicationContext,
-            AttributesNames.KEY_APP_SONG,
+            AttributeNames.KEY_APP_SONG,
+            true
+        )
+    }
+
+    open fun doGetConfigDemo(): Boolean {
+        return Tools.process.get(
+            applicationContext,
+            AttributeNames.KEY_APP_DEMO_CONFIGURATION,
             true
         )
     }
@@ -37,25 +55,33 @@ abstract class ApplicationActivity : GlobalActivity() {
     open fun doGetConfigRefreshAuto(): Boolean {
         return Tools.process.get(
             applicationContext,
-            AttributesNames.KEY_APP_REFRESH_AUTO,
+            AttributeNames.KEY_APP_REFRESH_AUTO,
             true
         )
     }
 
+    open fun doConfigRegion(regionChosen: String) {
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_REGION, regionChosen)
+    }
+
     open fun doConfigTown(townChosen: String) {
-        Tools.process.set(applicationContext, AttributesNames.KEY_APP_TOWN, townChosen)
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_TOWN, townChosen)
     }
 
     open fun doConfigTemperatureUnity(unity: String) {
-        Tools.process.set(applicationContext, AttributesNames.KEY_APP_TEMPERATURE_UNITY, unity)
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_TEMPERATURE_UNITS, unity)
     }
 
     open fun doConfigSong(isOn: Boolean) {
-        Tools.process.set(applicationContext, AttributesNames.KEY_APP_SONG, isOn)
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_SONG, isOn)
+    }
+
+    open fun doConfigDemo(isOn: Boolean) {
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_DEMO_CONFIGURATION, isOn)
     }
 
     open fun doConfigRefreshAuto(isOn: Boolean) {
-        Tools.process.set(applicationContext, AttributesNames.KEY_APP_REFRESH_AUTO, isOn)
+        Tools.process.set(applicationContext, AttributeNames.KEY_APP_REFRESH_AUTO, isOn)
     }
 
 }

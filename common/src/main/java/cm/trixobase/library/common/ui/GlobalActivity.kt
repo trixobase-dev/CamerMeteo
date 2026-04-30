@@ -4,8 +4,8 @@ package cm.trixobase.library.common.ui
 
 import androidx.activity.ComponentActivity
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.widget.SnakeBox
-import cm.trixobase.library.common.widget.ToastBox
+import cm.trixobase.library.common.ui.widget.SnakeBox
+import cm.trixobase.library.common.ui.widget.ToastBox
 
 abstract class GlobalActivity : ComponentActivity() {
 

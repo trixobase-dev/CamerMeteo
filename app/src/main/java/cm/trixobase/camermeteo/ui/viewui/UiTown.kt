@@ -1,7 +1,6 @@
 package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.R
-import cm.trixobase.library.common.AttributesNames
+import cm.trixobase.library.common.constants.Town
 
 /*
  * Powered by Trixobase Enterprise on 09/04/26
@@ -20,7 +19,7 @@ class UiTown {
 
         internal constructor() {
             instance.name = "Yaoundé"
-            instance.picture = R.drawable.ic_launcher_background
+            instance.picture = cm.trixobase.library.common.R.drawable.iv_town_yaounde
         }
 
         private val instance = UiTown()
@@ -61,34 +60,34 @@ class UiTown {
             val towns = mutableListOf<UiTown>()
             towns.add(
                 builder()
-                    .withName(AttributesNames.TOWN_YAOUNDE)
+                    .withName(Town.YAOUNDE.nom)
                     .withDescription("Partiellement nuageux")
                     .withTemperature(29)
-                    .withPicture(R.drawable.iv_town_yaounde)
+                    .withPicture(Town.YAOUNDE.picture)
                     .build()
             )
             towns.add(
                 builder()
-                    .withName(AttributesNames.TOWN_DSCHANG)
+                    .withName(Town.DSCHANG.nom)
                     .withDescription("Nuageux, ensolleillé")
                     .withTemperature(30)
-                    .withPicture(R.drawable.iv_town_dschang)
+                    .withPicture(Town.DSCHANG.picture)
                     .build()
             )
             towns.add(
                 builder()
-                    .withName(AttributesNames.TOWN_DOUALA)
+                    .withName(Town.NGAOUNDERE.nom)
                     .withDescription("Pluvieux")
                     .withTemperature(24)
-                    .withPicture(R.drawable.iv_town_douala)
+                    .withPicture(Town.NGAOUNDERE.picture)
                     .build()
             )
             towns.add(
                 builder()
-                    .withName(AttributesNames.TOWN_NGAOUNDERE)
+                    .withName(Town.GAROUA.nom)
                     .withDescription("Temps sec")
                     .withTemperature(30)
-                    .withPicture(R.drawable.iv_town_ngaoundere)
+                    .withPicture(Town.GAROUA.picture)
                     .build()
             )
             return towns
