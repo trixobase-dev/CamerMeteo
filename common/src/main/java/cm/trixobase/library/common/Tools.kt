@@ -2,9 +2,15 @@
 
 package cm.trixobase.library.common
 
+import android.Manifest
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.preference.PreferenceManager
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import java.util.Calendar
@@ -26,7 +32,11 @@ object Tools {
         }
 
         fun computeDateLittle(calendar: Calendar): String {
-            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${monthNameLittle(calendar).lowercase()}"
+            return "${dayName(calendar).substring(0, 3)}. ${day(calendar)} ${
+                monthNameLittle(
+                    calendar
+                ).lowercase()
+            }"
         }
 
         private fun stringToCalendar(date: String): Calendar {
@@ -51,7 +61,7 @@ object Tools {
         }
 
         private fun dayName(calendar: Calendar): String {
-            return when(calendar.get(Calendar.DAY_OF_WEEK)) {
+            return when (calendar.get(Calendar.DAY_OF_WEEK)) {
                 1 -> "Dimanche"
                 2 -> "Lundi"
                 3 -> "Mardi"
@@ -64,7 +74,7 @@ object Tools {
         }
 
         private fun monthName(calendar: Calendar): String {
-            return when(calendar.get(Calendar.MONTH)) {
+            return when (calendar.get(Calendar.MONTH)) {
                 0 -> "Janvier"
                 1 -> "Février"
                 2 -> "Mars"
@@ -82,7 +92,7 @@ object Tools {
         }
 
         private fun monthNameLittle(calendar: Calendar): String {
-            return  when(calendar.get(Calendar.MONTH)) {
+            return when (calendar.get(Calendar.MONTH)) {
                 0 -> "Jan."
                 1 -> "Févr."
                 2 -> "Mars."
@@ -104,7 +114,8 @@ object Tools {
     object process {
 
         fun get(context: Context, key: String, defaultValue: String): String {
-            return PreferenceManager.getDefaultSharedPreferences(context).getString(key, defaultValue)
+            return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(key, defaultValue)
                 ?: defaultValue
         }
 
@@ -113,7 +124,8 @@ object Tools {
         }
 
         fun get(context: Context, key: String, defaultValue: Boolean): Boolean {
-            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue)
+            return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(key, defaultValue)
         }
 
         fun set(context: Context, key: String, value: String) {
@@ -143,7 +155,10 @@ object Tools {
         fun shareApp(context: Context) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
-            val shareMessage = String.format(context.getString(R.string.share_app_message), "$GooglePlayStore_Url?id=${context.packageName}")
+            val shareMessage = String.format(
+                context.getString(R.string.share_app_message),
+                "$GooglePlayStore_Url?id=${context.packageName}/"
+            )
             intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
             intent.type = "text/plain"
             val shareIntent = Intent.createChooser(intent, context.getString(R.string.share_app))
@@ -153,15 +168,32 @@ object Tools {
 
         fun rateApp(context: Context) {
             try {
-                val uri = "market://details?id=${context.packageName}".toUri()
+                val uri = "market://details?id=${context.packageName}/".toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             } catch (e: Exception) {
-                val uri = "$GooglePlayStore_Url?id=${context.packageName}".toUri()
+                val uri = "$GooglePlayStore_Url?id=${context.packageName}/".toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
+            }
+        }
+
+        fun notify(context: Context, title: String, content: String, logo: Int) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val notificationManager =
+                    context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                val notification = NotificationCompat.Builder(context, "trixobase_channel_id")
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setSmallIcon(logo)
+                    .build()
+                notificationManager.notify(1, notification)
             }
         }
 

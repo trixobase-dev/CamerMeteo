@@ -369,8 +369,8 @@ class MainActivity : ApplicationActivity() {
 
 sealed class Screens(val screen: String) {
 
-    data object Home: Screens("Home")
-    data object Rules: Screens("Rules")
-    data object Policies: Screens("Policies")
+    data object Home : Screens("Home")
+    data object Rules : Screens("Rules")
+    data object Policies : Screens("Policies")
 
 }

@@ -73,7 +73,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun getCity(city: String): Town {
-        return Town.entries.filter { city == it.nom }[0]
+        return Town.entries.filter { city == it.name }[0]
     }
 
     private fun getUnits(unity: String): String {

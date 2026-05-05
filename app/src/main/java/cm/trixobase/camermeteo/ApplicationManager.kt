@@ -3,12 +3,26 @@
 package cm.trixobase.camermeteo
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import cm.trixobase.camermeteo.domain.AttributeNames
 
 /*
  * Powered by Trixobase Enterprise on 16/04/26
  */
 
 class ApplicationManager: Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        val channel = NotificationChannel(
+            AttributeNames.CHANNEL_ID,
+            AttributeNames.CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
 
     companion object {
 

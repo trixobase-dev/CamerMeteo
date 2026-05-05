@@ -79,16 +79,15 @@ private fun MyContent(
                 if (isDemo(LocalContext.current.applicationContext))
                     viewModel.getWeatherDemo()
                 else viewModel.getWeatherData()
-            } else {
+            } else
                 uiState.apply {
-                    if (this.temps.isEmpty())
+                    if (!this.error.isEmpty())
                         MyTextError(error = "${LocalContext.current.applicationContext.getString(R.string.warning_internet_connection)}\n${this.error}")
                     else {
                         MyDegree()
                         MyTemp(this.temps)
                     }
                 }
-            }
         }
     }
 }
