@@ -1,12 +1,19 @@
 package cm.trixobase.camermeteo.ui.view
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,18 +35,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -47,11 +59,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
-import cm.trixobase.camermeteo.ui.view.drawer.Policies
-import cm.trixobase.camermeteo.ui.view.drawer.Rules
 import cm.trixobase.camermeteo.ui.view.home.Home
 import cm.trixobase.camermeteo.ui.view.home.HomeViewModel
 import cm.trixobase.camermeteo.ui.view.setting.SettingActivity
+import cm.trixobase.camermeteo.ui.view.terms.Terms
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.Tools
@@ -77,6 +88,7 @@ class MainActivity : ApplicationActivity() {
 
         setContent {
             CamerMeteoTheme {
+                MyPermission()
                 MyNavDrawer()
                 MyContent()
             }
@@ -97,6 +109,39 @@ class MainActivity : ApplicationActivity() {
     @SuppressLint("GestureBackNavigation", "MissingSuperCall")
     override fun onBackPressed() {
         showDialog.value = true
+    }
+
+    @Composable
+    fun MyPermission() {
+        val context = LocalContext.current.applicationContext
+        var isNotificationGranted by remember {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                )
+            } else mutableStateOf(true)
+        }
+
+        val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                isNotificationGranted = isGranted
+            }
+        )
+
+        LaunchedEffect(key1 = Unit) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
+
+        //Tools.phone.notify(context, "Forte pluie et vents forts", "N\'oublie pas ton parapluie molah", R.drawable.iv_logo)
+
     }
 
     @Composable
@@ -169,8 +214,18 @@ class MainActivity : ApplicationActivity() {
                     startDestination = Screens.Home.screen
                 ) {
                     composable(Screens.Home.screen) { Home(action = { openDrawer() }, viewModel) }
-                    composable(Screens.Rules.screen) { Rules() }
-                    composable(Screens.Policies.screen) { Policies() }
+                    composable(Screens.Rules.screen) {
+                        Terms(
+                            action = { backToHome(navController) },
+                            screen = "RULES"
+                        )
+                    }
+                    composable(Screens.Policies.screen) {
+                        Terms(
+                            action = { backToHome(navController) },
+                            screen = "POLICIES"
+                        )
+                    }
                 }
             }
         }
@@ -179,13 +234,24 @@ class MainActivity : ApplicationActivity() {
     @Composable
     private fun MyDrawerHead() {
         val colors = MaterialTheme.colorScheme
-        Box(
+        Column(
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .width(280.dp)
                 .height(120.dp)
                 .background(colors.onSurface)
+                .padding(10.dp)
         ) {
-            Text("")
+            Image(
+                modifier = Modifier.size(60.dp),
+                contentDescription = "CamerMeteo Logo",
+                painter = painterResource(id = R.drawable.iv_logo)
+            )
+            Text(
+                text = "La météo de nos régions",
+                color = colors.primary,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 
@@ -402,6 +468,12 @@ class MainActivity : ApplicationActivity() {
         }
     }
 
+    private fun backToHome(controller: NavHostController) {
+        coroutineScope?.launch {
+            controller.goTo(Screens.Home.screen)
+        }
+    }
+
     private fun NavHostController.goTo(route: String) {
         coroutineScope?.launch {
             drawerState?.close()
@@ -415,6 +487,7 @@ class MainActivity : ApplicationActivity() {
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
+            MyDrawerHead()
         }
     }
 
@@ -423,7 +496,7 @@ class MainActivity : ApplicationActivity() {
 sealed class Screens(val screen: String) {
 
     data object Home : Screens("Home")
-    data object Rules : Screens("Rules")
+    data object Rules : Screens("Terms")
     data object Policies : Screens("Policies")
 
 }

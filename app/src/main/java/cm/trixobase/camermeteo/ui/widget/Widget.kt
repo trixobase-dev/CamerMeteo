@@ -50,6 +50,7 @@ fun MyToolbar(onBackPressedDispatcher: OnBackPressedDispatcher, title: String) {
                         .padding(end = 5.dp)
                         .clickable(onClick = { onBackPressedDispatcher.onBackPressed() }),
                     painter = painterResource(id = R.drawable.ic_arrow_left),
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = "Retour"
                 )
                 Text(

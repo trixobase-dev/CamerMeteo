@@ -75,7 +75,6 @@ dependencies {
 
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.lifecycle.runtime.ktx.v261)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(libs.hilt.android)
