@@ -450,7 +450,7 @@ enum class Town {
     },
     SANGMELIMA {
         override val region = Region.SUD.nom
-        override val nom = "Yaoundé"
+        override val nom = "Sangmelima"
         override val lat = "2.9333"
         override val lon = "11.9833"
         override val picture = R.drawable.iv_town_yaounde

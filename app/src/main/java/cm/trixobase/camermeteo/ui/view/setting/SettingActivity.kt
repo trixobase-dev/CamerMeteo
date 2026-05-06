@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -80,20 +81,20 @@ class SettingActivity : ApplicationActivity() {
             modifier = modifier.fillMaxSize(),
         ) {
             Column {
-                MyLine(color = MaterialTheme.colorScheme.inverseSurface)
+                MyLine()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 18.dp)
                 ) {
                     OptionOne()
-                    MyLine()
+                    MyLine(color = Color.LightGray)
                     OptionTwo(configSong)
-                    MyLine()
+                    MyLine(color = Color.LightGray)
                     OptionThree(configRefreshAuto)
-                    MyLine()
+                    MyLine(color = Color.LightGray)
                     OptionFour(configDemo)
-                    MyLine()
+                    MyLine(color = Color.LightGray)
                 }
             }
         }
@@ -248,7 +249,7 @@ class SettingActivity : ApplicationActivity() {
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        MyLine()
+                        MyLine(color = Color.LightGray)
                         Spacer(
                             modifier = Modifier
                                 .height(10.dp)
@@ -278,11 +279,12 @@ class SettingActivity : ApplicationActivity() {
                                 .height(10.dp)
                                 .fillMaxSize()
                         )
-                        MyLine()
+                        MyLine(color = Color.LightGray)
                     }
                 },
                 confirmButton = {
                     Button(
+                        modifier = Modifier.width(95.dp),
                         onClick = { onConfirm(selectedOption) },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
                     ) {
@@ -291,6 +293,7 @@ class SettingActivity : ApplicationActivity() {
                 },
                 dismissButton = {
                     Button(
+                        modifier = Modifier.width(95.dp),
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.secondary)
                     ) {

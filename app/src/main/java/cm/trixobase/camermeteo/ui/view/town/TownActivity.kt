@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -83,7 +82,7 @@ class TownActivity : ApplicationActivity() {
             modifier = modifier.fillMaxSize()
         ) {
             Column {
-                MyLine(color = MaterialTheme.colorScheme.inverseSurface)
+                MyLine()
                 MyTowns(myTown)
             }
         }
@@ -127,7 +126,7 @@ class TownActivity : ApplicationActivity() {
                     contentDescription = "Image représentant la ville",
                     contentScale = ContentScale.FillWidth
                 )
-                MyLine()
+                MyLine(color = Color.LightGray)
                 Row(
                     modifier = Modifier
                         .fillMaxSize()

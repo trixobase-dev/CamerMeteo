@@ -76,7 +76,7 @@ class RegionActivity : ApplicationActivity() {
             modifier = modifier.fillMaxSize()
         ) {
             Column {
-                MyLine(color = MaterialTheme.colorScheme.inverseSurface)
+                MyLine()
                 MyRegions()
             }
         }

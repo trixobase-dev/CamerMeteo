@@ -5,6 +5,8 @@
     <string name="settings">Paramètres</string>
     <string name="reglages">Réglages</string>
     <string name="rules">Règlements</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
 
     <string name="app_tonalities">Tonalités de l\'application</string>
     <string name="confidentials_policies">Politique de confidentialité</string>
@@ -22,5 +24,6 @@
 
     <string name="warning_available_soon">Bientôt disponible.</string>
     <string name="warning_empty_message">Message vide.</string>
+    <string name="warning_quit_application">Souhaitez-vous quitter l\'application ?</string>
     <string name="warning_internet_connection">Veuillez vérifier votre connexion internet.</string>
 </resources>

@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -171,9 +172,9 @@ private fun MyTemp(tempsHour: List<UiTemp>) {
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
     ) {
-        MyLine()
+        MyLine(color = Color.LightGray)
         MyTempsByHour(tempsHour)
-        MyLine()
+        MyLine(color = Color.LightGray)
         MyTempsByDate()
     }
 }
@@ -254,7 +255,7 @@ private fun MyItemDate(modifier: Modifier = Modifier, date: UiDate) {
             fontFamily = FontFamily.SansSerif
         )
     }
-    MyLine()
+    MyLine(color = Color.LightGray)
 }
 
 private fun isDemo(context: Context): Boolean {

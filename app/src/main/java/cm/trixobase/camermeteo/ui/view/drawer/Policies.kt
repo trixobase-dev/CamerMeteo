@@ -3,7 +3,6 @@ package cm.trixobase.camermeteo.ui.view.drawer
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +28,7 @@ private fun MyContent() {
         modifier = Modifier.fillMaxSize(),
     ) {
         Column {
-            MyLine(color = MaterialTheme.colorScheme.inverseSurface)
+            MyLine()
             Text("Politique de confidentialite")
         }
     }

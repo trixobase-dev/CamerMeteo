@@ -28,11 +28,14 @@
             android:exported="false" />
         <activity
             android:name=".ui.view.town.TownActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".ui.view.region.RegionActivity"
-            android:noHistory="true"
-            android:exported="false"/>
+            android:exported="false"
+            android:noHistory="true" />
+        <activity
+            android:name=".ui.view.AboutActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

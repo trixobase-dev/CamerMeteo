@@ -52,7 +52,9 @@ fun MyToolbar(onBackPressedDispatcher: OnBackPressedDispatcher, title: String) {
                     painter = painterResource(id = R.drawable.ic_arrow_left),
                     contentDescription = "Retour"
                 )
-                Text(title)
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.primary)
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(titleContentColor = Color.White),
@@ -60,7 +62,7 @@ fun MyToolbar(onBackPressedDispatcher: OnBackPressedDispatcher, title: String) {
 }
 
 @Composable
-fun MyLine(modifier: Modifier = Modifier, color: Color = Color.LightGray) {
+fun MyLine(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.primary) {
     Spacer(
         modifier = modifier
             .height(1.dp)

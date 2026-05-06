@@ -2,6 +2,8 @@
 <resources>
     <string name="share_app">Share application</string>
     <string name="rules">Rules</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="app_tonalities">Application tonalities</string>
     <string name="about">About us</string>
     <string name="back">Back</string>
@@ -14,6 +16,7 @@
     <string name="your_region">Your region</string>
     <string name="your_town">Your town</string>
     <string name="warning_empty_message">Empty message.</string>
+    <string name="warning_quit_application">Close application ?</string>
     <string name="warning_available_soon">Available soon.</string>
     <string name="warning_internet_connection">Check your internet connexion.</string>
 </resources>

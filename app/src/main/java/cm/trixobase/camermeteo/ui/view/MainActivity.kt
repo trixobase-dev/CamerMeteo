@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,11 +28,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,6 +67,7 @@ class MainActivity : ApplicationActivity() {
     private var viewModel = HomeViewModel()
     private var coroutineScope: CoroutineScope? = null
     private var drawerState: DrawerState? = null
+    private var showDialog = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +78,7 @@ class MainActivity : ApplicationActivity() {
         setContent {
             CamerMeteoTheme {
                 MyNavDrawer()
+                MyContent()
             }
         }
     }
@@ -83,6 +91,54 @@ class MainActivity : ApplicationActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         //outState.putString(AttributeNames.KEY_APP_TOWN, viewModel.uiState.value?.nom)
+    }
+
+    @Suppress("UseExpressionBody", "OVERRIDE_DEPRECATION", "deprecation")
+    @SuppressLint("GestureBackNavigation", "MissingSuperCall")
+    override fun onBackPressed() {
+        showDialog.value = true
+    }
+
+    @Composable
+    fun MyContent() {
+        showDialog = remember { mutableStateOf(false) }
+        MyDialogExit(showDialog.value)
+    }
+
+    @Composable
+    fun MyDialogExit(isShowing: Boolean) {
+        val colors = MaterialTheme.colorScheme
+        if (isShowing) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = getString(R.string.warning_quit_application),
+                        textAlign = TextAlign.Start,
+                        color = colors.primary
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        modifier = Modifier.width(95.dp),
+                        onClick = { finish() },
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+                    ) {
+                        Text(getString(R.string.yes), color = colors.onPrimary)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        modifier = Modifier.width(95.dp),
+                        onClick = { showDialog.value = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary)
+                    ) {
+                        Text(text = getString(R.string.no), color = colors.onSecondary)
+                    }
+                }
+            )
+        }
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -149,7 +205,7 @@ class MainActivity : ApplicationActivity() {
         MyLabel(getString(R.string.reglages))
 
         MyItemSetting(context, myTextColor)
-        MyItemAbout(myTextColor)
+        MyItemAbout(context, myTextColor)
     }
 
     @Composable
@@ -303,7 +359,7 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyItemAbout(myTextColor: Color) {
+    private fun MyItemAbout(context: Context, myTextColor: Color) {
         NavigationDrawerItem(
             label = {
                 Text(
@@ -324,12 +380,9 @@ class MainActivity : ApplicationActivity() {
             onClick = {
                 coroutineScope?.launch {
                     drawerState?.close()
-                    showAvailableSoon()
-                    /*
                     val intent = Intent(context, AboutActivity::class.java)
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent)
-                     */
                 }
             })
     }
