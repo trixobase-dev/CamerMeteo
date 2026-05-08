@@ -44,7 +44,7 @@ import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.Tools
+import cm.trixobase.library.common.Utils
 import cm.trixobase.library.common.constants.Town
 
 /*
@@ -259,12 +259,12 @@ private fun MyItemDate(modifier: Modifier = Modifier, date: UiDate) {
 }
 
 private fun isDemo(context: Context): Boolean {
-    return Tools.process.get(context, AttributeNames.KEY_APP_DEMO_CONFIGURATION, true)
+    return Utils.process.get(context, AttributeNames.KEY_APP_DEMO_CONFIGURATION, true)
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun PoliciesDarkPreview() {
+private fun DarkPreview() {
     CamerMeteoTheme {
     }
 }

@@ -14,9 +14,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 object AppModule {
 
     enum class TEMPERATURE(val units: String, val unity: String) {
-        CELSIUS(units = "metric", unity = AttributeNames.TEMPERATURE_UNITS_CELSIUS),
-        FAHRENHEIT(units = "imperial", unity = AttributeNames.TEMPERATURE_UNITS_FAHRENHEIT),
-        KELVIN(units = "standard", unity = AttributeNames.TEMPERATURE_UNITS_KELVIN);
+        CELSIUS(units = "metric", unity = AttributeNames.TEMPERATURE_UNITY_CELSIUS),
+        FAHRENHEIT(units = "imperial", unity = AttributeNames.TEMPERATURE_UNITY_FAHRENHEIT),
+        KELVIN(units = "standard", unity = AttributeNames.TEMPERATURE_UNITY_KELVIN);
 
         override fun toString(): String {
             return "[$name ($unity) => $units]"

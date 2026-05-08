@@ -1,4 +1,4 @@
-@file:Suppress("unused", "className", "constPropertyName", "spellCheckingInspection", "deprecation")
+@file:Suppress("unused", "className", "constPropertyName", "spellCheckingInspection", "deprecation", "ObsoleteSdkInt")
 
 package cm.trixobase.library.common
 
@@ -8,18 +8,24 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Build.VERSION_CODES.JELLY_BEAN
+import android.os.Build.VERSION_CODES.LOLLIPOP
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.preference.PreferenceManager
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import cm.trixobase.library.common.ui.ExitActivity
 import java.util.Calendar
 
 /*
  * Powered by Trixobase Enterprise on 06/04/26
  */
 
-object Tools {
+object Utils {
 
     object time {
 
@@ -40,8 +46,7 @@ object Tools {
         }
 
         private fun stringToCalendar(date: String): Calendar {
-            return Calendar.Builder()
-                .setDate(year(date), month(date) - 1, day(date)).build()
+            return Calendar.Builder().setDate(year(date), month(date) - 1, day(date)).build()
         }
 
         private fun year(date: String): Int {
@@ -115,8 +120,7 @@ object Tools {
 
         fun get(context: Context, key: String, defaultValue: String): String {
             return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(key, defaultValue)
-                ?: defaultValue
+                .getString(key, defaultValue) ?: defaultValue
         }
 
         fun get(context: Context, key: String, defaultValue: Int): Int {
@@ -150,14 +154,22 @@ object Tools {
 
     object phone {
 
-        private const val GooglePlayStore_Url = "https://play.google.com/"
+        fun stopApp(context: Context) {
+            val intent = Intent(context, ExitActivity::class.java)
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_NO_ANIMATION
+                        or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            context.startActivity(intent)
+        }
 
         fun shareApp(context: Context) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             val shareMessage = String.format(
                 context.getString(R.string.share_app_message),
-                "$GooglePlayStore_Url?id=${context.packageName}/"
+                "https://play.google.com/?id=${context.packageName}/"
             )
             intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
             intent.type = "text/plain"
@@ -173,7 +185,7 @@ object Tools {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             } catch (e: Exception) {
-                val uri = "$GooglePlayStore_Url?id=${context.packageName}/".toUri()
+                val uri = "https://play.google.com/?id=${context.packageName}/".toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
@@ -182,19 +194,30 @@ object Tools {
 
         fun notify(context: Context, title: String, content: String, logo: Int) {
             if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    context, Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 val notificationManager =
                     context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 val notification = NotificationCompat.Builder(context, "trixobase_channel_id")
-                    .setContentTitle(title)
-                    .setContentText(content)
-                    .setSmallIcon(logo)
-                    .build()
+                    .setContentTitle(title).setContentText(content).setSmallIcon(logo).build()
                 notificationManager.notify(1, notification)
             }
+        }
+
+        @ChecksSdkIntAtLeast(api = JELLY_BEAN)
+        fun hasJellyBean(): Boolean {
+            return Build.VERSION.SDK_INT >= JELLY_BEAN
+        }
+
+        @ChecksSdkIntAtLeast(api = LOLLIPOP)
+        fun hasLollipop(): Boolean {
+            return Build.VERSION.SDK_INT >= LOLLIPOP
+        }
+
+        @ChecksSdkIntAtLeast(api = TIRAMISU)
+        fun hasTiramisu(): Boolean {
+            return Build.VERSION.SDK_INT >= TIRAMISU
         }
 
     }

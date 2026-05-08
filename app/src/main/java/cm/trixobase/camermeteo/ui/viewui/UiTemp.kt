@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.ApplicationManager
-import cm.trixobase.library.common.Tools
+import cm.trixobase.library.common.Utils
 import java.util.Calendar
 
 /*
@@ -73,7 +73,7 @@ class UiTemp {
         }
 
         fun getAll(): List<UiTemp> {
-            val cH = Tools.time.currentDate().get(Calendar.HOUR_OF_DAY)
+            val cH = Utils.time.currentDate().get(Calendar.HOUR_OF_DAY)
             val h = if (cH > 10) 10 else cH
             val temps = mutableListOf<UiTemp>()
             for (i in h..23) {

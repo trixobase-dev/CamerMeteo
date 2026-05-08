@@ -13,8 +13,8 @@ open class BaseNames {
 
     val NAME = "name"
 
-    val TEMPERATURE_UNITS_CELSIUS = "°C"
-    val TEMPERATURE_UNITS_KELVIN = "°K"
-    val TEMPERATURE_UNITS_FAHRENHEIT = "°F"
+    val TEMPERATURE_UNITY_CELSIUS = "°C"
+    val TEMPERATURE_UNITY_KELVIN = "°K"
+    val TEMPERATURE_UNITY_FAHRENHEIT = "°F"
 
 }

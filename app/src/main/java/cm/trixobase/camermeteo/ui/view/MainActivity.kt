@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -65,9 +66,10 @@ import cm.trixobase.camermeteo.ui.view.setting.SettingActivity
 import cm.trixobase.camermeteo.ui.view.terms.Terms
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.Tools
+import cm.trixobase.library.common.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26
@@ -84,8 +86,6 @@ class MainActivity : ApplicationActivity() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[HomeViewModel::class]
 
-        //if (savedInstanceState != null)
-
         setContent {
             CamerMeteoTheme {
                 MyPermission()
@@ -100,11 +100,6 @@ class MainActivity : ApplicationActivity() {
         viewModel.getMyData(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        //outState.putString(AttributeNames.KEY_APP_TOWN, viewModel.uiState.value?.nom)
-    }
-
     @Suppress("UseExpressionBody", "OVERRIDE_DEPRECATION", "deprecation")
     @SuppressLint("GestureBackNavigation", "MissingSuperCall")
     override fun onBackPressed() {
@@ -115,7 +110,7 @@ class MainActivity : ApplicationActivity() {
     fun MyPermission() {
         val context = LocalContext.current.applicationContext
         var isNotificationGranted by remember {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Utils.phone.hasTiramisu()) {
                 mutableStateOf(
                     ContextCompat.checkSelfPermission(
                         context,
@@ -167,7 +162,7 @@ class MainActivity : ApplicationActivity() {
                 confirmButton = {
                     Button(
                         modifier = Modifier.width(95.dp),
-                        onClick = { finish() },
+                        onClick = { Utils.phone.stopApp(applicationContext) },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
                     ) {
                         Text(getString(R.string.yes), color = colors.onPrimary)
@@ -249,7 +244,7 @@ class MainActivity : ApplicationActivity() {
             )
             Text(
                 text = "La météo de nos régions",
-                color = colors.primary,
+                color = colors.onPrimary,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -309,7 +304,7 @@ class MainActivity : ApplicationActivity() {
             onClick = {
                 coroutineScope?.launch {
                     drawerState?.close()
-                    Tools.phone.shareApp(context)
+                    Utils.phone.shareApp(context)
                 }
             })
     }
@@ -336,7 +331,7 @@ class MainActivity : ApplicationActivity() {
             onClick = {
                 coroutineScope?.launch {
                     drawerState?.close()
-                    Tools.phone.rateApp(context)
+                    Utils.phone.rateApp(context)
                 }
             })
     }
@@ -484,6 +479,14 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Preview(showBackground = true)
+    @Composable
+    private fun PreviewTheme() {
+        CamerMeteoTheme {
+            MyDrawerHead()
+        }
+    }
+
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {

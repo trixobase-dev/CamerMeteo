@@ -7,9 +7,28 @@ import cm.trixobase.camermeteo.ui.viewui.UiTemp
  */
 
 data class HomeUiState(
+    val region: String = "",
     val city: String = "",
-    val unity: String = "",
-    val temps: List<UiTemp> = arrayListOf(),
-    val isLoading: Boolean = true,
+    var unity: String = "",
+    val temps: List<UiTemp> = listOf(),
+    val isLoading: Boolean = false,
     val error: String = ""
-)
+) {
+
+    fun builder(weather: List<UiTemp>): HomeUiState {
+        return HomeUiState(
+            region = this.region,
+            city = this.city,
+            unity = this.unity,
+            temps = weather)
+    }
+
+    fun builder(error: String): HomeUiState {
+        return HomeUiState(
+            region = this.region,
+            city = this.city,
+            unity = this.unity,
+            error = error,
+            temps = this.temps)
+    }
+}

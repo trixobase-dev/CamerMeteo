@@ -6,12 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.trixobase.camermeteo.data.di.AppModule
-import cm.trixobase.camermeteo.data.di.Network
 import cm.trixobase.camermeteo.data.model.Weather
 import cm.trixobase.camermeteo.data.repository.WeatherRepository
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
-import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.utils.NetworkResult
 import kotlinx.coroutines.launch
 
 /*
@@ -26,33 +24,39 @@ class HomeViewModel : ViewModel() {
     val uiState: LiveData<HomeUiState> = _uiState
 
     fun getMyData(context: Context) {
-        var city = ""
-        var unity = ""
         viewModelScope.launch {
-            repository.getMyTown(context).collect {
-                city = it.data!!
+            repository.getMyData(context).collect {
+                val data = it.data!!
+                val region = data["region"]!!
+                val city = data["city"]!!
+                val unity = data["unity"]!!
+
+                if (_uiState.value?.city != city) {
+                    _uiState.value = HomeUiState(
+                        region = region,
+                        city = city,
+                        unity = unity,
+                        isLoading = true
+                    )
+                } else
+                    _uiState.value?.unity = unity
             }
-            repository.getMyUnity(context).collect {
-                unity = it.data!!
-            }
-            _uiState.value = HomeUiState(city = city, unity = unity)
         }
     }
 
     fun getWeatherData() {
         viewModelScope.launch {
-            val state = uiState.value!!
-            repository.getWeather(city = getCity(state.city), units = getUnits(state.unity)).collect { result ->
+            val stateHome = uiState.value!!
+            repository.getWeather(
+                town = stateHome.city,
+                unity = stateHome.unity
+            ).collect { result ->
                 _uiState.value = when (result) {
-                    is Network.Success ->
-                        HomeUiState(
-                            city = state.city,
-                            unity = state.unity,
-                            temps = buildDemoTemps(result.data),
-                            isLoading = false
-                        )
+                    is NetworkResult.Success ->
+                        stateHome.builder(buildWeather(result.data))
+
                     else ->
-                        HomeUiState(city = state.city, unity = state.unity, error = result.error, isLoading = false)
+                        stateHome.builder(result.error)
                 }
             }
         }
@@ -60,34 +64,30 @@ class HomeViewModel : ViewModel() {
 
     fun getWeatherDemo() {
         viewModelScope.launch {
-            val state = uiState.value!!
+            val stateHome = uiState.value!!
             repository.getDemo().collect { result ->
                 _uiState.value = when (result) {
-                    is Network.Success ->
-                        HomeUiState(city = state.city, unity = state.unity, temps = result.data!!, isLoading = false)
+                    is NetworkResult.Success ->
+                        stateHome.builder(result.data!!)
+
                     else ->
-                        HomeUiState(city = state.city, unity = state.unity, error = result.error, isLoading = false)
+                        stateHome.builder(result.error)
                 }
             }
         }
     }
 
-    private fun getCity(city: String): Town {
-        return Town.entries.filter { city == it.name }[0]
-    }
-
-    private fun getUnits(unity: String): String {
-        return AppModule.TEMPERATURE.entries.filter { unity == it.unity }[0].units
-    }
-
-    private fun buildDemoTemps(data: Weather?): List<UiTemp> {
-        return arrayListOf(UiTemp.builder()
+    private fun buildWeather(data: Weather?): List<UiTemp> {
+        return arrayListOf(
+            UiTemp.builder()
                 .withHour(10)
                 .withTemperature(data?.temperature?.max?.toInt() ?: 25)
                 .withPrecipitation(
                     hasRain = true,
                     hasVent = true,
-                    hasSun = false))
+                    hasSun = false
+                )
+        )
     }
 
 }
