@@ -1,6 +1,11 @@
 package cm.trixobase.camermeteo.ui.view.terms
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.webkit.JavascriptInterface
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +36,14 @@ import cm.trixobase.library.common.R
  * Powered by Trixobase Enterprise on 29/04/26
  */
 
+private const val URL_TERMS_AND_POLICIES = "https://trixobase.com/apps/CamerMeteo/policies.html"
+
 @Composable
 fun Terms(action: () -> Unit, screen: String) {
     val context = LocalContext.current.applicationContext
     CamerMeteoTheme {
         Scaffold(
-            topBar = { MyToolbar(action, context.getString(
-                if ("RULES" == screen) R.string.rules_for_use else R.string.confidentials_policies)) },
+            topBar = { MyToolbar(action, context.getString(R.string.confidentials_policies)) },
             content = { MyContent(Modifier.padding(it)) }
         )
     }
@@ -69,8 +75,10 @@ private fun MyToolbar(backToHome: () -> Unit, title: String) {
     )
 }
 
+@SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
 @Composable
 private fun MyContent(modifier: Modifier = Modifier) {
+    val context = LocalContext.current.applicationContext
     Surface{
         Column(modifier = modifier.fillMaxWidth()) {
             MyLine()
@@ -78,7 +86,16 @@ private fun MyContent(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                val webView = WebView(context)
+                webView.settings.javaScriptEnabled = true
+                webView.settings.builtInZoomControls = true
+                webView.settings.displayZoomControls = true
+                webView.webChromeClient = WebChromeClient()
+                LocalActivity.current?.setContentView(webView)
 
+                webView.addJavascriptInterface(JavascriptInterface(), "Android")
+                webView.loadUrl(URL_TERMS_AND_POLICIES)
+                //webView.loadUrl("file:///android_asset/app.html")
             }
         }
     }

@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.ApplicationManager
-import cm.trixobase.library.common.Utils
+import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
 
 /*

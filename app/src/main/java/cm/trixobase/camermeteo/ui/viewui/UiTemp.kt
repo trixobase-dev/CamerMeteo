@@ -1,7 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.ApplicationManager
-import cm.trixobase.library.common.Utils
+import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
 
 /*
@@ -44,7 +44,7 @@ class UiTemp {
             this.hasRain = hasRain
             this.hasVent = hasVent
             this.hasSun = hasSun
-            instance.picture = ApplicationManager.Companion.getWeatherPicture(
+            instance.picture = ApplicationManager.getWeatherPicture(
                 instance.temperature,
                 hour,
                 hasVent,

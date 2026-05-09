@@ -44,8 +44,8 @@ import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.Utils
 import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26

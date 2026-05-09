@@ -6,10 +6,10 @@ import cm.trixobase.camermeteo.data.di.AppModule
 import cm.trixobase.camermeteo.data.model.Weather
 import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
-import cm.trixobase.library.common.Utils
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Town
 import cm.trixobase.library.common.utils.NetworkResult
+import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

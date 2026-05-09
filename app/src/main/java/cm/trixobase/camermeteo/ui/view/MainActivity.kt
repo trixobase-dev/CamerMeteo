@@ -38,6 +38,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -62,11 +63,12 @@ import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.home.Home
 import cm.trixobase.camermeteo.ui.view.home.HomeViewModel
+import cm.trixobase.camermeteo.ui.view.region.RegionActivity
 import cm.trixobase.camermeteo.ui.view.setting.SettingActivity
 import cm.trixobase.camermeteo.ui.view.terms.Terms
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.Utils
+import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -110,7 +112,7 @@ class MainActivity : ApplicationActivity() {
     fun MyPermission() {
         val context = LocalContext.current.applicationContext
         var isNotificationGranted by remember {
-            if (Utils.phone.hasTiramisu()) {
+            if (Utils.phone.isTiramisu()) {
                 mutableStateOf(
                     ContextCompat.checkSelfPermission(
                         context,
@@ -209,12 +211,6 @@ class MainActivity : ApplicationActivity() {
                     startDestination = Screens.Home.screen
                 ) {
                     composable(Screens.Home.screen) { Home(action = { openDrawer() }, viewModel) }
-                    composable(Screens.Rules.screen) {
-                        Terms(
-                            action = { backToHome(navController) },
-                            screen = "RULES"
-                        )
-                    }
                     composable(Screens.Policies.screen) {
                         Terms(
                             action = { backToHome(navController) },
@@ -258,14 +254,14 @@ class MainActivity : ApplicationActivity() {
         MyItemShare(context, myTextColor)
         MyItemRate(context, myTextColor)
 
-        MyLabel(getString(R.string.rules))
+        MyLabel(getString(R.string.menu))
 
-        MyItemRule(navController, myTextColor)
-        MyItemPolicy(navController, myTextColor)
-
-        MyLabel(getString(R.string.reglages))
-
+        MyItemCity(context, myTextColor)
         MyItemSetting(context, myTextColor)
+
+        MyLabel(getString(R.string.information))
+
+        MyItemPolicy(navController, myTextColor)
         MyItemAbout(context, myTextColor)
     }
 
@@ -337,11 +333,12 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyItemRule(controller: NavHostController, myTextColor: Color) {
+    private fun MyItemCity(context: Context, myTextColor: Color) {
+        val uiState = viewModel.uiState.observeAsState()
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = getString(R.string.rules_for_use),
+                    text = String.format(getString(R.string.my_city), uiState.value!!.city),
                     color = myTextColor,
                     fontSize = (14.5).sp
                 )
@@ -349,7 +346,7 @@ class MainActivity : ApplicationActivity() {
             icon = {
                 Icon(
                     modifier = Modifier.size(18.dp),
-                    painter = painterResource(id = R.drawable.ic_rules),
+                    painter = painterResource(id = R.drawable.ic_town),
                     contentDescription = "Rules",
                     tint = myTextColor
                 )
@@ -358,7 +355,9 @@ class MainActivity : ApplicationActivity() {
             onClick = {
                 coroutineScope?.launch {
                     drawerState?.close()
-                    controller.goTo(Screens.Rules.screen)
+                    val intent = Intent(context, RegionActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
                 }
             })
     }
@@ -499,7 +498,6 @@ class MainActivity : ApplicationActivity() {
 sealed class Screens(val screen: String) {
 
     data object Home : Screens("Home")
-    data object Rules : Screens("Terms")
     data object Policies : Screens("Policies")
 
 }

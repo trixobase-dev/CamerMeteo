@@ -1,7 +1,9 @@
+@file: Suppress("unused")
+
 package cm.trixobase.camermeteo
 
 import cm.trixobase.camermeteo.domain.AttributeNames
-import cm.trixobase.library.common.Utils
+import cm.trixobase.library.common.utils.Utils
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Town
 import cm.trixobase.library.common.ui.GlobalActivity

@@ -1,25 +1,26 @@
 @file:Suppress("unused", "className", "constPropertyName", "spellCheckingInspection", "deprecation", "ObsoleteSdkInt")
 
-package cm.trixobase.library.common
+package cm.trixobase.library.common.utils
 
 import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
-import android.os.Build.VERSION_CODES.JELLY_BEAN
-import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.os.Build.VERSION_CODES.TIRAMISU
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import cm.trixobase.library.common.R
 import cm.trixobase.library.common.ui.ExitActivity
 import java.util.Calendar
+
 
 /*
  * Powered by Trixobase Enterprise on 06/04/26
@@ -154,6 +155,23 @@ object Utils {
 
     object phone {
 
+        fun hasInternet(context: Context): Boolean {
+            val connectivity = context
+                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+            if (connectivity == null) {
+                Log.d("NetworkCheck", "isNetworkAvailable: No")
+                return false
+            }
+            val info = connectivity.allNetworkInfo
+            for (i in info.indices) {
+                if (info[i]!!.state == NetworkInfo.State.CONNECTED) {
+                    Log.d("NetworkCheck", "isNetworkAvailable: Yes")
+                    return true
+                }
+            }
+            return false
+        }
+
         fun stopApp(context: Context) {
             val intent = Intent(context, ExitActivity::class.java)
             intent.addFlags(
@@ -198,26 +216,26 @@ object Utils {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 val notificationManager =
-                    context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val notification = NotificationCompat.Builder(context, "trixobase_channel_id")
                     .setContentTitle(title).setContentText(content).setSmallIcon(logo).build()
                 notificationManager.notify(1, notification)
             }
         }
 
-        @ChecksSdkIntAtLeast(api = JELLY_BEAN)
-        fun hasJellyBean(): Boolean {
-            return Build.VERSION.SDK_INT >= JELLY_BEAN
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN)
+        fun isJellyBean(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
         }
 
-        @ChecksSdkIntAtLeast(api = LOLLIPOP)
-        fun hasLollipop(): Boolean {
-            return Build.VERSION.SDK_INT >= LOLLIPOP
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.LOLLIPOP)
+        fun isLollipop(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
         }
 
-        @ChecksSdkIntAtLeast(api = TIRAMISU)
-        fun hasTiramisu(): Boolean {
-            return Build.VERSION.SDK_INT >= TIRAMISU
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.TIRAMISU)
+        fun isTiramisu(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
         }
 
     }
