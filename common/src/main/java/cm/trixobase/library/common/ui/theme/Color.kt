@@ -1,4 +1,4 @@
-package cm.trixobase.camermeteo.ui.theme
+package cm.trixobase.library.common.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -15,13 +15,17 @@ val Red = Color(199, 20, 20, 255)
 val WhiteBreak = Color(0xFFF6FBF0)
 val Yellow = Color(96.4f, 84.1f,29.7f, alpha = 255f)
 
+//          CamerMeteo
+
+val lightSubTitle = Color(48, 81, 46, 150)
+val darkSubTitle = Color(74, 141, 69, 80)
+
 val primaryLight = Color(0xFF046E1E)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF97F593)
 val onPrimaryContainerLight = Color(0xFF0E7222)
 val secondaryLight = Color(0xFF446742)
 val onSecondaryLight = Color(0xFFFFFFFF)
-val secondaryContainerLight = Color(0xFFC3EABB)
 val onSecondaryContainerLight = Color(0xFF496B45)
 val tertiaryLight = Color(0xFF006B5D)
 val onTertiaryLight = Color(0xFFFFFFFF)
@@ -50,6 +54,8 @@ val surfaceContainerLowLight = Color(0xFFF0F5EA)
 val surfaceContainerLight = Color(0xFFEAF0E4)
 val surfaceContainerHighLight = Color(0xFFE5EADF)
 val surfaceContainerHighestLight = Color(0xFFDFE4D9)
+
+
 
 val primaryDark = Color(0xFFF5FFEF)
 val onPrimaryDark = Color(0xFF00390B)
@@ -85,9 +91,6 @@ val surfaceContainerLowDark = Color(0xFF181D16)
 val surfaceContainerDark = Color(0xFF1C211A)
 val surfaceContainerHighDark = Color(0xFF262B24)
 val surfaceContainerHighestDark = Color(0xFF31362F)
-
-
-
 
 
 

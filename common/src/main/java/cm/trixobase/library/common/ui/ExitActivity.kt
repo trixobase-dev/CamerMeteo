@@ -13,11 +13,11 @@ class ExitActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Utils.phone.isLollipop()) {
-            finishAndRemoveTask();
+            finishAndRemoveTask()
         } else if (Utils.phone.isJellyBean()) {
-            finishAffinity();
+            finishAffinity()
         } else {
-            finish();
+            finish()
         }
     }
 

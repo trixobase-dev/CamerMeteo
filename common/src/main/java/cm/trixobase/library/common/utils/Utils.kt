@@ -7,11 +7,13 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.ContextThemeWrapper
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +22,7 @@ import androidx.core.net.toUri
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.ui.ExitActivity
 import java.util.Calendar
+import java.util.Locale
 
 
 /*
@@ -182,13 +185,9 @@ object Utils {
             context.startActivity(intent)
         }
 
-        fun shareApp(context: Context) {
+        fun shareApp(context: Context, shareMessage: String) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
-            val shareMessage = String.format(
-                context.getString(R.string.share_app_message),
-                "https://play.google.com/?id=${context.packageName}/"
-            )
             intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
             intent.type = "text/plain"
             val shareIntent = Intent.createChooser(intent, context.getString(R.string.share_app))
@@ -223,14 +222,48 @@ object Utils {
             }
         }
 
+        fun setLanguage(context: Context, language: String) {
+             val myLocale = Locale(language)
+            val config = Configuration(context.resources.configuration)
+
+            Locale.setDefault(myLocale)
+
+            if (isNouga())
+                config.setLocale(myLocale)
+            else config.locale = myLocale
+
+            if (isJellyBeanMR1())
+                context.createConfigurationContext(config)
+            else context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        }
+
+        fun updateLanguage(wrapper: ContextThemeWrapper, language: String) {
+            val myLocale = Locale(language)
+            if (isJellyBeanMR1()) {
+                val config = Configuration()
+                config.setLocale(myLocale)
+                //wrapper.applyOverrideConfiguration(config)
+            }
+        }
+
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN)
         fun isJellyBean(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
         }
 
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+        fun isJellyBeanMR1(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+        }
+
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.LOLLIPOP)
         fun isLollipop(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        }
+
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N)
+        fun isNouga(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         }
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.TIRAMISU)

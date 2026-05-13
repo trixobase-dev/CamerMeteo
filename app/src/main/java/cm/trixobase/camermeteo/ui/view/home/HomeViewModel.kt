@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.trixobase.camermeteo.data.model.Weather
+import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.repository.WeatherRepository
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.library.common.utils.NetworkResult
@@ -27,19 +27,33 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             repository.getMyData(context).collect {
                 val data = it.data!!
+                val language = data["lang"]!!
                 val region = data["region"]!!
                 val city = data["city"]!!
                 val unity = data["unity"]!!
+                val isDemo = data["demo"]!!.toBoolean()
 
                 if (_uiState.value?.city != city) {
                     _uiState.value = HomeUiState(
+                        language = language,
                         region = region,
                         city = city,
                         unity = unity,
+                        isDemo = isDemo,
                         isLoading = true
                     )
-                } else
+                } else {
                     _uiState.value?.unity = unity
+                    if (_uiState.value?.isDemo != isDemo)
+                        _uiState.value = HomeUiState(
+                            language = language,
+                            region = region,
+                            city = city,
+                            unity = unity,
+                            isDemo = isDemo,
+                            isLoading = true
+                        )
+                }
             }
         }
     }
@@ -48,6 +62,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val stateHome = uiState.value!!
             repository.getWeather(
+                language = stateHome.language,
                 town = stateHome.city,
                 unity = stateHome.unity
             ).collect { result ->
@@ -77,11 +92,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun buildWeather(data: Weather?): List<UiTemp> {
+    private fun buildWeather(data: ApiResult?): List<UiTemp> {
         return arrayListOf(
             UiTemp.builder()
                 .withHour(10)
-                .withTemperature(data?.temperature?.max?.toInt() ?: 25)
+                .withTemperature(data?.main?.temp_max!!.toInt())
                 .withPrecipitation(
                     hasRain = true,
                     hasVent = true,

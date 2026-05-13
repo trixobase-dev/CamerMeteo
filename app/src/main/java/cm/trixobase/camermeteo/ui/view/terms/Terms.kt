@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,7 +37,7 @@ import cm.trixobase.library.common.R
 private const val URL_TERMS_AND_POLICIES = "https://trixobase.com/apps/CamerMeteo/policies.html"
 
 @Composable
-fun Terms(action: () -> Unit, screen: String) {
+fun Terms(action: () -> Unit) {
     val context = LocalContext.current.applicationContext
     CamerMeteoTheme {
         Scaffold(
@@ -79,24 +77,22 @@ private fun MyToolbar(backToHome: () -> Unit, title: String) {
 @Composable
 private fun MyContent(modifier: Modifier = Modifier) {
     val context = LocalContext.current.applicationContext
-    Surface{
-        Column(modifier = modifier.fillMaxWidth()) {
-            MyLine()
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val webView = WebView(context)
-                webView.settings.javaScriptEnabled = true
-                webView.settings.builtInZoomControls = true
-                webView.settings.displayZoomControls = true
-                webView.webChromeClient = WebChromeClient()
-                LocalActivity.current?.setContentView(webView)
+    Column(modifier = modifier.fillMaxWidth()) {
+        MyLine()
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val webView = WebView(context)
+            webView.settings.javaScriptEnabled = true
+            webView.settings.builtInZoomControls = true
+            webView.settings.displayZoomControls = true
+            webView.webChromeClient = WebChromeClient()
 
-                webView.addJavascriptInterface(JavascriptInterface(), "Android")
-                webView.loadUrl(URL_TERMS_AND_POLICIES)
-                //webView.loadUrl("file:///android_asset/app.html")
-            }
+            webView.addJavascriptInterface(JavascriptInterface(), "Android")
+            webView.loadUrl(URL_TERMS_AND_POLICIES)
+            //LocalActivity.current?.setContentView(webView)
+            //webView.loadUrl("file:///android_asset/app.html")
         }
     }
 }

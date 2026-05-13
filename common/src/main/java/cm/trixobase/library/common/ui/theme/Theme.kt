@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package cm.trixobase.camermeteo.ui.theme
+package cm.trixobase.library.common.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,7 +25,7 @@ private val lightScheme = lightColorScheme(
     onPrimaryContainer = onPrimaryContainerLight,
     secondary = secondaryLight,
     onSecondary = onSecondaryLight,
-    secondaryContainer = secondaryContainerLight,
+    secondaryContainer = lightSubTitle,
     onSecondaryContainer = onSecondaryContainerLight,
     tertiary = tertiaryLight,
     onTertiary = onTertiaryLight,
@@ -63,7 +63,7 @@ private val darkScheme = darkColorScheme(
     onPrimaryContainer = onPrimaryContainerDark,
     secondary = secondaryDark,
     onSecondary = onSecondaryDark,
-    secondaryContainer = Color(48, 81, 46, 80),
+    secondaryContainer = darkSubTitle,
     onSecondaryContainer = onSecondaryContainerDark,
     tertiary = tertiaryDark,
     onTertiary = onTertiaryDark,
@@ -107,7 +107,7 @@ val unspecified_scheme = ColorFamily(
 )
 
 @Composable
-fun CamerMeteoTheme(
+fun ApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
@@ -125,7 +125,7 @@ fun CamerMeteoTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography,
+        typography = MyAppTypography,
         content = content
     )
 }

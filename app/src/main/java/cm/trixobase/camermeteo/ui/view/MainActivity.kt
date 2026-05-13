@@ -108,10 +108,11 @@ class MainActivity : ApplicationActivity() {
         showDialog.value = true
     }
 
+    @Suppress("VariableNeverRead", "AssignedValueIsNeverRead")
     @Composable
     fun MyPermission() {
         val context = LocalContext.current.applicationContext
-        var isNotificationGranted by remember {
+        var isNotificationGranted: Boolean by remember {
             if (Utils.phone.isTiramisu()) {
                 mutableStateOf(
                     ContextCompat.checkSelfPermission(
@@ -212,10 +213,7 @@ class MainActivity : ApplicationActivity() {
                 ) {
                     composable(Screens.Home.screen) { Home(action = { openDrawer() }, viewModel) }
                     composable(Screens.Policies.screen) {
-                        Terms(
-                            action = { backToHome(navController) },
-                            screen = "POLICIES"
-                        )
+                        Terms(action = { backToHome(navController) })
                     }
                 }
             }
@@ -300,7 +298,12 @@ class MainActivity : ApplicationActivity() {
             onClick = {
                 coroutineScope?.launch {
                     drawerState?.close()
-                    Utils.phone.shareApp(context)
+                    Utils.phone.shareApp(
+                        context, String.format(
+                            context.getString(R.string.share_app_message),
+                            "https://play.google.com/?id=${context.packageName}/"
+                        )
+                    )
                 }
             })
     }

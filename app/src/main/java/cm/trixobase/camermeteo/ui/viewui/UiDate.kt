@@ -38,7 +38,7 @@ class UiDate {
         fun withTemperature(temperature: Int): UiDate {
             this.temperature = temperature
             instance.temperatureToDisplay = "${temperature + 2}° / ${temperature - 2}°"
-            instance.picture = ApplicationManager.Companion.getWeatherPicture(temperature, hour)
+            instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
             return instance
         }
 

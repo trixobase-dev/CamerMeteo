@@ -1,6 +1,5 @@
 package cm.trixobase.camermeteo.ui.view.home
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -15,11 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.region.RegionActivity
 import cm.trixobase.camermeteo.ui.viewui.UiDate
@@ -45,7 +47,7 @@ import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.Town
-import cm.trixobase.library.common.utils.Utils
+import cm.trixobase.library.common.ui.widget.ToastBox
 
 /*
  * Powered by Trixobase Enterprise on 01/04/26
@@ -63,6 +65,7 @@ private fun MyContent(
     action: () -> Unit,
     viewModel: HomeViewModel
 ) {
+    val scrollState = rememberScrollState()
     val uiStateObserved = viewModel.uiState.observeAsState()
     val uiState = uiStateObserved.value!!
 
@@ -70,14 +73,14 @@ private fun MyContent(
         modifier = Modifier.fillMaxSize(),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MyTop(city = uiState.city, openDrawer = action)
 
             if (uiState.isLoading) {
                 CircularProgressIndicator(Modifier.padding(top = 25.dp))
-                if (isDemo(LocalContext.current.applicationContext))
+                if (uiState.isDemo)
                     viewModel.getWeatherDemo()
                 else viewModel.getWeatherData()
             } else
@@ -96,27 +99,51 @@ private fun MyContent(
 @Composable
 private fun MyTop(city: String, openDrawer: () -> Unit) {
     val context = LocalContext.current.applicationContext
+    val colorWhite = MaterialTheme.colorScheme.onSurface
     Row(
         modifier = Modifier
             .padding(top = 10.dp, start = 15.dp, end = 15.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Icon(
-            painterResource(id = R.drawable.ic_town),
-            contentDescription = "Ville",
+        Image(
+            painterResource(id = R.drawable.iv_icon_cloche),
+            contentDescription = "Notification",
             modifier = Modifier.clickable(onClick = {
+                ToastBox.builder(context).withMessage(context.getString(R.string.warning_available_soon))
+                    .showLong()
+            })
+        )
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            ),
+            modifier = Modifier,
+            onClick = {
                 val intent = Intent(context, RegionActivity::class.java)
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
-            })
-        )
-        Text(
-            text = Town.entries.filter { city == it.name }[0].nom,
-            fontSize = 22.sp
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_setting),
+            }
+        ) {
+            Icon(
+                modifier = Modifier.size(8.dp),
+                painter = painterResource(id = R.drawable.ic_circle),
+                contentDescription = "Circle",
+                tint = Color.Green)
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = Town.entries.filter { city == it.name }[0].nom,
+                fontSize = 22.sp,
+                color = colorWhite
+            )
+            Icon(
+                modifier = Modifier.size(15.dp),
+                painter = painterResource(id = R.drawable.ic_arrow_bottom),
+                contentDescription = "Arrow select",
+                tint = MaterialTheme.colorScheme.onSurface)
+        }
+        Image(
+            painter = painterResource(id = R.drawable.iv_icon_setting),
             contentDescription = "Paramètres",
             modifier = Modifier.clickable(onClick = { openDrawer() })
         )
@@ -126,6 +153,8 @@ private fun MyTop(city: String, openDrawer: () -> Unit) {
 @Composable
 private fun MyDegree() {
     val comic = FontFamily(Font(R.font.comic))
+    val colorWhite = MaterialTheme.colorScheme.onSurface
+    val colorSoft = MaterialTheme.colorScheme.secondaryContainer
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -135,27 +164,40 @@ private fun MyDegree() {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(10.dp)
+        )
+        Image(
+            modifier = Modifier.size(110.dp),
+            painter = painterResource(id = cm.trixobase.camermeteo.R.drawable.iv_meteo_sun_nuage),
+            contentDescription = "Weather day"
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp)
         )
         Text(
             text = "34°",
             fontSize = 75.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = comic,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colorWhite
         )
         Text(
             text = "Nuageux°",
-            fontSize = 23.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Light,
             fontFamily = comic,
             textAlign = TextAlign.Center,
+            color = colorWhite
         )
         Text(
             text = "30° / 24°",
             fontSize = 18.sp,
             fontFamily = comic,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colorSoft
         )
         Spacer(
             modifier = Modifier
@@ -194,12 +236,8 @@ private fun MyTempsByHour(tempsHour: List<UiTemp>) {
 
 @Composable
 private fun MyTempsByDate() {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        items(UiDate.getAll()) { date ->
-            MyItemDate(date = date)
-        }
+    UiDate.getAll().forEach { date ->
+        MyItemDate(date = date)
     }
 }
 
@@ -258,14 +296,13 @@ private fun MyItemDate(modifier: Modifier = Modifier, date: UiDate) {
     MyLine(color = Color.LightGray)
 }
 
-private fun isDemo(context: Context): Boolean {
-    return Utils.process.get(context, AttributeNames.KEY_APP_DEMO_CONFIGURATION, true)
-}
-
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DarkPreview() {
     CamerMeteoTheme {
+        Surface {
+            MyTop(city = Town.GAROUA_BOULAI.name) { }
+        }
     }
 }
 

@@ -5,6 +5,8 @@ package cm.trixobase.camermeteo.data.model
  */
 
 data class Wind(
-    val max: Max
+    val speed: String, // m/s
+    val deg: String,
+    val gust: String
 )
 

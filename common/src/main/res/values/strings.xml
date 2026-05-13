@@ -1,8 +1,10 @@
 <resources>
     <string name="about">A propos</string>
+    <string name="appearance">Apparence</string>
     <string name="back">Retour</string>
     <string name="cancel">Annuler</string>
     <string name="information" translatable="false">Information</string>
+    <string name="language">Langue</string>
     <string name="menu" translatable="false">Menu</string>
     <string name="no">Non</string>
     <string name="settings">Paramètres</string>
@@ -12,6 +14,7 @@
 
     <string name="app_tonalities">Tonalités de l\'application</string>
     <string name="confidentials_policies">Politique de confidentialité</string>
+    <string name="localisation_auto">Localisation automatique</string>
     <string name="rate_us">Notez-nous</string>
     <string name="refresh_automatic">Actualisation automatique</string>
     <string name="rules_for_use">Conditions d\'utilisation</string>
@@ -20,6 +23,8 @@
     <string name="your_region">Votre région</string>
     <string name="your_town">Votre ville</string>
     <string name="share_app_in">Partagez l\'application via</string>
+    <string name="warning_sun">Rappel soleil</string>
+    <string name="warning_rain">Alertes pluie</string>
 
     <string name="my_city">Ma ville (%s)</string>
     <string name="thing_chosen">%s séléctionné</string>

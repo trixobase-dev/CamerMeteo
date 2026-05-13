@@ -8,11 +8,13 @@ import cm.trixobase.library.common.constants.BaseNames
 
 object AttributeNames: BaseNames() {
 
-    const val KEY_APP_DEMO_CONFIGURATION = "key_demo_configuration"
-    const val KEY_APP_REFRESH_AUTO = "key_refresh_auto"
-    const val KEY_APP_SONG = "key_song_activated"
-    const val KEY_APP_TEMPERATURE_UNITY = "key_temperature_unity"
-    const val KEY_APP_REGION = "key_region_name"
-    const val KEY_APP_TOWN = "key_town_name"
+    const val KEY_APP_DEMO_CONFIGURATION: String = "key_demo_configuration"
+    const val KEY_APP_NOTIFICATION_RAIN: String = "key_app_notification_rain"
+    const val KEY_APP_NOTIFICATION_SUN: String = "key_app_notification_sun"
+    const val KEY_APP_TEMPERATURE_UNITY: String = "key_temperature_unity"
+    const val KEY_APP_LOCALISATION_AUTO: String = "key_app_localisation_auto"
+    const val KEY_APP_REGION: String = "key_region_name"
+    const val KEY_APP_TOWN: String = "key_town_name"
+    const val KEY_APP_LANGUAGE: String = "key_app_language"
 
 }

@@ -2,8 +2,8 @@ package cm.trixobase.camermeteo.data.repository
 
 import android.content.Context
 import android.icu.util.Calendar
+import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.di.AppModule
-import cm.trixobase.camermeteo.data.model.Weather
 import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.library.common.constants.Region
@@ -24,6 +24,10 @@ class WeatherRepository {
 
     fun getMyData(context: Context): Flow<NetworkResult<MutableMap<String, String>>> = flow {
         val data = mutableMapOf<String, String>()
+        data["lang"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_LANGUAGE, AttributeNames.LANGUAGE_FRENCH)
+        data["demo"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_DEMO_CONFIGURATION, false).toString()
         data["region"] =
             Utils.process.get(context, AttributeNames.KEY_APP_REGION, Region.CENTRE.name)
         data["city"] =
@@ -37,10 +41,11 @@ class WeatherRepository {
         emit(NetworkResult.Success(data))
     }
 
-    fun getWeather(town: String, unity: String): Flow<NetworkResult<Weather>> = flow {
+    fun getWeather(town: String, language: String, unity: String): Flow<NetworkResult<ApiResult>> = flow {
         try {
             val city = getCity(town)
             val response = api.getWeather(
+                lang = language,
                 units = getUnits(unity),
                 date = getCurrentDate(),
                 lat = city.lat,

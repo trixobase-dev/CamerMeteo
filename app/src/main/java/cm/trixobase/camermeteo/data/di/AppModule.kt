@@ -1,8 +1,6 @@
-@file:Suppress("ClassName")
-
 package cm.trixobase.camermeteo.data.di
 
-import cm.trixobase.camermeteo.data.datasource.WeatherApi
+import cm.trixobase.camermeteo.data.datasource.ApiWeather
 import cm.trixobase.camermeteo.domain.AttributeNames
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,12 +22,12 @@ object AppModule {
     }
 
     const val API_WEATHER_KEY_ID: String = "79481cd4c6034c853f7e1d9e6315bed2"
-    const val API_WEATHER_BASE_URL: String = "https://api.openweathermap.org/data/3.0/onecall/"
+    const val API_WEATHER_BASE_URL: String = "https://api.openweathermap.org/data/2.5/weather/"
 
-    val weatherApi: WeatherApi = buildWeatherApi()
+    val weatherApi: ApiWeather = buildWeatherApi()
 
-    private fun buildWeatherApi(): WeatherApi {
-        return getRetrofit().create(WeatherApi::class.java)
+    private fun buildWeatherApi(): ApiWeather {
+        return getRetrofit().create(ApiWeather::class.java)
     }
 
     private fun getRetrofit(): Retrofit {

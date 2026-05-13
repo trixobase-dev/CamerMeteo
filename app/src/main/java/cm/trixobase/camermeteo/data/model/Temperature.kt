@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package cm.trixobase.camermeteo.data.model
 
 /*
@@ -5,10 +7,9 @@ package cm.trixobase.camermeteo.data.model
  */
 
 data class Temperature (
-    val min: String,
-    val max: String,
-    val morning: String,
-    val afternoon: String,
-    val evening: String,
-    val night: String
+    val temp: String,
+    val temp_min: String,
+    val temp_max: String,
+    val pressure: String, //hPa
+    val humidity: String, //%
 )

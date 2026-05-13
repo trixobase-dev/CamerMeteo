@@ -3,16 +3,24 @@
 package cm.trixobase.camermeteo
 
 import cm.trixobase.camermeteo.domain.AttributeNames
-import cm.trixobase.library.common.utils.Utils
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Town
 import cm.trixobase.library.common.ui.GlobalActivity
+import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 09/04/26
  */
 
 abstract class ApplicationActivity : GlobalActivity() {
+
+    open fun doGetConfigLanguage(): String {
+        return Utils.process.get(
+            applicationContext,
+            AttributeNames.KEY_APP_LANGUAGE,
+            AttributeNames.LANGUAGE_FRENCH
+        )
+    }
 
     open fun doGetConfigTown(): String {
         return Utils.process.get(
@@ -38,10 +46,18 @@ abstract class ApplicationActivity : GlobalActivity() {
         )
     }
 
-    open fun doGetConfigSong(): Boolean {
+    open fun doGetConfigNoteSun(): Boolean {
         return Utils.process.get(
             applicationContext,
-            AttributeNames.KEY_APP_SONG,
+            AttributeNames.KEY_APP_NOTIFICATION_SUN,
+            true
+        )
+    }
+
+    open fun doGetConfigNoteRain(): Boolean {
+        return Utils.process.get(
+            applicationContext,
+            AttributeNames.KEY_APP_NOTIFICATION_RAIN,
             true
         )
     }
@@ -54,11 +70,11 @@ abstract class ApplicationActivity : GlobalActivity() {
         )
     }
 
-    open fun doGetConfigRefreshAuto(): Boolean {
+    open fun doGetConfigLocalisation(): Boolean {
         return Utils.process.get(
             applicationContext,
-            AttributeNames.KEY_APP_REFRESH_AUTO,
-            true
+            AttributeNames.KEY_APP_LOCALISATION_AUTO,
+            false
         )
     }
 
@@ -74,16 +90,25 @@ abstract class ApplicationActivity : GlobalActivity() {
         Utils.process.set(applicationContext, AttributeNames.KEY_APP_TEMPERATURE_UNITY, unity)
     }
 
-    open fun doConfigSong(isOn: Boolean) {
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_SONG, isOn)
+    open fun doConfigNotificationSun(isOn: Boolean) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_NOTIFICATION_SUN, isOn)
+    }
+
+    open fun doConfigLanguage(language: String) {
+        Utils.phone.updateLanguage(this, language)
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_LANGUAGE, language)
+    }
+
+    open fun doConfigLocalisationAuto(isOn: Boolean) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_LOCALISATION_AUTO, isOn)
+    }
+
+    open fun doConfigNotificationRain(isOn: Boolean) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_NOTIFICATION_RAIN, isOn)
     }
 
     open fun doConfigDemo(isOn: Boolean) {
         Utils.process.set(applicationContext, AttributeNames.KEY_APP_DEMO_CONFIGURATION, isOn)
-    }
-
-    open fun doConfigRefreshAuto(isOn: Boolean) {
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_REFRESH_AUTO, isOn)
     }
 
 }
