@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <application
         android:name=".ApplicationManager"
         android:allowBackup="true"
@@ -26,7 +24,7 @@
             android:name=".ui.view.setting.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.town.TownActivity"
+            android:name=".ui.view.town.CityActivity"
             android:exported="false" />
         <activity
             android:name=".ui.view.region.RegionActivity"

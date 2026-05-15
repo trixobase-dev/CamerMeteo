@@ -212,8 +212,7 @@ class MainActivity : ApplicationActivity() {
                     startDestination = Screens.Home.screen
                 ) {
                     composable(Screens.Home.screen) { Home(action = { openDrawer() }, viewModel) }
-                    composable(Screens.Policies.screen) {
-                        Terms(action = { backToHome(navController) })
+                    composable(Screens.Policies.screen) { Terms(action = { backToHome(navController) })
                     }
                 }
             }
@@ -237,7 +236,7 @@ class MainActivity : ApplicationActivity() {
                 painter = painterResource(id = R.drawable.iv_logo)
             )
             Text(
-                text = "La météo de nos régions",
+                text = getString(cm.trixobase.camermeteo.R.string.app_slogan),
                 color = colors.onPrimary,
                 fontWeight = FontWeight.Bold
             )
@@ -341,7 +340,7 @@ class MainActivity : ApplicationActivity() {
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = String.format(getString(R.string.my_city), uiState.value!!.city),
+                    text = String.format(getString(R.string.my_city), uiState.value!!.city.display.uppercase()),
                     color = myTextColor,
                     fontSize = (14.5).sp
                 )

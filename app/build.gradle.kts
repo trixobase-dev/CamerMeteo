@@ -12,7 +12,11 @@ android {
             minorApiLevel = 1
         }
     }
-
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        //noinspection MissingResourcesProperties
+        generateLocaleConfig = true
+    }
     defaultConfig {
         applicationId = "cm.trixobase.camermeteo"
         minSdk = 26
@@ -21,6 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        @Suppress("DEPRECATION")
+        resourceConfigurations += listOf("fr", "ar", "de", "en", "es", "it", "zh")
     }
 
     buildTypes {

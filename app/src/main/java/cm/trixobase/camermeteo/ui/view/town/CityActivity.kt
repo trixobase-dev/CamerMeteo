@@ -43,29 +43,30 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
+import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Region
-import cm.trixobase.library.common.constants.Town
 
 /*
  * Powered by Trixobase Enterprise on 07/04/26
  */
 
-class TownActivity : ApplicationActivity() {
+class CityActivity : ApplicationActivity() {
 
-    private var myRegionNom = ""
+    private var region = Region.CENTRE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        myRegionNom = intent.getStringExtra("region")!!
+        val myNameRegion = intent.getStringExtra("region")!!
+        region = Region.entries.filter { myNameRegion == it.name }[0]
 
         setContent {
             CamerMeteoTheme {
                 Scaffold(
-                    topBar = { MyToolbar(onBackPressedDispatcher, myRegionNom) },
+                    topBar = { MyToolbar(onBackPressedDispatcher, getString(region.display)) },
                     content = {
                         MyContent(
                             Modifier.padding(it),
-                            doGetConfigTown(),
+                            doGetConfigCity(),
                         )
                     }
                 )
@@ -96,7 +97,7 @@ class TownActivity : ApplicationActivity() {
             contentPadding = PaddingValues(15.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(Town.entries.filter { myRegionNom == it.region }.sortedBy { it.nom }) {
+            items(City.entries.filter { region.display == it.region }.sortedBy { it.display }) {
                 MyItemTown(myTown, it)
             }
         }
@@ -104,9 +105,9 @@ class TownActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyItemTown(myTown: String, town: Town) {
+    private fun MyItemTown(myTown: String, city: City) {
         Card(
-            modifier = Modifier.clickable(onClick = { setTownChosen(town.name) }),
+            modifier = Modifier.clickable(onClick = { setCity(city) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray),
             shape = RoundedCornerShape(4.dp),
@@ -122,7 +123,7 @@ class TownActivity : ApplicationActivity() {
                         .fillMaxWidth()
                         .height(60.dp)
                         .clip(RectangleShape),
-                    painter = painterResource(id = town.picture),
+                    painter = painterResource(id = city.picture),
                     contentDescription = "Image représentant la ville",
                     contentScale = ContentScale.FillWidth
                 )
@@ -139,7 +140,7 @@ class TownActivity : ApplicationActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = town.nom,
+                            text = city.display,
                             color = Color.Black,
                             fontSize = 24.sp,
                             fontFamily = FontFamily.Serif,
@@ -151,7 +152,7 @@ class TownActivity : ApplicationActivity() {
                                 .padding(start = 8.dp),
                             painter = painterResource(id = R.drawable.ic_my_location),
                             contentDescription = "Ville sélectionné",
-                            tint = if (myTown == town.name) Color.Black else Color.LightGray
+                            tint = if (myTown == city.name) Color.Black else Color.LightGray
                         )
                     }
                     Column(
@@ -180,10 +181,10 @@ class TownActivity : ApplicationActivity() {
         }
     }
 
-    private fun setTownChosen(townChosen: String) {
-        doConfigRegion(Region.entries.filter { myRegionNom == it.nom }[0].name)
-        doConfigTown(townChosen)
-        showMessage(String.format(getString(R.string.thing_chosen), townChosen))
+    private fun setCity(city: City) {
+        doConfigRegion(region)
+        doConfigCity(city)
+        showMessage(String.format(getString(R.string.thing_chosen), city.display))
         onBackPressedDispatcher.onBackPressed()
     }
 

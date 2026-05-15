@@ -1,7 +1,6 @@
 package cm.trixobase.camermeteo.data.di
 
 import cm.trixobase.camermeteo.data.datasource.ApiWeather
-import cm.trixobase.camermeteo.domain.AttributeNames
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -10,16 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 
 object AppModule {
-
-    enum class TEMPERATURE(val units: String, val unity: String) {
-        CELSIUS(units = "metric", unity = AttributeNames.TEMPERATURE_UNITY_CELSIUS),
-        FAHRENHEIT(units = "imperial", unity = AttributeNames.TEMPERATURE_UNITY_FAHRENHEIT),
-        KELVIN(units = "standard", unity = AttributeNames.TEMPERATURE_UNITY_KELVIN);
-
-        override fun toString(): String {
-            return "[$name ($unity) => $units]"
-        }
-    }
 
     const val API_WEATHER_KEY_ID: String = "79481cd4c6034c853f7e1d9e6315bed2"
     const val API_WEATHER_BASE_URL: String = "https://api.openweathermap.org/data/2.5/weather/"

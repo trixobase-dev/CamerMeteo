@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.ApplicationActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
-import cm.trixobase.camermeteo.ui.view.town.TownActivity
+import cm.trixobase.camermeteo.ui.view.town.CityActivity
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
@@ -57,7 +57,12 @@ class RegionActivity : ApplicationActivity() {
         setContent {
             CamerMeteoTheme {
                 Scaffold(
-                    topBar = { MyToolbar(onBackPressedDispatcher, getString(R.string.your_region)) },
+                    topBar = {
+                        MyToolbar(
+                            onBackPressedDispatcher,
+                            getString(R.string.your_region)
+                        )
+                    },
                     content = {
                         MyContent(
                             Modifier.padding(it)
@@ -90,9 +95,9 @@ class RegionActivity : ApplicationActivity() {
             contentPadding = PaddingValues(15.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalItemSpacing = 15.dp,
-            userScrollEnabled =  true
+            userScrollEnabled = true
         ) {
-            items(Region.entries.sortedBy { it.nom }) {
+            items(Region.entries.sortedBy { it.display }) {
                 MyItemRegion(it)
             }
         }
@@ -102,14 +107,16 @@ class RegionActivity : ApplicationActivity() {
     @Composable
     private fun MyItemRegion(region: Region) {
         Card(
-            modifier = Modifier.clickable(onClick = { goToTown(region.nom) }),
+            modifier = Modifier.clickable(onClick = { goToCitiesOf(region) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(4.dp),
             border = BorderStroke(1.dp, Color.Gray)
         ) {
             Column(
-                modifier = Modifier.width(140.dp).padding(5.dp),
+                modifier = Modifier
+                    .width(140.dp)
+                    .padding(5.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -118,8 +125,8 @@ class RegionActivity : ApplicationActivity() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        modifier= Modifier. fillMaxWidth(),
-                        text = region.nom,
+                        modifier = Modifier.fillMaxWidth(),
+                        text = getString(region.display),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.inverseSurface,
                         fontSize = 19.sp,
@@ -132,18 +139,20 @@ class RegionActivity : ApplicationActivity() {
                     painter = painterResource(id = region.picture),
                     contentDescription = "Image représentant la ville",
                     contentScale = ContentScale.FillBounds
-                ) }
+                )
+            }
         }
     }
 
-    private fun goToTown(regionNom: String) {
-        val intent = Intent(applicationContext, TownActivity::class.java)
-        intent.putExtra("region", regionNom)
+    private fun goToCitiesOf(region: Region) {
+        val intent = Intent(applicationContext, CityActivity::class.java)
+        intent.putExtra("region", region.name)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 
-    @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES,
+    @Preview(
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=360dp,height=806dp,dpi=320"
     )
     @Composable

@@ -9,6 +9,10 @@ import androidx.lifecycle.viewModelScope
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.repository.WeatherRepository
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
+import cm.trixobase.library.common.constants.City
+import cm.trixobase.library.common.constants.Language
+import cm.trixobase.library.common.constants.Region
+import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.utils.NetworkResult
 import kotlinx.coroutines.launch
 
@@ -25,35 +29,34 @@ class HomeViewModel : ViewModel() {
 
     fun getMyData(context: Context) {
         viewModelScope.launch {
+            val state = _uiState.value?: HomeUiState.started
             repository.getMyData(context).collect {
                 val data = it.data!!
-                val language = data["lang"]!!
-                val region = data["region"]!!
-                val city = data["city"]!!
-                val unity = data["unity"]!!
+
+                val l = data["language"]!!
+                val language = Language.entries.filter {d-> l == d.name }[0]
+                val r = data["region"]!!
+                val region = Region.entries.filter { d-> r == d.name }[0]
+                val c = data["city"]!!
+                val city = City.entries.filter { d-> c == d.name }[0]
+                val t = data["temperature"]!!
+                val temperature = Temperature.entries.filter { d-> t == d.name }[0]
+
+                val isLocalisation = data["gps"]!!.toBoolean()
                 val isDemo = data["demo"]!!.toBoolean()
 
-                if (_uiState.value?.city != city) {
+                if (state.isStarted || state.city.name != city.name || state.isDemo != isDemo || state.language.unit != language.unit || state.isLocalisation != isLocalisation) {
                     _uiState.value = HomeUiState(
                         language = language,
                         region = region,
                         city = city,
-                        unity = unity,
+                        temperature = temperature,
+                        isLocalisation = isLocalisation,
                         isDemo = isDemo,
-                        isLoading = true
+                        isLoading = true,
                     )
-                } else {
-                    _uiState.value?.unity = unity
-                    if (_uiState.value?.isDemo != isDemo)
-                        _uiState.value = HomeUiState(
-                            language = language,
-                            region = region,
-                            city = city,
-                            unity = unity,
-                            isDemo = isDemo,
-                            isLoading = true
-                        )
-                }
+                } else
+                    _uiState.value?.temperature = temperature
             }
         }
     }
@@ -62,14 +65,13 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val stateHome = uiState.value!!
             repository.getWeather(
-                language = stateHome.language,
-                town = stateHome.city,
-                unity = stateHome.unity
+                language = stateHome.language.unit,
+                city = stateHome.city,
+                units = stateHome.temperature.units
             ).collect { result ->
                 _uiState.value = when (result) {
                     is NetworkResult.Success ->
                         stateHome.builder(buildWeather(result.data))
-
                     else ->
                         stateHome.builder(result.error)
                 }
@@ -84,7 +86,6 @@ class HomeViewModel : ViewModel() {
                 _uiState.value = when (result) {
                     is NetworkResult.Success ->
                         stateHome.builder(result.data!!)
-
                     else ->
                         stateHome.builder(result.error)
                 }

@@ -13,17 +13,4 @@ open class BaseNames {
 
     val NAME = "name"
 
-    val TEMPERATURE_UNITY_CELSIUS = "°C"
-    val TEMPERATURE_UNITY_KELVIN = "°K"
-    val TEMPERATURE_UNITY_FAHRENHEIT = "°F"
-
-    val LANGUAGE_ARABE = "ar"
-    val LANGUAGE_FRENCH = "fr"
-    val LANGUAGE_ENGLISH = "en"
-    val LANGUAGE_GERMAN = "de"
-    val LANGUAGE_SPANISH = "es"
-    val LANGUAGE_ITALIAN = "it"
-    val LANGUAGE_RUSSIAN = "ru"
-    val LANGUAGE_CHINESE = "zh_cn"
-
 }

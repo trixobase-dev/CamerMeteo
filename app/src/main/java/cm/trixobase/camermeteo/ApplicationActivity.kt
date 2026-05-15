@@ -3,8 +3,10 @@
 package cm.trixobase.camermeteo
 
 import cm.trixobase.camermeteo.domain.AttributeNames
+import cm.trixobase.library.common.constants.City
+import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
-import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.ui.GlobalActivity
 import cm.trixobase.library.common.utils.Utils
 
@@ -18,15 +20,15 @@ abstract class ApplicationActivity : GlobalActivity() {
         return Utils.process.get(
             applicationContext,
             AttributeNames.KEY_APP_LANGUAGE,
-            AttributeNames.LANGUAGE_FRENCH
+            Language.FRENCH.name
         )
     }
 
-    open fun doGetConfigTown(): String {
+    open fun doGetConfigCity(): String {
         return Utils.process.get(
             applicationContext,
-            AttributeNames.KEY_APP_TOWN,
-            Town.YAOUNDE.name
+            AttributeNames.KEY_APP_CITY,
+            City.YAOUNDE.name
         )
     }
 
@@ -38,11 +40,11 @@ abstract class ApplicationActivity : GlobalActivity() {
         )
     }
 
-    open fun doGetConfigTemperatureUnity(): String {
+    open fun doGetConfigTemperature(): String {
         return Utils.process.get(
             applicationContext,
-            AttributeNames.KEY_APP_TEMPERATURE_UNITY,
-            AttributeNames.TEMPERATURE_UNITY_CELSIUS
+            AttributeNames.KEY_APP_TEMPERATURE,
+            Temperature.CELSIUS.name
         )
     }
 
@@ -78,25 +80,25 @@ abstract class ApplicationActivity : GlobalActivity() {
         )
     }
 
-    open fun doConfigRegion(regionChosen: String) {
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_REGION, regionChosen)
+    open fun doConfigRegion(region: Region) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_REGION, region.name)
     }
 
-    open fun doConfigTown(townChosen: String) {
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_TOWN, townChosen)
+    open fun doConfigCity(city: City) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_CITY, city.name)
     }
 
-    open fun doConfigTemperatureUnity(unity: String) {
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_TEMPERATURE_UNITY, unity)
+    open fun doConfigTemperature(temperature: Temperature) {
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_TEMPERATURE, temperature.name)
     }
 
     open fun doConfigNotificationSun(isOn: Boolean) {
         Utils.process.set(applicationContext, AttributeNames.KEY_APP_NOTIFICATION_SUN, isOn)
     }
 
-    open fun doConfigLanguage(language: String) {
-        Utils.phone.updateLanguage(this, language)
-        Utils.process.set(applicationContext, AttributeNames.KEY_APP_LANGUAGE, language)
+    open fun doConfigLanguage(language: Language) {
+        Utils.phone.setLanguage(this, language.unit)
+        Utils.process.set(applicationContext, AttributeNames.KEY_APP_LANGUAGE, language.name)
     }
 
     open fun doConfigLocalisationAuto(isOn: Boolean) {

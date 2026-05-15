@@ -6,8 +6,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import cm.trixobase.camermeteo.domain.AttributeNames
-import cm.trixobase.library.common.constants.Language
-import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 16/04/26
@@ -26,10 +24,6 @@ class ApplicationManager: Application() {
         )
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-
-        //Set Language
-        val language = Utils.process.get(this, AttributeNames.KEY_APP_LANGUAGE, Language.FRENCH.unit)
-        Utils.phone.setLanguage(applicationContext, language)
     }
 
     companion object {

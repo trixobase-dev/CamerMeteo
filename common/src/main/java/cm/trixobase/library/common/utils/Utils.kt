@@ -3,26 +3,27 @@
 package cm.trixobase.library.common.utils
 
 import android.Manifest
+import android.app.LocaleManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
+import android.os.LocaleList
 import android.preference.PreferenceManager
 import android.util.Log
-import android.view.ContextThemeWrapper
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.ui.ExitActivity
 import java.util.Calendar
-import java.util.Locale
 
 
 /*
@@ -223,26 +224,14 @@ object Utils {
         }
 
         fun setLanguage(context: Context, language: String) {
-             val myLocale = Locale(language)
-            val config = Configuration(context.resources.configuration)
-
-            Locale.setDefault(myLocale)
-
-            if (isNouga())
-                config.setLocale(myLocale)
-            else config.locale = myLocale
-
-            if (isJellyBeanMR1())
-                context.createConfigurationContext(config)
-            else context.resources.updateConfiguration(config, context.resources.displayMetrics)
-        }
-
-        fun updateLanguage(wrapper: ContextThemeWrapper, language: String) {
-            val myLocale = Locale(language)
-            if (isJellyBeanMR1()) {
-                val config = Configuration()
-                config.setLocale(myLocale)
-                //wrapper.applyOverrideConfiguration(config)
+            if (isTiramisu()) {
+                val localManager = context.getSystemService(LocaleManager::class.java)
+                localManager.applicationLocales = if (language == "fr")
+                    LocaleList.getEmptyLocaleList() else LocaleList.forLanguageTags(language)
+            } else {
+                val localeList = if (language == "fr")
+                    LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(language)
+                AppCompatDelegate.setApplicationLocales(localeList)
             }
         }
 

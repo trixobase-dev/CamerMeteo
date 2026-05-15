@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">CamerMétéo</string>
+    <string name="app_slogan">La météo de nos régions</string>
 </resources>

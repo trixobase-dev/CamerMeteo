@@ -1,7 +1,7 @@
 package cm.trixobase.library.common
 
 import cm.trixobase.library.common.constants.Region
-import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.constants.City
 import org.junit.Test
 
 /**
@@ -12,7 +12,7 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun myTest() {
-        Town.entries.filter { Region.CENTRE.nom == it.region }.forEach {
+        City.entries.filter { Region.CENTRE.display == it.region }.forEach {
             println(it)
         }
     }

@@ -12,6 +12,28 @@
     <string name="rules">Règlements</string>
     <string name="yes">Oui</string>
 
+    <string name="region_cm_adamaoua">Adamaoua</string>
+    <string name="region_cm_center">Centre</string>
+    <string name="region_cm_east">Est</string>
+    <string name="region_cm_far_north">Extrême Nord</string>
+    <string name="region_cm_littoral">Littoral</string>
+    <string name="region_cm_north">Nord</string>
+    <string name="region_cm_north_west">Nord Ouest</string>
+    <string name="region_cm_west">Ouest</string>
+    <string name="region_cm_south">Sud</string>
+    <string name="region_cm_west_south">Sud Ouest</string>
+
+    <string name="region_cm_adamaoua_description">Ville du Cameroun</string>
+    <string name="region_cm_center_description">Ville du Cameroun</string>
+    <string name="region_cm_east_description">Ville du Cameroun</string>
+    <string name="region_cm_far_north_description">Ville du Cameroun</string>
+    <string name="region_cm_littoral_description">Ville du Cameroun</string>
+    <string name="region_cm_north_description">Ville du Cameroun</string>
+    <string name="region_cm_north_west_description">Ville du Cameroun</string>
+    <string name="region_cm_west_description">Ville du Cameroun</string>
+    <string name="region_cm_south_description">Ville du Cameroun</string>
+    <string name="region_cm_west_south_description">Ville du Cameroun</string>
+
     <string name="app_tonalities">Tonalités de l\'application</string>
     <string name="confidentials_policies">Politique de confidentialité</string>
     <string name="localisation_auto">Localisation automatique</string>

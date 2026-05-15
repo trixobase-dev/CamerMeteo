@@ -46,7 +46,7 @@ import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.ui.widget.ToastBox
 
 /*
@@ -97,9 +97,10 @@ private fun MyContent(
 }
 
 @Composable
-private fun MyTop(city: String, openDrawer: () -> Unit) {
+private fun MyTop(city: City, openDrawer: () -> Unit) {
     val context = LocalContext.current.applicationContext
-    val colorWhite = MaterialTheme.colorScheme.onSurface
+    val colorButton = MaterialTheme.colorScheme.secondaryContainer
+    val colorTitle = MaterialTheme.colorScheme.onSurface
     Row(
         modifier = Modifier
             .padding(top = 10.dp, start = 15.dp, end = 15.dp)
@@ -116,7 +117,7 @@ private fun MyTop(city: String, openDrawer: () -> Unit) {
         )
         Button(
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                containerColor = colorButton
             ),
             modifier = Modifier,
             onClick = {
@@ -132,15 +133,15 @@ private fun MyTop(city: String, openDrawer: () -> Unit) {
                 tint = Color.Green)
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp),
-                text = Town.entries.filter { city == it.name }[0].nom,
+                text = city.display,
                 fontSize = 22.sp,
-                color = colorWhite
+                color = colorTitle
             )
             Icon(
                 modifier = Modifier.size(15.dp),
                 painter = painterResource(id = R.drawable.ic_arrow_bottom),
                 contentDescription = "Arrow select",
-                tint = MaterialTheme.colorScheme.onSurface)
+                tint = colorTitle)
         }
         Image(
             painter = painterResource(id = R.drawable.iv_icon_setting),
@@ -301,7 +302,7 @@ private fun MyItemDate(modifier: Modifier = Modifier, date: UiDate) {
 private fun DarkPreview() {
     CamerMeteoTheme {
         Surface {
-            MyTop(city = Town.GAROUA_BOULAI.name) { }
+            MyTop(city = City.GAROUA_BOULAI) { }
         }
     }
 }

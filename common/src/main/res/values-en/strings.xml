@@ -23,4 +23,15 @@
     <string name="warning_quit_application">Close application ?</string>
     <string name="warning_available_soon">Available soon.</string>
     <string name="warning_internet_connection">Check your internet connexion.</string>
+
+    <string name="region_cm_adamaoua">Adamaoua</string>
+    <string name="region_cm_center">Center</string>
+    <string name="region_cm_east">East</string>
+    <string name="region_cm_far_north">Far North</string>
+    <string name="region_cm_littoral">Littoral</string>
+    <string name="region_cm_north">North</string>
+    <string name="region_cm_north_west">North West</string>
+    <string name="region_cm_west">West</string>
+    <string name="region_cm_south">South</string>
+    <string name="region_cm_west_south">South West</string>
 </resources>

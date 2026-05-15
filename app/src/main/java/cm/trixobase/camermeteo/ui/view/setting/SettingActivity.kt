@@ -48,12 +48,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cm.trixobase.camermeteo.ApplicationActivity
-import cm.trixobase.camermeteo.data.di.AppModule
-import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.Language
+import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.ui.theme.ApplicationTheme
 
 /*
@@ -72,7 +71,7 @@ class SettingActivity : ApplicationActivity() {
                         MyContent(
                             Modifier.padding(it),
                             doGetConfigLanguage(),
-                            doGetConfigTemperatureUnity(),
+                            doGetConfigTemperature(),
                             doGetConfigLocalisation(),
                             doGetConfigNoteSun(),
                             doGetConfigNoteRain(),
@@ -87,13 +86,15 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyContent(
         modifier: Modifier = Modifier,
-        configLanguage: String = Language.FRENCH.unit,
-        configUnity: String = AttributeNames.TEMPERATURE_UNITY_CELSIUS,
+        configLanguage: String = Language.FRENCH.name,
+        configTemperature: String = Temperature.CELSIUS.name,
         configLocalisation: Boolean = false,
         configNoteSun: Boolean = true,
         configNoteRain: Boolean = true,
         configDemo: Boolean = true
     ) {
+        val language = Language.entries.filter { configLanguage == it.name }[0]
+        val temperature = Temperature.entries.filter { configTemperature == it.name }[0]
         val scrollState = rememberScrollState()
         Surface(
             modifier = modifier.fillMaxSize(),
@@ -102,23 +103,7 @@ class SettingActivity : ApplicationActivity() {
                 modifier = Modifier.verticalScroll(scrollState)
             ) {
                 MyLine()
-                /*
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 18.dp)
-                ) {
-                    OptionOne(configUnity)
-                    MyLine(color = Color.LightGray)
-                    OptionTwo(configSong)
-                    MyLine(color = Color.LightGray)
-                    OptionThree(configRefreshAuto)
-                    MyLine(color = Color.LightGray)
-                    OptionFour(configDemo)
-                    MyLine(color = Color.LightGray)
-                }
-                */
-                MyAppearance(configLanguage, configUnity)
+                MyAppearance(language, temperature)
                 MyNotification(configNoteSun, configNoteRain)
                 MyLocalisation(configLocalisation, configDemo)
             }
@@ -126,33 +111,35 @@ class SettingActivity : ApplicationActivity() {
     }
 
     @Composable
-   private fun MyAppearance(configLanguage: String, configUnity: String) {
-       Column(
-           modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp, horizontal = 15.dp),
-       ) {
-           cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.appearance))
-           Card(
-               modifier = Modifier.padding(top = 8.dp),
-               elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-               shape = RoundedCornerShape(10.dp),
-           ) {
-               Column(
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .height(115.dp)
-               ) {
-                   MyConfigTemperature(configUnity)
-                   MyConfigLanguage(configLanguage)
-               }
-           }
-       }
+    private fun MyAppearance(language: Language, temperature: Temperature) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 15.dp),
+        ) {
+            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.appearance))
+            Card(
+                modifier = Modifier.padding(top = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                shape = RoundedCornerShape(10.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(115.dp)
+                ) {
+                    MyConfigTemperature(temperature)
+                    MyConfigLanguage(language)
+                }
+            }
+        }
     }
 
     @Composable
-    private fun MyConfigTemperature(configUnity: String) {
+    private fun MyConfigTemperature(temperature: Temperature) {
         val colors = MaterialTheme.colorScheme
         var showDialogTemperature by remember { mutableStateOf(false) }
-        var myUnity by remember { mutableStateOf(configUnity) }
+        var myUnity by remember { mutableStateOf(temperature.display) }
 
         Row(
             modifier = Modifier
@@ -168,22 +155,25 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = { showDialogTemperature = true },
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_temperature),
-                        contentDescription = "Thermometer icon")
+                        contentDescription = "Thermometer icon"
+                    )
                 }
                 Text(
-                    //text = getString(R.string.temperature_unity),
-                    text = "Unité de température",
-                    textAlign = TextAlign.Start)
+                    text = getString(R.string.temperature_unity),
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
-                modifier = Modifier.clickable{ showDialogTemperature = true },
+                modifier = Modifier.clickable { showDialogTemperature = true },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -201,10 +191,10 @@ class SettingActivity : ApplicationActivity() {
 
         MyDialogTemperature(
             showDialogTemperature,
-            configUnity,
+            temperature,
             onConfirm = {
-                doConfigTemperatureUnity(unity = it)
-                myUnity = it
+                doConfigTemperature(temperature = it)
+                myUnity = it.display
                 showDialogTemperature = false
             },
             onDismiss = { showDialogTemperature = false },
@@ -213,10 +203,10 @@ class SettingActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyConfigLanguage(configLanguage: String) {
+    private fun MyConfigLanguage(language: Language) {
         val colors = MaterialTheme.colorScheme
         var showDialogLanguage by remember { mutableStateOf(false) }
-        var myLanguage by remember { mutableStateOf(configLanguage) }
+        var myLanguage by remember { mutableStateOf(language.display) }
 
         Row(
             modifier = Modifier
@@ -232,26 +222,29 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = { showDialogLanguage = true },
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_web),
-                        contentDescription = "Earth icon")
+                        contentDescription = "Earth icon"
+                    )
                 }
                 Text(
-                    //text = getString(R.string.language),
-                    text = "Langue",
-                    textAlign = TextAlign.Start)
+                    text = getString(R.string.language),
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
-                modifier = Modifier.clickable{ showDialogLanguage = true },
+                modifier = Modifier.clickable { showDialogLanguage = true },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = Language.entries.filter { myLanguage == it.unit }[0].language,
+                    text = myLanguage,
                     color = colors.onSurfaceVariant,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -265,10 +258,10 @@ class SettingActivity : ApplicationActivity() {
 
         MyDialogLanguage(
             showDialogLanguage,
-            configLanguage,
+            language,
             onConfirm = {
                 doConfigLanguage(language = it)
-                myLanguage = it
+                myLanguage = it.display
                 showDialogLanguage = false
             },
             onDismiss = { showDialogLanguage = false },
@@ -279,7 +272,9 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyNotification(configNoteSun: Boolean, configNoteRain: Boolean) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp, horizontal = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
             cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = "Notifications")
             Card(
@@ -317,19 +312,23 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = {},
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_sun),
-                        contentDescription = "Sun icon")
+                        contentDescription = "Sun icon"
+                    )
                 }
                 Text(
                     //text = getString(R.string.warning_sun),
                     text = "Rappel soleil",
-                    textAlign = TextAlign.Start)
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
                 modifier = Modifier,
@@ -364,18 +363,22 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = {},
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_rain),
-                        contentDescription = "Rain icon")
+                        contentDescription = "Rain icon"
+                    )
                 }
                 Text(
                     text = getString(R.string.warning_rain),
-                    textAlign = TextAlign.Start)
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
                 modifier = Modifier,
@@ -395,7 +398,9 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyLocalisation(configLocalisation: Boolean, configDemo: Boolean) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp, horizontal = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
             cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = "Localisation")
             Card(
@@ -414,6 +419,7 @@ class SettingActivity : ApplicationActivity() {
             }
         }
     }
+
     @Composable
     private fun MyConfigLocalisation(configLocalisation: Boolean) {
         val localisationAutoIsOn = remember { mutableStateOf(configLocalisation) }
@@ -432,18 +438,22 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = {},
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_map),
-                        contentDescription = "Map icon")
+                        contentDescription = "Map icon"
+                    )
                 }
                 Text(
                     text = getString(R.string.localisation_auto),
-                    textAlign = TextAlign.Start)
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
                 modifier = Modifier,
@@ -459,6 +469,7 @@ class SettingActivity : ApplicationActivity() {
             }
         }
     }
+
     @Composable
     private fun MyConfigDemo(configDemo: Boolean) {
         val demoIsOn = remember { mutableStateOf(configDemo) }
@@ -477,18 +488,22 @@ class SettingActivity : ApplicationActivity() {
             ) {
                 IconButton(
                     onClick = {},
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end = 10.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 10.dp),
                     shape = IconButtonDefaults.outlinedShape,
                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_demo),
-                        contentDescription = "Sun icon")
+                        contentDescription = "Sun icon"
+                    )
                 }
                 Text(
                     text = "Mode démo",
-                    textAlign = TextAlign.Start)
+                    textAlign = TextAlign.Start
+                )
             }
             Row(
                 modifier = Modifier,
@@ -508,12 +523,12 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyDialogTemperature(
         showDialog: Boolean,
-        configUnity: String,
+        temperature: Temperature,
         onRequestDismiss: () -> Unit,
-        onConfirm: (String) -> Unit,
+        onConfirm: (Temperature) -> Unit,
         onDismiss: () -> Unit
     ) {
-        var selectedOption by rememberSaveable { mutableStateOf(configUnity) }
+        var selectedOption by rememberSaveable { mutableStateOf(temperature.name) }
         val colors = MaterialTheme.colorScheme
 
         if (showDialog) {
@@ -539,16 +554,16 @@ class SettingActivity : ApplicationActivity() {
                                 .fillMaxSize()
                         )
 
-                        AppModule.TEMPERATURE.entries.forEach { option ->
+                        Temperature.entries.forEach { option ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(option.name)
+                                Text(option.name.lowercase().replaceFirstChar { it.uppercase() })
                                 RadioButton(
-                                    selected = option.unity == selectedOption,
-                                    onClick = { selectedOption = option.unity })
+                                    selected = option.name == selectedOption,
+                                    onClick = { selectedOption = option.name })
                             }
                         }
 
@@ -563,7 +578,10 @@ class SettingActivity : ApplicationActivity() {
                 confirmButton = {
                     Button(
                         modifier = Modifier.width(95.dp),
-                        onClick = { onConfirm(selectedOption) },
+                        onClick = {
+                            val t = Temperature.entries.filter { selectedOption == it.name }[0]
+                            onConfirm(t)
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
                     ) {
                         Text("Ok", color = colors.onPrimary)
@@ -585,12 +603,12 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyDialogLanguage(
         showDialog: Boolean,
-        configLanguage: String,
+        language: Language,
         onRequestDismiss: () -> Unit,
-        onConfirm: (String) -> Unit,
+        onConfirm: (Language) -> Unit,
         onDismiss: () -> Unit
     ) {
-        var selectedOption by rememberSaveable { mutableStateOf(configLanguage) }
+        var selectedOption by rememberSaveable { mutableStateOf(language.name) }
         val colors = MaterialTheme.colorScheme
 
         if (showDialog) {
@@ -622,10 +640,10 @@ class SettingActivity : ApplicationActivity() {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(option.language)
+                                Text(option.display)
                                 RadioButton(
-                                    selected = option.unit == selectedOption,
-                                    onClick = { selectedOption = option.unit })
+                                    selected = option.name == selectedOption,
+                                    onClick = { selectedOption = option.name })
                             }
                         }
 
@@ -640,7 +658,10 @@ class SettingActivity : ApplicationActivity() {
                 confirmButton = {
                     Button(
                         modifier = Modifier.width(95.dp),
-                        onClick = { onConfirm(selectedOption) },
+                        onClick = {
+                            val l = Language.entries.filter { selectedOption == it.name }[0]
+                            onConfirm(l)
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
                     ) {
                         Text("Ok", color = colors.onPrimary)
@@ -674,7 +695,7 @@ class SettingActivity : ApplicationActivity() {
     private fun SettingDarkPreview() {
         ApplicationTheme {
             Surface {
-                MyAppearance("en", "°C")
+                MyAppearance(Language.ITALIAN, Temperature.KELVIN)
             }
         }
     }

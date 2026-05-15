@@ -6,8 +6,10 @@ import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.di.AppModule
 import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
+import cm.trixobase.library.common.constants.City
+import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
-import cm.trixobase.library.common.constants.Town
+import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.utils.NetworkResult
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.delay
@@ -24,29 +26,26 @@ class WeatherRepository {
 
     fun getMyData(context: Context): Flow<NetworkResult<MutableMap<String, String>>> = flow {
         val data = mutableMapOf<String, String>()
-        data["lang"] =
-            Utils.process.get(context, AttributeNames.KEY_APP_LANGUAGE, AttributeNames.LANGUAGE_FRENCH)
+        data["language"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_LANGUAGE, Language.FRENCH.name)
         data["demo"] =
             Utils.process.get(context, AttributeNames.KEY_APP_DEMO_CONFIGURATION, false).toString()
+        data["gps"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false).toString()
         data["region"] =
             Utils.process.get(context, AttributeNames.KEY_APP_REGION, Region.CENTRE.name)
         data["city"] =
-            Utils.process.get(context, AttributeNames.KEY_APP_TOWN, Town.YAOUNDE.name)
-        data["unity"] =
-            Utils.process.get(
-                context,
-                AttributeNames.KEY_APP_TEMPERATURE_UNITY,
-                AttributeNames.TEMPERATURE_UNITY_CELSIUS
-            )
+            Utils.process.get(context, AttributeNames.KEY_APP_CITY, City.YAOUNDE.name)
+        data["temperature"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_TEMPERATURE, Temperature.CELSIUS.name)
         emit(NetworkResult.Success(data))
     }
 
-    fun getWeather(town: String, language: String, unity: String): Flow<NetworkResult<ApiResult>> = flow {
+    fun getWeather(city: City, language: String, units: String): Flow<NetworkResult<ApiResult>> = flow {
         try {
-            val city = getCity(town)
             val response = api.getWeather(
                 lang = language,
-                units = getUnits(unity),
+                units = units,
                 date = getCurrentDate(),
                 lat = city.lat,
                 lon = city.lon
@@ -69,14 +68,6 @@ class WeatherRepository {
         } catch (e: Exception) {
             emit(NetworkResult.Error(e.message!!))
         }
-    }
-
-    private fun getCity(city: String): Town {
-        return Town.entries.filter { city == it.name }[0]
-    }
-
-    private fun getUnits(unity: String): String {
-        return AppModule.TEMPERATURE.entries.filter { unity == it.unity }[0].units
     }
 
     private fun getCurrentDate(): String {
