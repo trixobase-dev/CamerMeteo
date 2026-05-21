@@ -6,6 +6,6 @@ package cm.trixobase.camermeteo.data.model
 
 data class Sys(
     val country: String,
-    val sunrise: String,
-    val sunset: String
+    val sunrise: Long,
+    val sunset: Long
 )

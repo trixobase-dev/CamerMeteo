@@ -22,7 +22,9 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.ui.ExitActivity
+import cm.trixobase.library.common.ui.domain.ExitActivity
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Calendar
 
 
@@ -32,10 +34,32 @@ import java.util.Calendar
 
 object Utils {
 
+    object maths {
+
+        fun arroundDouble(value: Double): Double = BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
+
+        fun celsiusToFahrenheit(value: Double): Double = (value * (9/5)) + 32
+
+        fun celsiusToKelvin(value: Double): Double = value + 273.15
+
+    }
+
     object time {
 
         fun currentDate(): Calendar {
             return Calendar.getInstance()
+        }
+
+        fun getCurrentDate(): String {
+            val c = Calendar.getInstance()
+            val date = "${format(day(c))}/${format(month(c))}/${year(c)}"
+            return date
+        }
+
+        fun getCurrentHour(): String {
+            val c = Calendar.getInstance()
+            val time = "${format(hour(c))}:${format(minute(c))}"
+            return time
         }
 
         fun calendarByDate(date: String): Calendar {
@@ -66,8 +90,24 @@ object Utils {
             return date.substring(0, 2).toInt()
         }
 
+        private fun year(calendar: Calendar): Int {
+            return calendar.get(Calendar.YEAR)
+        }
+
+        private fun month(calendar: Calendar): Int {
+            return calendar.get(Calendar.MONTH) + 1
+        }
+
         private fun day(calendar: Calendar): Int {
             return calendar.get(Calendar.DAY_OF_MONTH)
+        }
+
+        private fun hour(calendar: Calendar): Int {
+            return calendar.get(Calendar.HOUR_OF_DAY)
+        }
+
+        private fun minute(calendar: Calendar): Int {
+            return calendar.get(Calendar.MINUTE)
         }
 
         private fun dayName(calendar: Calendar): String {
@@ -119,6 +159,11 @@ object Utils {
             }
         }
 
+        private fun format(time: Int): String {
+            val t = time.toString()
+            return if (t.length > 1) t else "0$t"
+        }
+
     }
 
     object process {
@@ -163,17 +208,34 @@ object Utils {
             val connectivity = context
                 .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
             if (connectivity == null) {
-                Log.d("NetworkCheck", "isNetworkAvailable: No")
+                Log.d("NetworkCheck", "No available network")
                 return false
             }
             val info = connectivity.allNetworkInfo
             for (i in info.indices) {
                 if (info[i]!!.state == NetworkInfo.State.CONNECTED) {
-                    Log.d("NetworkCheck", "isNetworkAvailable: Yes")
+                    Log.d("NetworkCheck", "Available network: ${info[i].typeName}")
                     return true
                 }
             }
             return false
+        }
+
+        fun openBrowser(context: Context, url: String) {
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+            }
+        }
+
+        fun sendMessageWhatsApp(context: Context) {
+            val intent = Intent()
+            intent.action = Intent.ACTION_SEND
+            intent.putExtra(Intent.EXTRA_TEXT, "")
+            intent.type = "text/plain"
+            val shareIntent = Intent.createChooser(intent, context.getString(R.string.write_us))
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(shareIntent)
         }
 
         fun stopApp(context: Context) {
@@ -186,12 +248,12 @@ object Utils {
             context.startActivity(intent)
         }
 
-        fun shareApp(context: Context, shareMessage: String) {
+        fun shareText(context: Context, shareMessage: String) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
             intent.type = "text/plain"
-            val shareIntent = Intent.createChooser(intent, context.getString(R.string.share_app))
+            val shareIntent = Intent.createChooser(intent, context.getString(R.string.share))
             shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(shareIntent)
         }
@@ -236,29 +298,19 @@ object Utils {
         }
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN)
-        fun isJellyBean(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
-        }
+        fun isJellyBean() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-        fun isJellyBeanMR1(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-        }
+        fun isJellyBeanMR1() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.LOLLIPOP)
-        fun isLollipop(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        }
+        fun isLollipop() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N)
-        fun isNouga(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-        }
+        fun isNouga() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.TIRAMISU)
-        fun isTiramisu(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-        }
+        fun isTiramisu() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
     }
 

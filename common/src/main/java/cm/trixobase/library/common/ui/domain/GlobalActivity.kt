@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package cm.trixobase.library.common.ui
+package cm.trixobase.library.common.ui.domain
 
 import androidx.activity.ComponentActivity
 import cm.trixobase.library.common.R

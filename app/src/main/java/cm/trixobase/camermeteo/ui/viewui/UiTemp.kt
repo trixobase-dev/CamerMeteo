@@ -72,7 +72,7 @@ class UiTemp {
             return ((1..10).random() % 2 == 0)
         }
 
-        fun getAll(): List<UiTemp> {
+        fun getAll(min: Double, max: Double): List<UiTemp> {
             val cH = Utils.time.currentDate().get(Calendar.HOUR_OF_DAY)
             val h = if (cH > 10) 10 else cH
             val temps = mutableListOf<UiTemp>()
@@ -80,7 +80,7 @@ class UiTemp {
                 temps.add(
                     builder()
                         .withHour(i)
-                        .withTemperature((25..38).random())
+                        .withTemperature((min.toInt()..max.toInt()).random())
                         .withPrecipitation(
                             hasRain = randomBoolean(),
                             hasVent = randomBoolean(),

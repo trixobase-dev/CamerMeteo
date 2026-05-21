@@ -70,8 +70,6 @@ class SettingActivity : ApplicationActivity() {
                     content = {
                         MyContent(
                             Modifier.padding(it),
-                            doGetConfigLanguage(),
-                            doGetConfigTemperature(),
                             doGetConfigLocalisation(),
                             doGetConfigNoteSun(),
                             doGetConfigNoteRain(),
@@ -86,15 +84,11 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyContent(
         modifier: Modifier = Modifier,
-        configLanguage: String = Language.FRENCH.name,
-        configTemperature: String = Temperature.CELSIUS.name,
         configLocalisation: Boolean = false,
         configNoteSun: Boolean = true,
         configNoteRain: Boolean = true,
         configDemo: Boolean = true
     ) {
-        val language = Language.entries.filter { configLanguage == it.name }[0]
-        val temperature = Temperature.entries.filter { configTemperature == it.name }[0]
         val scrollState = rememberScrollState()
         Surface(
             modifier = modifier.fillMaxSize(),
@@ -103,7 +97,7 @@ class SettingActivity : ApplicationActivity() {
                 modifier = Modifier.verticalScroll(scrollState)
             ) {
                 MyLine()
-                MyAppearance(language, temperature)
+                MyAppearance()
                 MyNotification(configNoteSun, configNoteRain)
                 MyLocalisation(configLocalisation, configDemo)
             }
@@ -111,7 +105,7 @@ class SettingActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyAppearance(language: Language, temperature: Temperature) {
+    private fun MyAppearance() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,15 +122,16 @@ class SettingActivity : ApplicationActivity() {
                         .fillMaxWidth()
                         .height(115.dp)
                 ) {
-                    MyConfigTemperature(temperature)
-                    MyConfigLanguage(language)
+                    MyConfigTemperature()
+                    MyConfigLanguage()
                 }
             }
         }
     }
 
     @Composable
-    private fun MyConfigTemperature(temperature: Temperature) {
+    private fun MyConfigTemperature() {
+        val temperature = Temperature.entries.filter { doGetConfigTemperature() == it.name }[0]
         val colors = MaterialTheme.colorScheme
         var showDialogTemperature by remember { mutableStateOf(false) }
         var myUnity by remember { mutableStateOf(temperature.display) }
@@ -191,7 +186,6 @@ class SettingActivity : ApplicationActivity() {
 
         MyDialogTemperature(
             showDialogTemperature,
-            temperature,
             onConfirm = {
                 doConfigTemperature(temperature = it)
                 myUnity = it.display
@@ -203,7 +197,8 @@ class SettingActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyConfigLanguage(language: Language) {
+    private fun MyConfigLanguage() {
+        val language = Language.entries.filter { doGetConfigLanguage() == it.name }[0]
         val colors = MaterialTheme.colorScheme
         var showDialogLanguage by remember { mutableStateOf(false) }
         var myLanguage by remember { mutableStateOf(language.display) }
@@ -258,7 +253,6 @@ class SettingActivity : ApplicationActivity() {
 
         MyDialogLanguage(
             showDialogLanguage,
-            language,
             onConfirm = {
                 doConfigLanguage(language = it)
                 myLanguage = it.display
@@ -523,11 +517,11 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyDialogTemperature(
         showDialog: Boolean,
-        temperature: Temperature,
         onRequestDismiss: () -> Unit,
         onConfirm: (Temperature) -> Unit,
         onDismiss: () -> Unit
     ) {
+        val temperature = Temperature.entries.filter { doGetConfigTemperature() == it.name }[0]
         var selectedOption by rememberSaveable { mutableStateOf(temperature.name) }
         val colors = MaterialTheme.colorScheme
 
@@ -582,7 +576,8 @@ class SettingActivity : ApplicationActivity() {
                             val t = Temperature.entries.filter { selectedOption == it.name }[0]
                             onConfirm(t)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text("Ok", color = colors.onPrimary)
                     }
@@ -591,7 +586,8 @@ class SettingActivity : ApplicationActivity() {
                     Button(
                         modifier = Modifier.width(95.dp),
                         onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary)
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(text = getString(R.string.cancel), color = colors.onSecondary)
                     }
@@ -603,11 +599,11 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyDialogLanguage(
         showDialog: Boolean,
-        language: Language,
         onRequestDismiss: () -> Unit,
         onConfirm: (Language) -> Unit,
         onDismiss: () -> Unit
     ) {
+        val language = Language.entries.filter { doGetConfigLanguage() == it.name }[0]
         var selectedOption by rememberSaveable { mutableStateOf(language.name) }
         val colors = MaterialTheme.colorScheme
 
@@ -662,7 +658,8 @@ class SettingActivity : ApplicationActivity() {
                             val l = Language.entries.filter { selectedOption == it.name }[0]
                             onConfirm(l)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text("Ok", color = colors.onPrimary)
                     }
@@ -671,7 +668,8 @@ class SettingActivity : ApplicationActivity() {
                     Button(
                         modifier = Modifier.width(95.dp),
                         onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary)
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(text = getString(R.string.cancel), color = colors.onSecondary)
                     }
@@ -695,7 +693,7 @@ class SettingActivity : ApplicationActivity() {
     private fun SettingDarkPreview() {
         ApplicationTheme {
             Surface {
-                MyAppearance(Language.ITALIAN, Temperature.KELVIN)
+                MyAppearance()
             }
         }
     }

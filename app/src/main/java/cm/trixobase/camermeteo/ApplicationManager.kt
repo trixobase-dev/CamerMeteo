@@ -5,6 +5,12 @@ package cm.trixobase.camermeteo
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
+import cm.trixobase.camermeteo.data.datasource.ApiResult
+import cm.trixobase.camermeteo.data.model.Sys
+import cm.trixobase.camermeteo.data.model.Temperature
+import cm.trixobase.camermeteo.data.model.Weather
+import cm.trixobase.camermeteo.data.model.Wind
 import cm.trixobase.camermeteo.domain.AttributeNames
 
 /*
@@ -28,10 +34,52 @@ class ApplicationManager: Application() {
 
     companion object {
 
+        fun getWeatherToShare(c: Context, apiResult: ApiResult): String {
+            return "CamerMétéo: " + c.getString(cm.trixobase.library.common.R.string.weather_day) +
+                    "\n- ${c.getString(cm.trixobase.library.common.R.string.place)}: ${apiResult.name}" +
+                    "\n- ${c.getString(cm.trixobase.library.common.R.string.temperature)}: ${apiResult.main.temp} °C" +
+                    "\n- ${c.getString(cm.trixobase.library.common.R.string.rain)}: ${apiResult.main.humidity} %" +
+                    "\n- ${c.getString(cm.trixobase.library.common.R.string.wind)}: ${apiResult.wind.speed} m/s" +
+                    "\n- ${c.getString(cm.trixobase.library.common.R.string.pressure)}: ${apiResult.main.pressure} hPa"
+        }
+
+        fun getWeatherDemo(): ApiResult {
+            return ApiResult(
+                name = "Cameroun",
+                weather = listOf(Weather(
+                    main = "Rain",
+                    description = "Temps nuageux")),
+                main = Temperature(
+                    temp = 32.5,
+                    temp_min = 28.0,
+                    temp_max = 34.7,
+                    pressure = 1021,
+                    humidity = 60
+                ),
+                visibility = 2000,
+                dt = 1726660758,
+                wind = Wind(
+                    speed = 4.09,
+                    deg = 124,
+                    gust = 3.47
+                ),
+                sys = Sys(
+                    country = "CM",
+                    sunrise = 1726636384,
+                    sunset = 1726680975
+                )
+            )
+        }
+
+        fun getWeatherPicture(weather: ApiResult): Int {
+            return  R.drawable.iv_meteo_sun_nuage
+        }
+
         fun getWeatherPicture(temperature: Int, hour: Int): Int {
             return if (hour < 18) lightPictures(temperature) else nightPictures(temperature)
 
         }
+
         fun getWeatherPicture(temperature: Int, hour: Int, hasVent: Boolean, hasRain: Boolean, hasSun: Boolean): Int {
             return if (hour < 18) lightPictures(temperature, hasVent, hasRain, hasSun) else nightPictures(temperature, hasVent, hasRain, hasSun)
 

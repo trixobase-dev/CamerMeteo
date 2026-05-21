@@ -4,12 +4,21 @@
     <string name="back">Retour</string>
     <string name="cancel">Annuler</string>
     <string name="information" translatable="false">Information</string>
+    <string name="humidity">Humidité</string>
     <string name="language">Langue</string>
     <string name="menu" translatable="false">Menu</string>
     <string name="no">Non</string>
+    <string name="place">Lieu</string>
+    <string name="pressure">Préssion</string>
     <string name="settings">Paramètres</string>
+    <string name="share">Partager</string>
+    <string name="rain">Pluie</string>
     <string name="reglages">Réglages</string>
     <string name="rules">Règlements</string>
+    <string name="temperature">Température</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="visibility">Visibilité</string>
+    <string name="wind">Vent</string>
     <string name="yes">Oui</string>
 
     <string name="region_cm_adamaoua">Adamaoua</string>
@@ -41,12 +50,16 @@
     <string name="refresh_automatic">Actualisation automatique</string>
     <string name="rules_for_use">Conditions d\'utilisation</string>
     <string name="share_app">Partagez l\'application</string>
+    <string name="share_weather">Partagez la météo</string>
+    <string name="share_weather_friends">Envoie la météo à tes amis</string>
     <string name="temperature_unity">Unité de température</string>
     <string name="your_region">Votre région</string>
     <string name="your_town">Votre ville</string>
     <string name="share_app_in">Partagez l\'application via</string>
     <string name="warning_sun">Rappel soleil</string>
     <string name="warning_rain">Alertes pluie</string>
+    <string name="write_us">Nous écrire</string>
+    <string name="weather_day">Météo du jour</string>
 
     <string name="my_city">Ma ville (%s)</string>
     <string name="thing_chosen">%s séléctionné</string>

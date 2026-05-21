@@ -1,4 +1,4 @@
-package cm.trixobase.library.common.ui
+package cm.trixobase.library.common.ui.domain
 
 import android.app.Activity
 import android.os.Bundle

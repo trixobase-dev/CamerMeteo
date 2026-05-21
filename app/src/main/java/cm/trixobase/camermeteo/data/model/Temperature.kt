@@ -7,9 +7,9 @@ package cm.trixobase.camermeteo.data.model
  */
 
 data class Temperature (
-    val temp: String,
-    val temp_min: String,
-    val temp_max: String,
-    val pressure: String, //hPa
-    val humidity: String, //%
+    val temp: Double,
+    val temp_min: Double,
+    val temp_max: Double,
+    val pressure: Int, //hPa
+    val humidity: Int, //%
 )

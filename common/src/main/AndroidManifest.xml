@@ -11,7 +11,7 @@
         android:localeConfig="@xml/locale_config"
         tools:targetApi="33">
         <activity
-            android:name=".ui.ExitActivity"
+            android:name=".ui.domain.ExitActivity"
             android:exported="false"
             android:autoRemoveFromRecents="true"
             android:theme="@android:style/Theme.NoDisplay" />

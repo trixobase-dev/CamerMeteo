@@ -2,10 +2,10 @@ package cm.trixobase.camermeteo.data.repository
 
 import android.content.Context
 import android.icu.util.Calendar
+import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.di.AppModule
 import cm.trixobase.camermeteo.domain.AttributeNames
-import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
@@ -45,7 +45,7 @@ class WeatherRepository {
         try {
             val response = api.getWeather(
                 lang = language,
-                units = units,
+                units = Temperature.CELSIUS.units,
                 date = getCurrentDate(),
                 lat = city.lat,
                 lon = city.lon
@@ -60,11 +60,11 @@ class WeatherRepository {
         }
     }
 
-    fun getDemo(): Flow<NetworkResult<List<UiTemp>>> = flow {
+    fun getDemo(): Flow<NetworkResult<ApiResult>> = flow {
         try {
             delay(1500)
-            val temps = UiTemp.getAll()
-            emit(NetworkResult.Success(temps))
+            val weather = ApplicationManager.getWeatherDemo()
+            emit(NetworkResult.Success(weather))
         } catch (e: Exception) {
             emit(NetworkResult.Error(e.message!!))
         }

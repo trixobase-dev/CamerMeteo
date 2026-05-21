@@ -13,7 +13,8 @@ data class ApiResult(
     val name: String,
     val weather: List<Weather>,
     val main: Temperature,
-    val visibility: String, // en mètre
+    val visibility: Int, // en mètre
+    val dt: Long, // en milli
     val wind: Wind,
     val sys: Sys
 )

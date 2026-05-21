@@ -3,7 +3,9 @@ package cm.trixobase.camermeteo.ui.view
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -40,6 +44,7 @@ import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
+import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 05/05/26
@@ -71,59 +76,64 @@ class AboutActivity : ApplicationActivity() {
                 modifier = modifier.fillMaxSize()
             ) {
                 MyLine()
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "CamerMétéo",
-                        textAlign = TextAlign.Center,
-                        color = colors.primary,
-                        fontSize = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.comic)),
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.iv_logo),
-                        contentDescription = "CamerMeteo Logo",
-                        modifier = Modifier.size(120.dp)
-                    )
-                    Text(
-                        text = "version 1.0",
-                        textAlign = TextAlign.Center,
-                        color = colors.primary,
-                        fontSize = 15.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Light
-                    )
-                    Spacer(Modifier
-                        .fillMaxWidth()
-                        .height(50.dp))
-                    Button(
-                        onClick = { showDialog.value = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Row(
-                            modifier = Modifier.width(95.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_trixobase),
-                                contentDescription = "CamerMeteo Logo",
-                                modifier = Modifier
-                                    .size(25.dp)
-                                    .padding(end = 5.dp)
-                            )
-                            Text(
-                                text = "Plus",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
+                        Text(
+                            text = "CamerMétéo",
+                            textAlign = TextAlign.Center,
+                            color = colors.primary,
+                            fontSize = 22.sp,
+                            fontFamily = FontFamily(Font(R.font.comic)),
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.iv_logo),
+                            contentDescription = "CamerMeteo Logo",
+                            modifier = Modifier.size(120.dp)
+                        )
+                        Text(
+                            text = "version 1.0",
+                            textAlign = TextAlign.Center,
+                            color = colors.primary,
+                            fontSize = 15.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Light
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom) {
+                            Button(
+                                onClick = { showDialog.value = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.width(95.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_trixobase),
+                                        contentDescription = "Trixobase Logo",
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                            .padding(end = 5.dp)
+                                    )
+                                    Text(
+                                        text = "Plus",
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
+                            }
                     }
                 }
             }
@@ -134,6 +144,11 @@ class AboutActivity : ApplicationActivity() {
 
     @Composable
     fun MyDialogTrixo() {
+        val url = "https://trixobase.com/"
+        val description = "Entreprise fondée par une communauté d\'ingénieurs dans le domaine des Technologies de l\'Information et de la Communication pour la réalisation d\'applications android de pointe; Dédiées aux africains et au Cameroun en particulier."
+        val phoneNumber = "(+237) 686 82 08 28"
+        val context = LocalContext.current.applicationContext
+
         AlertDialog(
             containerColor = Color.Black,
             onDismissRequest = { showDialog.value = false },
@@ -152,14 +167,14 @@ class AboutActivity : ApplicationActivity() {
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Entreprise fondée par une communauté de développeurs camerounais pour la conception d\'applications android.",
+                        text = description,
                         lineHeight = 20.sp,
                         color = Color.White,
                         fontSize = 15.sp,
                         textAlign = TextAlign.Justify)
                     Spacer(Modifier.height(15.dp))
                     Row(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().height(40.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -167,27 +182,31 @@ class AboutActivity : ApplicationActivity() {
                             contentDescription = "Localisation")
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = "Yaoundé - Nkomkana",
+                            text = "Cameroun - Yaoundé",
                             color = Color.White,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,)
                     }
                     Row(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().height(40.dp).clickable {
+                            Utils.phone.sendMessageWhatsApp(context)
+                        },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            painterResource(id = R.drawable.ic_call),
+                            painterResource(id = R.drawable.ic_whatsapp),
                             contentDescription = "Service client")
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = "(+237) 686 82 08 28",
+                            text = phoneNumber,
                             color = Color.White,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,)
                     }
                     Row(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().height(40.dp).clickable {
+                            Utils.phone.openBrowser(context, url)
+                        },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -195,7 +214,7 @@ class AboutActivity : ApplicationActivity() {
                             contentDescription = "web site")
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = "https://trixobase.com/",
+                            text = url,
                             color = Color.White,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,)

@@ -7,7 +7,7 @@ import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.ui.GlobalActivity
+import cm.trixobase.library.common.ui.domain.GlobalActivity
 import cm.trixobase.library.common.utils.Utils
 
 /*
