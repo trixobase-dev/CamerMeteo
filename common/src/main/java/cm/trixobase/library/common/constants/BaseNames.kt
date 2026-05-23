@@ -8,9 +8,6 @@ package cm.trixobase.library.common.constants
 
 open class BaseNames {
 
-    val CHANNEL_ID = "trixobase_channel_id"
-    val CHANNEL_NAME = "trixobase_channel_name"
-
     val NAME = "name"
 
 }

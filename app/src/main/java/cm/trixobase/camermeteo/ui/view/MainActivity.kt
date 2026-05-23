@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -132,14 +131,9 @@ class MainActivity : ApplicationActivity() {
         )
 
         LaunchedEffect(key1 = Unit) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
-            }
+            if (Utils.phone.isTiramisu())
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-
-        //Tools.phone.notify(context, "Forte pluie et vents forts", "N\'oublie pas ton parapluie molah", R.drawable.iv_logo)
 
     }
 
@@ -239,7 +233,7 @@ class MainActivity : ApplicationActivity() {
                 painter = painterResource(id = R.drawable.iv_logo)
             )
             Text(
-                text = getString(cm.trixobase.camermeteo.R.string.app_slogan),
+                text = getString(R.string.app_slogan),
                 color = colors.onPrimary,
                 fontWeight = FontWeight.Bold
             )

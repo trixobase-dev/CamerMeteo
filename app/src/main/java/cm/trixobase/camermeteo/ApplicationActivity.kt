@@ -68,7 +68,7 @@ abstract class ApplicationActivity : GlobalActivity() {
         return Utils.process.get(
             applicationContext,
             AttributeNames.KEY_APP_DEMO_CONFIGURATION,
-            true
+            false
         )
     }
 

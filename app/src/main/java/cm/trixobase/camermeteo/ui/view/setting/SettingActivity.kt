@@ -172,7 +172,7 @@ class SettingActivity : ApplicationActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = myUnity,
+                    text = "°$myUnity",
                     color = colors.onSurfaceVariant,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -431,7 +431,7 @@ class SettingActivity : ApplicationActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = {},
+                    onClick = { },
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(end = 10.dp),
@@ -440,7 +440,7 @@ class SettingActivity : ApplicationActivity() {
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
-                        painter = painterResource(id = R.drawable.iv_icon_map),
+                        painter = painterResource(id = R.drawable.iv_icon_map_target),
                         contentDescription = "Map icon"
                     )
                 }
@@ -450,10 +450,10 @@ class SettingActivity : ApplicationActivity() {
                 )
             }
             Row(
-                modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Switch(
+                    enabled = false,
                     checked = localisationAutoIsOn.value,
                     onCheckedChange = {
                         localisationAutoIsOn.value = it

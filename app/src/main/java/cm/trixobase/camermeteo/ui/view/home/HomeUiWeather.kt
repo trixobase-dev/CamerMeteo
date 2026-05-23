@@ -4,7 +4,6 @@ import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 16/05/26
@@ -50,21 +49,22 @@ class HomeUiWeather {
 
     fun getPressure(): String = apiResult.main.pressure.toString() + " hPa"
 
-    fun getVisibility(): String = apiResult.visibility.toString() + " m"
+    fun getVisibility(): String = getVisibility(apiResult.visibility)
 
-    fun getDetails(): List<UiTemp> = UiTemp.getAll(apiResult.main.temp_min, apiResult.main.temp_max)
+    fun getDetails(): List<UiTemp> = UiTemp.getAll(apiResult.main.temp_min, apiResult.main.temp_max, temperature)
 
-    fun getTemperatureMain(): String = getTemperature(apiResult.main.temp) + this.temperature.unity
+    fun getTemperatureMain(): String = getTemperature(apiResult.main.temp) + "°"
 
-    fun getTemperatureInterval(): String = getTemperature(apiResult.main.temp_min) + " / " + getTemperature(apiResult.main.temp_max)
+    fun getUnity(): String = this.temperature.display
+
+    fun getTemperatureInterval(): String = getTemperature(apiResult.main.temp_min) + "° / " + getTemperature(apiResult.main.temp_max) + "°"
+
+    private fun getVisibility(value: Int): String  {
+        return if (value >= 1000) "${value/1000} Km" else "$value m"
+    }
 
     private fun getTemperature(temperature: Double): String  {
-        val t = when(this.temperature) {
-            Temperature.CELSIUS -> temperature
-            Temperature.FAHRENHEIT -> Utils.maths.celsiusToFahrenheit(temperature)
-            Temperature.KELVIN -> Utils.maths.celsiusToKelvin(temperature)
-        }
-        return Utils.maths.arroundDouble(t).toString()
+        return ApplicationManager.convert(temperature, this.temperature)
     }
 
 }

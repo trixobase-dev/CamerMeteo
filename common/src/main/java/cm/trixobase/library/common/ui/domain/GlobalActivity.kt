@@ -3,23 +3,21 @@
 package cm.trixobase.library.common.ui.domain
 
 import androidx.activity.ComponentActivity
-import cm.trixobase.library.common.R
 import cm.trixobase.library.common.ui.widget.SnakeBox
 import cm.trixobase.library.common.ui.widget.ToastBox
 
 abstract class GlobalActivity : ComponentActivity() {
 
     open fun showAvailableSoon() {
-        ToastBox.builder(applicationContext).withMessage(getString(R.string.warning_available_soon))
-            .showLong()
+        ToastBox.builder(applicationContext).showSoonMessage()
     }
 
     open fun showError(message: String) {
-        SnakeBox.builder(applicationContext).withMessage(message).showShort()
+        SnakeBox.builder(applicationContext).showShort(message)
     }
 
     open fun showMessage(message: String) {
-        ToastBox.builder(applicationContext).withMessage(message).showShort()
+        ToastBox.builder(applicationContext).showLong(message)
     }
 
 }

@@ -1,6 +1,7 @@
 package cm.trixobase.camermeteo.ui.viewui
 
 import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
 
@@ -14,7 +15,7 @@ class UiTemp {
 
     lateinit var hourToDisplay: String
     var picture: Int = 0
-    var temperature: Int = 20
+    var temperature: Int = 0
 
     class Builder {
 
@@ -25,9 +26,6 @@ class UiTemp {
 
         private val instance = UiTemp()
         var hour: Int = 0
-        var hasRain: Boolean = false
-        var hasVent: Boolean = false
-        var hasSun: Boolean = true
 
         fun withHour(hour: Int): Builder {
             this.hour = if (hour > 23) 0 else hour
@@ -35,22 +33,9 @@ class UiTemp {
             return this
         }
 
-        fun withTemperature(temperature: Int): Builder {
+        fun withTemperature(temperature: Int): UiTemp {
             instance.temperature = temperature
-            return this
-        }
-
-        fun withPrecipitation(hasRain: Boolean, hasVent: Boolean, hasSun: Boolean): UiTemp {
-            this.hasRain = hasRain
-            this.hasVent = hasVent
-            this.hasSun = hasSun
-            instance.picture = ApplicationManager.getWeatherPicture(
-                instance.temperature,
-                hour,
-                hasVent,
-                hasRain,
-                hasSun
-            )
+            instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
             return instance
         }
 
@@ -68,11 +53,7 @@ class UiTemp {
             return Builder()
         }
 
-        private fun randomBoolean(): Boolean {
-            return ((1..10).random() % 2 == 0)
-        }
-
-        fun getAll(min: Double, max: Double): List<UiTemp> {
+        fun getAll(min: Double, max: Double, unity: Temperature): List<UiTemp> {
             val cH = Utils.time.currentDate().get(Calendar.HOUR_OF_DAY)
             val h = if (cH > 10) 10 else cH
             val temps = mutableListOf<UiTemp>()
@@ -80,15 +61,17 @@ class UiTemp {
                 temps.add(
                     builder()
                         .withHour(i)
-                        .withTemperature((min.toInt()..max.toInt()).random())
-                        .withPrecipitation(
-                            hasRain = randomBoolean(),
-                            hasVent = randomBoolean(),
-                            hasSun = randomBoolean()
-                        )
+                        .withTemperature(getTemp(min, max, unity))
                 )
             }
             return temps
+        }
+
+        private fun getTemp(min: Double, max: Double, temperature: Temperature): Int {
+            val t: Int = (min.toInt()..max.toInt()).random()
+            val r = ApplicationManager.convert(t.toDouble(), temperature)
+            val v = r.toDouble().toInt()
+            return v
         }
 
     }

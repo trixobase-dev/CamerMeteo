@@ -1,7 +1,6 @@
 package cm.trixobase.library.common.ui.widget
 
 import android.content.Context
-import cm.trixobase.library.common.R
 
 /*
  * Powered by Trixobase Enterprise on 10/04/26
@@ -9,25 +8,23 @@ import cm.trixobase.library.common.R
 
 class SnakeBox {
 
-    private constructor(context: Context)
+    private constructor(context: Context) {
+        this.context = context
+    }
 
-    private lateinit var message: String
+    private var context: Context
+    private var message = ""
 
     class Builder {
 
-        private val instance: SnakeBox
-
         internal constructor(context: Context) {
             instance = SnakeBox(context)
-            instance.message = context.getString(R.string.warning_empty_message)
         }
 
-        fun withMessage(message: String): Builder {
+        private val instance: SnakeBox
+
+        fun showShort(message: String) {
             instance.message = message
-            return this
-        }
-
-        fun showShort() {
             instance.displayShort()
         }
 

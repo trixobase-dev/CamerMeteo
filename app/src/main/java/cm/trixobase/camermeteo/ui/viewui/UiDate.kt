@@ -1,6 +1,5 @@
 package cm.trixobase.camermeteo.ui.viewui
 
-import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
 
@@ -38,7 +37,7 @@ class UiDate {
         fun withTemperature(temperature: Int): UiDate {
             this.temperature = temperature
             instance.temperatureToDisplay = "${temperature + 2}° / ${temperature - 2}°"
-            instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
+            //instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
             return instance
         }
 

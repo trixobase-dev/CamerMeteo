@@ -2,12 +2,9 @@
 
 package cm.trixobase.library.common.utils
 
-import android.Manifest
 import android.app.LocaleManager
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
@@ -16,8 +13,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
@@ -27,7 +22,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Calendar
 
-
 /*
  * Powered by Trixobase Enterprise on 06/04/26
  */
@@ -36,11 +30,12 @@ object Utils {
 
     object maths {
 
-        fun arroundDouble(value: Double): Double = BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
+        fun arroundDouble(value: Double): String =
+            BigDecimal(value).setScale(1, RoundingMode.HALF_UP).toString()
 
-        fun celsiusToFahrenheit(value: Double): Double = (value * (9/5)) + 32
+        fun celsiusToFahrenheit(temperature: Double): Double = (temperature * (9 / 5)) + 32
 
-        fun celsiusToKelvin(value: Double): Double = value + 273.15
+        fun celsiusToKelvin(temperature: Double): Double = temperature + 273.15
 
     }
 
@@ -223,9 +218,10 @@ object Utils {
 
         fun openBrowser(context: Context, url: String) {
             val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-            if (intent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(intent)
-            }
+            val shareIntent =
+                Intent.createChooser(intent, context.getString(R.string.trixobase_enterprise))
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(shareIntent)
         }
 
         fun sendMessageWhatsApp(context: Context) {
@@ -236,16 +232,6 @@ object Utils {
             val shareIntent = Intent.createChooser(intent, context.getString(R.string.write_us))
             shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(shareIntent)
-        }
-
-        fun stopApp(context: Context) {
-            val intent = Intent(context, ExitActivity::class.java)
-            intent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        or Intent.FLAG_ACTIVITY_NO_ANIMATION
-                        or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-            context.startActivity(intent)
         }
 
         fun shareText(context: Context, shareMessage: String) {
@@ -272,17 +258,14 @@ object Utils {
             }
         }
 
-        fun notify(context: Context, title: String, content: String, logo: Int) {
-            if (ContextCompat.checkSelfPermission(
-                    context, Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val notification = NotificationCompat.Builder(context, "trixobase_channel_id")
-                    .setContentTitle(title).setContentText(content).setSmallIcon(logo).build()
-                notificationManager.notify(1, notification)
-            }
+        fun stopApp(context: Context) {
+            val intent = Intent(context, ExitActivity::class.java)
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_NO_ANIMATION
+            )
+            context.startActivity(intent)
         }
 
         fun setLanguage(context: Context, language: String) {
@@ -292,7 +275,9 @@ object Utils {
                     LocaleList.getEmptyLocaleList() else LocaleList.forLanguageTags(language)
             } else {
                 val localeList = if (language == "fr")
-                    LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(language)
+                    LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(
+                    language
+                )
                 AppCompatDelegate.setApplicationLocales(localeList)
             }
         }

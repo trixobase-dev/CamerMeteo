@@ -10,36 +10,38 @@ import cm.trixobase.library.common.R
 
 class ToastBox {
 
-    private var context: Context
-
     private constructor(context: Context) {
         this.context = context
     }
 
-    private lateinit var message: String
+    private var context: Context
+    private lateinit var text: String
     private var duration: Int = 0
 
     class Builder {
 
-        private val instance: ToastBox
-
         internal constructor(context: Context) {
             instance = ToastBox(context)
-            instance.message = context.getString(R.string.warning_empty_message)
+            instance.text = context.getString(R.string.warning_empty_message)
             instance.duration = Toast.LENGTH_SHORT
         }
 
-        fun withMessage(message: String) : Builder{
-            instance.message = message
-            return this
-        }
+        private val instance: ToastBox
 
-        fun showLong() {
+        fun showSoonMessage() {
+            instance.text = instance.context.getString(R.string.warning_available_soon)
             instance.duration = Toast.LENGTH_LONG
             instance.display()
         }
 
-        fun showShort() {
+        fun showLong(message: String) {
+            instance.text = message
+            instance.duration = Toast.LENGTH_LONG
+            instance.display()
+        }
+
+        fun showShort(message: String) {
+            instance.text = message
             instance.duration = Toast.LENGTH_SHORT
             instance.display()
         }
@@ -55,7 +57,7 @@ class ToastBox {
     }
 
     private fun display() {
-        Toast.makeText(context, message, duration).show()
+        Toast.makeText(context, text, duration).show()
     }
 
 }

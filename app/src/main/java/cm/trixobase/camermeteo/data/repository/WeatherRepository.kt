@@ -10,7 +10,7 @@ import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.utils.NetworkResult
+import cm.trixobase.library.common.utils.RequestResult
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +22,9 @@ import kotlinx.coroutines.flow.flow
 
 class WeatherRepository {
 
-    private val api = AppModule.weatherApi
+    private val openMeteo = AppModule.weatherApi
 
-    fun getMyData(context: Context): Flow<NetworkResult<MutableMap<String, String>>> = flow {
+    fun getMyData(context: Context): Flow<RequestResult<MutableMap<String, String>>> = flow {
         val data = mutableMapOf<String, String>()
         data["language"] =
             Utils.process.get(context, AttributeNames.KEY_APP_LANGUAGE, Language.FRENCH.name)
@@ -38,12 +38,12 @@ class WeatherRepository {
             Utils.process.get(context, AttributeNames.KEY_APP_CITY, City.YAOUNDE.name)
         data["temperature"] =
             Utils.process.get(context, AttributeNames.KEY_APP_TEMPERATURE, Temperature.CELSIUS.name)
-        emit(NetworkResult.Success(data))
+        emit(RequestResult.Success(data))
     }
 
-    fun getWeather(city: City, language: String, units: String): Flow<NetworkResult<ApiResult>> = flow {
+    fun getWeather(city: City, language: String, units: String): Flow<RequestResult<ApiResult>> = flow {
         try {
-            val response = api.getWeather(
+            val response = openMeteo.getWeather(
                 lang = language,
                 units = Temperature.CELSIUS.units,
                 date = getCurrentDate(),
@@ -51,22 +51,22 @@ class WeatherRepository {
                 lon = city.lon
             )
             val result = when (response.code()) {
-                200 -> NetworkResult.Success(response.body())
-                else -> NetworkResult.Error(response.errorBody()?.source().toString())
+                200 -> RequestResult.Success(response.body())
+                else -> RequestResult.Error(response.errorBody()?.source().toString())
             }
             emit(result)
         } catch (e: Exception) {
-            emit(NetworkResult.Error(e.message!!))
+            emit(RequestResult.Error(e.message!!))
         }
     }
 
-    fun getDemo(): Flow<NetworkResult<ApiResult>> = flow {
+    fun getDemo(): Flow<RequestResult<ApiResult>> = flow {
         try {
             delay(1500)
             val weather = ApplicationManager.getWeatherDemo()
-            emit(NetworkResult.Success(weather))
+            emit(RequestResult.Success(weather))
         } catch (e: Exception) {
-            emit(NetworkResult.Error(e.message!!))
+            emit(RequestResult.Error(e.message!!))
         }
     }
 

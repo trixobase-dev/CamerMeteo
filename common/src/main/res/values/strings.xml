@@ -1,4 +1,7 @@
 <resources>
+    <string name="app_name" translatable="false">CamerMétéo</string>
+    <string name="app_slogan">La météo de nos régions</string>
+    <string name="trixobase_enterprise" translatable="false">Trixobase Enterprise</string>
     <string name="about">A propos</string>
     <string name="appearance">Apparence</string>
     <string name="back">Retour</string>
@@ -56,8 +59,8 @@
     <string name="your_region">Votre région</string>
     <string name="your_town">Votre ville</string>
     <string name="share_app_in">Partagez l\'application via</string>
-    <string name="warning_sun">Rappel soleil</string>
-    <string name="warning_rain">Alertes pluie</string>
+    <string name="warning_sun">Rappel canicule</string>
+    <string name="warning_rain">Alerte pluie</string>
     <string name="write_us">Nous écrire</string>
     <string name="weather_day">Météo du jour</string>
 

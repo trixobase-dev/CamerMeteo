@@ -6,13 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.repository.WeatherRepository
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.utils.NetworkResult
+import cm.trixobase.library.common.data.AppDatabase
+import cm.trixobase.library.common.data.repository.NotificationRepository
+import cm.trixobase.library.common.utils.RequestResult
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -28,8 +31,11 @@ class HomeViewModel : ViewModel() {
     val uiState: LiveData<HomeUiState> = _uiState
 
     fun getMyData(context: Context) {
+        val state = _uiState.value?: HomeUiState.started
+        val db = AppDatabase.getInstance(context)
+        state.notifications = NotificationRepository(db).fetchAll()
+
         viewModelScope.launch {
-            val state = _uiState.value?: HomeUiState.started
             repository.getMyData(context).collect {
                 val data = it.data!!
 
@@ -41,8 +47,14 @@ class HomeViewModel : ViewModel() {
                 val isLocalisation = data["gps"]!!.toBoolean()
                 val isDemo = data["demo"]!!.toBoolean()
 
-                if (state.isStarted || (state.city.name != city.name) || (state.isDemo != isDemo) || (state.isLocalisation != isLocalisation) || (state.temperature.name != temperature.name)) {
+                if (state.isStarted
+                    || (state.language.name != language.name)
+                    || (state.city.name != city.name)
+                    || (state.temperature.name != temperature.name)
+                    || (state.isLocalisation != isLocalisation)
+                    || (state.isDemo != isDemo) ) {
                     _uiState.value = HomeUiState(
+                        notifications = state.notifications,
                         language = language,
                         region = region,
                         city = city,
@@ -51,18 +63,17 @@ class HomeViewModel : ViewModel() {
                         isDemo = isDemo,
                         isLoading = true,
                     )
-                } else
-                    _uiState.value?.temperature = temperature
+                }
             }
         }
     }
 
     fun getWeatherData(context: Context) {
+        val stateHome = uiState.value!!
         viewModelScope.launch {
-            val stateHome = uiState.value!!
 
             if (!Utils.phone.hasInternet(context))
-                _uiState.value = stateHome.builder(context.getString(R.string.warning_internet_connection))
+                _uiState.value = stateHome.error(context.getString(R.string.warning_internet_connection))
             else
                 repository.getWeather(
                     language = stateHome.language.unit,
@@ -70,30 +81,32 @@ class HomeViewModel : ViewModel() {
                     units = stateHome.temperature.units
                 ).collect { result ->
                     _uiState.value = when (result) {
-                        is NetworkResult.Success ->
-                            stateHome.builder(result.data!!)
+                        is RequestResult.Success -> {
+                            val weather = result.data!!
+                            ApplicationManager.setWeatherNotification(context, weather)
+                            stateHome.update(weather)
+                        }
                         else ->
-                            stateHome.builder(result.error)
+                            stateHome.error(result.error)
                     }
                 }
         }
     }
 
     fun getWeatherDemo(context: Context) {
+        val stateHome = uiState.value!!
         viewModelScope.launch {
-            val stateHome = uiState.value!!
-
-            if (!Utils.phone.hasInternet(context))
-                _uiState.value = stateHome.builder(context.getString(R.string.warning_internet_connection))
-            else
-                repository.getDemo().collect { result ->
-                    _uiState.value = when (result) {
-                        is NetworkResult.Success ->
-                            stateHome.builder(result.data!!)
-                        else ->
-                            stateHome.builder(result.error)
+            repository.getDemo().collect { result ->
+                _uiState.value = when (result) {
+                    is RequestResult.Success -> {
+                        val weather = result.data!!
+                        ApplicationManager.setWeatherNotification(context, weather)
+                        stateHome.update(result.data!!)
                     }
+                    else ->
+                        stateHome.error(result.error)
                 }
+            }
         }
     }
 
