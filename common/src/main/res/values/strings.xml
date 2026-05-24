@@ -6,10 +6,10 @@
     <string name="appearance">Apparence</string>
     <string name="back">Retour</string>
     <string name="cancel">Annuler</string>
-    <string name="information" translatable="false">Information</string>
+    <string name="information">Information</string>
     <string name="humidity">Humidité</string>
     <string name="language">Langue</string>
-    <string name="menu" translatable="false">Menu</string>
+    <string name="menu">Menu</string>
     <string name="no">Non</string>
     <string name="place">Lieu</string>
     <string name="pressure">Préssion</string>
@@ -66,7 +66,7 @@
 
     <string name="my_city">Ma ville (%s)</string>
     <string name="thing_chosen">%s séléctionné</string>
-    <string name="share_app_message">Météo du Cameroun ou CamerMétéo. L\'application dédiée aux prévisions météorologiques pour les camerounais(es). Clic juste ici:\n\n%s</string>
+    <string name="share_app_message">Météo du Cameroun ou CamerMétéo. L\'application dédiée aux prévisions météorologiques pour les camerounais(es). Clic juste ici:  %s</string>
 
     <string name="warning_available_soon">Bientôt disponible.</string>
     <string name="warning_empty_message">Message vide.</string>

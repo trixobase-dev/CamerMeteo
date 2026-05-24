@@ -217,11 +217,9 @@ object Utils {
         }
 
         fun openBrowser(context: Context, url: String) {
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-            val shareIntent =
-                Intent.createChooser(intent, context.getString(R.string.trixobase_enterprise))
-            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(shareIntent)
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = url.toUri()
+            context.startActivity(intent)
         }
 
         fun sendMessageWhatsApp(context: Context) {

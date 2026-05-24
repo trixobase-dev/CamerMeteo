@@ -57,6 +57,8 @@ import cm.trixobase.camermeteo.ui.widget.MySubTitle
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
+import cm.trixobase.library.common.constants.Language
+import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.data.model.Notification
 import cm.trixobase.library.common.ui.widget.ToastBox
@@ -91,7 +93,7 @@ private fun MyContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MyTop(city = state.city, notifications = state.notifications, openDrawer = action)
+            MyTop(state = state, openDrawer = action)
 
             if (state.isLoading) {
                 CircularProgressIndicator(
@@ -127,12 +129,15 @@ private fun MyContent(
 }
 
 @Composable
-private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () -> Unit) {
+private fun MyTop(state: HomeUiState, openDrawer: () -> Unit) {
     val context = LocalContext.current.applicationContext
     var showNotifications by remember { mutableStateOf(false) }
     val isConnected = Utils.phone.hasInternet(context)
     val colorButton = MaterialTheme.colorScheme.secondaryContainer
     val colorTitle = MaterialTheme.colorScheme.onSurface
+
+    val city = state.city.display
+    
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -153,9 +158,7 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
                     ToastBox.builder(context).showSoonMessage()
                 }))
             Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorButton
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = colorButton),
                 modifier = Modifier,
                 onClick = {
                     val intent = Intent(context, RegionActivity::class.java)
@@ -171,7 +174,7 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    text = city.display,
+                    text = city,
                     fontSize = 22.sp,
                     color = colorTitle
                 )
@@ -193,7 +196,7 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
 
     MyNotifications(
         showNotifications,
-        notifications,
+        state.notifications,
         onDismiss = { showNotifications = false }
     )
 }
@@ -574,22 +577,25 @@ private fun MyNotifications(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DarkPreview() {
-    val weather = HomeUiWeather.builder(
-        apiResult = ApplicationManager.getWeatherDemo(),
-        temperature = Temperature.CELSIUS)
-        .build()
+    val state = HomeUiState(
+        language = Language.FRENCH,
+        region = Region.CENTRE,
+        city = City.YAOUNDE,
+        temperature = Temperature.CELSIUS,
+    )
+    state.update(ApplicationManager.getWeatherDemo())
     CamerMeteoTheme {
         Surface {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MyTop(city = City.GAROUA_BOULAI, notifications = listOf()) { }
-                MyWeatherPicture(weather)
-                MyWeatherDegree(weather)
-                //MyOverview(weather)
-                MyWeatherHours(weather)
-                MyWeatherShare(weather)
+                MyTop(state = state) { }
+                //MyWeatherPicture(state.weather)
+                //MyWeatherDegree(state.weather)
+                //MyOverview(state.weather)
+                //MyWeatherHours(state.weather)
+                //MyWeatherShare(state.weather)
             }
         }
     }
