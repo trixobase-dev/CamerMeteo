@@ -2,9 +2,6 @@ package cm.trixobase.camermeteo.ui.view.terms
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.webkit.JavascriptInterface
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,6 +80,7 @@ private fun MyContent(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            /*
             val webView = WebView(context)
             webView.settings.javaScriptEnabled = true
             webView.settings.builtInZoomControls = true
@@ -91,8 +89,9 @@ private fun MyContent(modifier: Modifier = Modifier) {
 
             webView.addJavascriptInterface(JavascriptInterface(), "Android")
             webView.loadUrl(URL_TERMS_AND_POLICIES)
-            //LocalActivity.current?.setContentView(webView)
-            //webView.loadUrl("file:///android_asset/app.html")
+            LocalActivity.current?.setContentView(webView)
+            webView.loadUrl("file:///android_asset/app.html")
+            */
         }
     }
 }

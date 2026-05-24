@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.region.RegionActivity
 import cm.trixobase.camermeteo.ui.viewui.UiTemp
@@ -57,8 +58,11 @@ import cm.trixobase.camermeteo.ui.widget.MySubTitle
 import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
+import cm.trixobase.library.common.constants.Language
+import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.data.model.Notification
+import cm.trixobase.library.common.ui.widget.MyPullToRefreshBox
 import cm.trixobase.library.common.ui.widget.ToastBox
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.delay
@@ -68,21 +72,24 @@ import kotlinx.coroutines.delay
  */
 
 @Composable
-fun Home(action: () -> Unit, viewModel: HomeViewModel) {
+fun Home(openDrawer: () -> Unit, viewModel: HomeViewModel) {
     CamerMeteoTheme {
-        MyContent(action, viewModel)
+        MyContent(openDrawer, viewModel)
     }
 }
 
 @Composable
 private fun MyContent(
-    action: () -> Unit,
+    openDrawer: () -> Unit,
     viewModel: HomeViewModel
 ) {
-    val context = LocalContext.current.applicationContext
     val scrollState = rememberScrollState()
+    val context = LocalContext.current.applicationContext
     val uiStateObserved = viewModel.uiState.observeAsState()
     val state = uiStateObserved.value!!
+
+    val location = if (Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false))
+        viewModel.location["city"]!! else state.city.display
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -91,7 +98,7 @@ private fun MyContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MyTop(city = state.city, notifications = state.notifications, openDrawer = action)
+            MyTop(state = state, location = location, openDrawer = openDrawer)
 
             if (state.isLoading) {
                 CircularProgressIndicator(
@@ -104,10 +111,10 @@ private fun MyContent(
             } else
                 state.apply {
                     if (!this.error.isEmpty())
-                        MyTextError(error = this.error)
+                        MyContentError(viewModel = viewModel, error = this.error)
                     else {
                         val weather = this.weather!!
-                        MyWeatherPicture(weather)
+                        MyWeatherPicture(weather, viewModel)
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -127,12 +134,23 @@ private fun MyContent(
 }
 
 @Composable
-private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () -> Unit) {
+fun MyContentError(viewModel: HomeViewModel, error: String) {
+    val context = LocalContext.current.applicationContext
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        MyPullToRefreshBox { viewModel.refreshData(context) }
+        MyTextError(error =error)
+    }
+}
+
+@Composable
+private fun MyTop(
+    state: HomeUiState,
+    location: String,
+    openDrawer: () -> Unit) {
     val context = LocalContext.current.applicationContext
     var showNotifications by remember { mutableStateOf(false) }
-    val isConnected = Utils.phone.hasInternet(context)
-    val colorButton = MaterialTheme.colorScheme.secondaryContainer
-    val colorTitle = MaterialTheme.colorScheme.onSurface
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -153,9 +171,7 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
                     ToastBox.builder(context).showSoonMessage()
                 }))
             Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorButton
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                 modifier = Modifier,
                 onClick = {
                     val intent = Intent(context, RegionActivity::class.java)
@@ -167,19 +183,19 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
                     modifier = Modifier.size(8.dp),
                     painter = painterResource(id = R.drawable.ic_circle),
                     contentDescription = "Circle",
-                    tint = if (isConnected) Color.Green else Color.Red
+                    tint = if (Utils.phone.hasInternet(context)) Color.Green else Color.Red
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    text = city.display,
+                    text = location,
                     fontSize = 22.sp,
-                    color = colorTitle
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
                     modifier = Modifier.size(15.dp),
                     painter = painterResource(id = R.drawable.ic_arrow_bottom),
                     contentDescription = "Arrow select",
-                    tint = colorTitle
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
             Image(
@@ -193,13 +209,14 @@ private fun MyTop(city: City, notifications: List<Notification>, openDrawer: () 
 
     MyNotifications(
         showNotifications,
-        notifications,
+        state.notifications,
         onDismiss = { showNotifications = false }
     )
 }
 
 @Composable
-private fun MyWeatherPicture(weather: HomeUiWeather) {
+private fun MyWeatherPicture(weather: HomeUiWeather, viewModel: HomeViewModel) {
+    val context = LocalContext.current.applicationContext
     var hour by remember { mutableStateOf( Utils.time.getCurrentHour()) }
     LaunchedEffect(key1 = hour) {
         while (true) {
@@ -211,6 +228,9 @@ private fun MyWeatherPicture(weather: HomeUiWeather) {
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
+        MyPullToRefreshBox {
+            viewModel.refreshData(context)
+        }
         MySection(hour)
         Column(
             modifier = Modifier
@@ -466,7 +486,7 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
             horizontalArrangement = Arrangement.Center
         ) {
             Column(
-                modifier = Modifier,
+                modifier = Modifier.width(180.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -483,7 +503,7 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
                 )
             }
             Button(
-                modifier = Modifier.padding(start = 15.dp),
+                modifier = Modifier.width(140.dp),
                 onClick = { Utils.phone.shareText(context, ApplicationManager.getWeatherToShare(context, weather.apiResult)) },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -571,25 +591,32 @@ private fun MyNotifications(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, locale = "it")
 @Composable
 private fun DarkPreview() {
-    val weather = HomeUiWeather.builder(
-        apiResult = ApplicationManager.getWeatherDemo(),
-        temperature = Temperature.CELSIUS)
-        .build()
+    val weather = ApplicationManager.getWeatherDemo()
+    val state = HomeUiState(
+        language = Language.FRENCH,
+        region = Region.CENTRE,
+        city = City.YAOUNDE,
+        temperature = Temperature.CELSIUS,
+    )
+    state.update(weather)
     CamerMeteoTheme {
         Surface {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MyTop(city = City.GAROUA_BOULAI, notifications = listOf()) { }
-                MyWeatherPicture(weather)
-                MyWeatherDegree(weather)
-                //MyOverview(weather)
-                MyWeatherHours(weather)
-                MyWeatherShare(weather)
+                //MyTop(state = state, location = state.city.display) { }
+                //MyWeatherPicture(state.weather)
+                //MyWeatherDegree(state.weather)
+                //MyOverview(state.weather)
+                //MyWeatherHours(state.weather)
+                MyWeatherShare(HomeUiWeather(
+                    apiResult = weather,
+                    temperature = Temperature.CELSIUS
+                ))
             }
         }
     }

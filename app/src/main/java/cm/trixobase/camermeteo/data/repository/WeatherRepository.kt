@@ -41,14 +41,14 @@ class WeatherRepository {
         emit(RequestResult.Success(data))
     }
 
-    fun getWeather(city: City, language: String, units: String): Flow<RequestResult<ApiResult>> = flow {
+    fun getWeather(language: String, latitude: String, longitude: String): Flow<RequestResult<ApiResult>> = flow {
         try {
             val response = openMeteo.getWeather(
                 lang = language,
                 units = Temperature.CELSIUS.units,
                 date = getCurrentDate(),
-                lat = city.lat,
-                lon = city.lon
+                lat = latitude,
+                lon = longitude
             )
             val result = when (response.code()) {
                 200 -> RequestResult.Success(response.body())

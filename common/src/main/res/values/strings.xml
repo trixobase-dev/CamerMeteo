@@ -2,16 +2,23 @@
     <string name="app_name" translatable="false">CamerMétéo</string>
     <string name="app_slogan">La météo de nos régions</string>
     <string name="trixobase_enterprise" translatable="false">Trixobase Enterprise</string>
+    <string name="trixobase_enterprise_location">Cameroun - Yaoundé</string>
+    <string name="trixobase_enterprise_phone_number" translatable="false">"(+237) 686 82 08 28"</string>
+    <string name="trixobase_enterprise_description">Entreprise fondée par une communauté d\'ingénieurs dans le domaine des Technologies de l\'Information et de la Communication pour la réalisation d\'applications android de pointe; Dédiées aux africains et au Cameroun en particulier.</string>
     <string name="about">A propos</string>
     <string name="appearance">Apparence</string>
     <string name="back">Retour</string>
     <string name="cancel">Annuler</string>
-    <string name="information" translatable="false">Information</string>
+    <string name="information">Information</string>
     <string name="humidity">Humidité</string>
     <string name="language">Langue</string>
-    <string name="menu" translatable="false">Menu</string>
+    <string name="location">Localisation</string>
+    <string name="menu">Menu</string>
+    <string name="notifications">Notifications</string>
     <string name="no">Non</string>
+    <string name="ok">Ok</string>
     <string name="place">Lieu</string>
+    <string name="plus">Plus</string>
     <string name="pressure">Préssion</string>
     <string name="settings">Paramètres</string>
     <string name="share">Partager</string>
@@ -21,6 +28,7 @@
     <string name="temperature">Température</string>
     <string name="today">Aujourd\'hui</string>
     <string name="visibility">Visibilité</string>
+    <string name="version">version</string>
     <string name="wind">Vent</string>
     <string name="yes">Oui</string>
 
@@ -66,7 +74,7 @@
 
     <string name="my_city">Ma ville (%s)</string>
     <string name="thing_chosen">%s séléctionné</string>
-    <string name="share_app_message">Météo du Cameroun ou CamerMétéo. L\'application dédiée aux prévisions météorologiques pour les camerounais(es). Clic juste ici:\n\n%s</string>
+    <string name="share_app_message">Météo du Cameroun ou CamerMétéo. L\'application dédiée aux prévisions météorologiques pour les camerounais(es). Clic juste ici:  %s</string>
 
     <string name="warning_available_soon">Bientôt disponible.</string>
     <string name="warning_empty_message">Message vide.</string>

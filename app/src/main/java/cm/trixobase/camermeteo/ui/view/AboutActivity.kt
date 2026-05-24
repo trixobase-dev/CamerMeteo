@@ -68,6 +68,7 @@ class AboutActivity : ApplicationActivity() {
 
     @Composable
     private fun MyContent(modifier: Modifier = Modifier) {
+        val context = LocalContext.current.applicationContext
         showDialog = remember { mutableStateOf(false) }
         val colors = MaterialTheme.colorScheme
 
@@ -97,7 +98,7 @@ class AboutActivity : ApplicationActivity() {
                             modifier = Modifier.size(120.dp)
                         )
                         Text(
-                            text = "version 1.0",
+                            text = context.getString(R.string.version) + " 1.0",
                             textAlign = TextAlign.Center,
                             color = colors.primary,
                             fontSize = 15.sp,
@@ -127,7 +128,7 @@ class AboutActivity : ApplicationActivity() {
                                             .padding(end = 5.dp)
                                     )
                                     Text(
-                                        text = "Plus",
+                                        text = context.getString(R.string.plus),
                                         fontSize = 17.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
@@ -144,10 +145,11 @@ class AboutActivity : ApplicationActivity() {
 
     @Composable
     fun MyDialogTrixo() {
-        val url = "https://trixobase.com/"
-        val description = "Entreprise fondée par une communauté d\'ingénieurs dans le domaine des Technologies de l\'Information et de la Communication pour la réalisation d\'applications android de pointe; Dédiées aux africains et au Cameroun en particulier."
-        val phoneNumber = "(+237) 686 82 08 28"
         val context = LocalContext.current.applicationContext
+        val url = "https://trixobase.com"
+        val location = context.getString(R.string.trixobase_enterprise_location)
+        val description = context.getString(R.string.trixobase_enterprise_description)
+        val phoneNumber = context.getString(R.string.trixobase_enterprise_phone_number)
 
         AlertDialog(
             containerColor = Color.Black,
@@ -182,7 +184,7 @@ class AboutActivity : ApplicationActivity() {
                             contentDescription = "Localisation")
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = "Cameroun - Yaoundé",
+                            text = location,
                             color = Color.White,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,)

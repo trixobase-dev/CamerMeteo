@@ -11,7 +11,7 @@ import cm.trixobase.library.common.constants.Temperature
 
 class HomeUiWeather {
 
-    private constructor(apiResult: ApiResult, temperature: Temperature) {
+    constructor(apiResult: ApiResult, temperature: Temperature) {
         this.apiResult = apiResult
         this.temperature = temperature
     }

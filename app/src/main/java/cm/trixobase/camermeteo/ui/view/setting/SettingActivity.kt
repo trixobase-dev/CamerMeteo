@@ -2,12 +2,12 @@
 
 package cm.trixobase.camermeteo.ui.view.setting
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -163,6 +164,7 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
+                    modifier = Modifier.width(170.dp),
                     text = getString(R.string.temperature_unity),
                     textAlign = TextAlign.Start
                 )
@@ -230,6 +232,7 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
+                    modifier = Modifier.width(170.dp),
                     text = getString(R.string.language),
                     textAlign = TextAlign.Start
                 )
@@ -270,7 +273,7 @@ class SettingActivity : ApplicationActivity() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
-            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = "Notifications")
+            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.notifications))
             Card(
                 modifier = Modifier.padding(top = 8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -291,6 +294,7 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyConfigNotificationSun(configNoteSun: Boolean) {
         val noteSunIsOn = remember { mutableStateOf(configNoteSun) }
+        val context = LocalContext.current.applicationContext
 
         Row(
             modifier = Modifier
@@ -319,8 +323,8 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
-                    //text = getString(R.string.warning_sun),
-                    text = "Rappel soleil",
+                    modifier = Modifier.width(170.dp),
+                    text = context.getString(R.string.warning_sun),
                     textAlign = TextAlign.Start
                 )
             }
@@ -370,6 +374,7 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
+                    modifier = Modifier.width(170.dp),
                     text = getString(R.string.warning_rain),
                     textAlign = TextAlign.Start
                 )
@@ -396,7 +401,7 @@ class SettingActivity : ApplicationActivity() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
-            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = "Localisation")
+            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.location))
             Card(
                 modifier = Modifier.padding(top = 8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -417,6 +422,7 @@ class SettingActivity : ApplicationActivity() {
     @Composable
     private fun MyConfigLocalisation(configLocalisation: Boolean) {
         val localisationAutoIsOn = remember { mutableStateOf(configLocalisation) }
+        val context = LocalContext.current.applicationContext
 
         Row(
             modifier = Modifier
@@ -445,7 +451,8 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
-                    text = getString(R.string.localisation_auto),
+                    modifier = Modifier.width(170.dp),
+                    text = context.getString(R.string.localisation_auto),
                     textAlign = TextAlign.Start
                 )
             }
@@ -495,6 +502,7 @@ class SettingActivity : ApplicationActivity() {
                     )
                 }
                 Text(
+                    modifier = Modifier.width(170.dp),
                     text = "Mode démo",
                     textAlign = TextAlign.Start
                 )
@@ -521,6 +529,7 @@ class SettingActivity : ApplicationActivity() {
         onConfirm: (Temperature) -> Unit,
         onDismiss: () -> Unit
     ) {
+        val context = LocalContext.current.applicationContext
         val temperature = Temperature.entries.filter { doGetConfigTemperature() == it.name }[0]
         var selectedOption by rememberSaveable { mutableStateOf(temperature.name) }
         val colors = MaterialTheme.colorScheme
@@ -531,7 +540,7 @@ class SettingActivity : ApplicationActivity() {
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = getString(R.string.temperature_unity),
+                        text = context.getString(R.string.temperature_unity),
                         textAlign = TextAlign.Center,
                         color = colors.primary
                     )
@@ -570,26 +579,30 @@ class SettingActivity : ApplicationActivity() {
                     }
                 },
                 confirmButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = {
-                            val t = Temperature.entries.filter { selectedOption == it.name }[0]
-                            onConfirm(t)
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text("Ok", color = colors.onPrimary)
+                    Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                        Button(
+                            modifier = Modifier.width(120.dp),
+                            onClick = {
+                                val t = Temperature.entries.filter { selectedOption == it.name }[0]
+                                onConfirm(t)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(context.getString(R.string.ok), color = colors.onPrimary)
+                        }
                     }
                 },
                 dismissButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(text = getString(R.string.cancel), color = colors.onSecondary)
+                    Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                        Button(
+                            modifier = Modifier.width(120.dp),
+                            onClick = { onDismiss() },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = context.getString(R.string.cancel), color = colors.onSecondary)
+                        }
                     }
                 }
             )
@@ -603,6 +616,7 @@ class SettingActivity : ApplicationActivity() {
         onConfirm: (Language) -> Unit,
         onDismiss: () -> Unit
     ) {
+        val context = LocalContext.current.applicationContext
         val language = Language.entries.filter { doGetConfigLanguage() == it.name }[0]
         var selectedOption by rememberSaveable { mutableStateOf(language.name) }
         val colors = MaterialTheme.colorScheme
@@ -613,7 +627,7 @@ class SettingActivity : ApplicationActivity() {
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = getString(R.string.language),
+                        text = context.getString(R.string.language),
                         textAlign = TextAlign.Center,
                         color = colors.primary
                     )
@@ -652,48 +666,48 @@ class SettingActivity : ApplicationActivity() {
                     }
                 },
                 confirmButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = {
-                            val l = Language.entries.filter { selectedOption == it.name }[0]
-                            onConfirm(l)
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text("Ok", color = colors.onPrimary)
+                    Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                        Button(
+                            modifier = Modifier.width(120.dp),
+                            onClick = {
+                                val l = Language.entries.filter { selectedOption == it.name }[0]
+                                onConfirm(l)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(context.getString(R.string.ok), color = colors.onPrimary)
+                        }
                     }
                 },
                 dismissButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(text = getString(R.string.cancel), color = colors.onSecondary)
+                    Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                        Button(
+                            modifier = Modifier.width(120.dp),
+                            onClick = { onDismiss() },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = context.getString(R.string.cancel), color = colors.onSecondary)
+                        }
                     }
                 }
             )
         }
     }
 
-    @Preview(showBackground = true)
+    @Preview(showBackground = true, locale = "it",
+        device = "spec:width=920px,height=1600px,dpi=440"
+    )
     @Composable
     private fun Preview() {
         ApplicationTheme {
             Surface {
-                MyNotification(configNoteSun = true, configNoteRain = true)
-            }
-        }
-    }
-
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    private fun SettingDarkPreview() {
-        ApplicationTheme {
-            Surface {
-                MyAppearance()
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    MyConfigNotificationSun(true)
+                    MyConfigLocalisation(true) }
             }
         }
     }

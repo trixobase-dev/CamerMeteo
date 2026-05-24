@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,7 +73,6 @@ import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 /*
  * Powered by Trixobase Enterprise on 01/04/26
  */
@@ -82,11 +82,22 @@ class MainActivity : ApplicationActivity() {
     private var viewModel = HomeViewModel()
     private var coroutineScope: CoroutineScope? = null
     private var drawerState: DrawerState? = null
-    private var showDialog = mutableStateOf(false)
+    private var showDialogExit = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[HomeViewModel::class]
+        /*
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                location.apply {
+                    viewModel.location["city"] = this.city
+                    viewModel.location["latitude"] = this.latitude
+                    viewModel.location["longitude"] = this.longitude
+                }
+            }
+        */
 
         setContent {
             CamerMeteoTheme {
@@ -105,7 +116,7 @@ class MainActivity : ApplicationActivity() {
     @Suppress("UseExpressionBody", "OVERRIDE_DEPRECATION", "deprecation")
     @SuppressLint("GestureBackNavigation", "MissingSuperCall")
     override fun onBackPressed() {
-        showDialog.value = true
+        showDialogExit.value = true
     }
 
     @Suppress("VariableNeverRead", "AssignedValueIsNeverRead")
@@ -139,42 +150,48 @@ class MainActivity : ApplicationActivity() {
 
     @Composable
     fun MyContent() {
-        showDialog = remember { mutableStateOf(false) }
-        MyDialogExit(showDialog.value)
+        showDialogExit = remember { mutableStateOf(false) }
+        MyDialogExit(showDialogExit.value)
     }
 
     @Composable
     fun MyDialogExit(isShowing: Boolean) {
+        val context = LocalContext.current.applicationContext
         val colors = MaterialTheme.colorScheme
         if (isShowing) {
             AlertDialog(
-                onDismissRequest = { showDialog.value = false },
+                onDismissRequest = { showDialogExit.value = false },
                 title = {
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = getString(R.string.warning_quit_application),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp),
+                        text = context.getString(R.string.warning_quit_application),
                         textAlign = TextAlign.Start,
                         color = colors.primary
                     )
                 },
                 confirmButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = { Utils.phone.stopApp(applicationContext) },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(getString(R.string.yes), color = colors.onPrimary)
+                    Box(modifier = Modifier.padding(horizontal = 15.dp)) {
+                        Button(
+                            modifier = Modifier.width(95.dp),
+                            onClick = { Utils.phone.stopApp(context) },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = context.getString(R.string.yes), color = colors.onPrimary)
+                        }
                     }
                 },
                 dismissButton = {
-                    Button(
-                        modifier = Modifier.width(95.dp),
-                        onClick = { showDialog.value = false },
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(text = getString(R.string.no), color = colors.onSecondary)
+                    Box(modifier = Modifier.padding(horizontal = 15.dp)) {
+                        Button(
+                            modifier = Modifier.width(95.dp),
+                            onClick = { showDialogExit.value = false },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = context.getString(R.string.no), color = colors.onSecondary)
+                        }
                     }
                 }
             )
@@ -208,7 +225,7 @@ class MainActivity : ApplicationActivity() {
                     navController = navController,
                     startDestination = Screens.Home.screen
                 ) {
-                    composable(Screens.Home.screen) { Home(action = { openDrawer() }, viewModel) }
+                    composable(Screens.Home.screen) { Home(openDrawer = { openDrawer() }, viewModel) }
                     composable(Screens.Policies.screen) { Terms(action = { backToHome(navController) })
                     }
                 }
@@ -476,19 +493,11 @@ class MainActivity : ApplicationActivity() {
         }
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    private fun PreviewTheme() {
-        CamerMeteoTheme {
-            MyDrawerHead()
-        }
-    }
-
-    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, locale = "de")
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
-            MyDrawerHead()
+            MyDialogExit(true)
         }
     }
 
