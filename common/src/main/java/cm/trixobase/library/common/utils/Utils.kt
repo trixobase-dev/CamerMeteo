@@ -5,6 +5,7 @@ package cm.trixobase.library.common.utils
 import android.app.LocaleManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
@@ -20,6 +21,7 @@ import cm.trixobase.library.common.R
 import cm.trixobase.library.common.ui.domain.ExitActivity
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.URLEncoder
 import java.util.Calendar
 
 /*
@@ -27,6 +29,9 @@ import java.util.Calendar
  */
 
 object Utils {
+
+    const val Trixobase_Phone_Number = "+237686820828"
+    const val Trixobase_Web_Site = "https://trixobase.com"
 
     object maths {
 
@@ -216,27 +221,35 @@ object Utils {
             return false
         }
 
-        fun openBrowser(context: Context, url: String) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = url.toUri()
+        fun launchCall(context: Context, phoneNumber: String = Trixobase_Phone_Number) {
+            context.startActivity(Intent(Intent.ACTION_DIAL, "tel:$phoneNumber".toUri()))
+        }
+
+        fun openBrowser(context: Context, url: String = Trixobase_Web_Site) {
+            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        }
+
+        fun sendMessageWhatsApp(context: Context, phoneNumber: String = Trixobase_Phone_Number, message: String = "From trixobase\'s application..") {
+            val intent: Intent = try {
+                Intent(Intent.ACTION_SEND).apply {
+                    this.type = "text/plain"
+                    this.putExtra(Intent.EXTRA_TEXT, message)
+                    this.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber)
+                    val info = context.packageManager.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA)
+                }
+            } catch (e: Exception) {
+                val text = URLEncoder.encode(message, "UTF-8")
+                val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$text"
+                Intent(Intent.ACTION_VIEW, url.toUri())
+            }
             context.startActivity(intent)
         }
 
-        fun sendMessageWhatsApp(context: Context) {
+        fun shareText(context: Context, text: String) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
-            intent.putExtra(Intent.EXTRA_TEXT, "")
             intent.type = "text/plain"
-            val shareIntent = Intent.createChooser(intent, context.getString(R.string.write_us))
-            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(shareIntent)
-        }
-
-        fun shareText(context: Context, shareMessage: String) {
-            val intent = Intent()
-            intent.action = Intent.ACTION_SEND
-            intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
-            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, text)
             val shareIntent = Intent.createChooser(intent, context.getString(R.string.share))
             shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(shareIntent)

@@ -146,7 +146,6 @@ class AboutActivity : ApplicationActivity() {
     @Composable
     fun MyDialogTrixo() {
         val context = LocalContext.current.applicationContext
-        val url = "https://trixobase.com"
         val location = context.getString(R.string.trixobase_enterprise_location)
         val description = context.getString(R.string.trixobase_enterprise_description)
         val phoneNumber = context.getString(R.string.trixobase_enterprise_phone_number)
@@ -191,12 +190,12 @@ class AboutActivity : ApplicationActivity() {
                     }
                     Row(
                         Modifier.fillMaxWidth().height(40.dp).clickable {
-                            Utils.phone.sendMessageWhatsApp(context)
+                            Utils.phone.launchCall(context)
                         },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            painterResource(id = R.drawable.ic_whatsapp),
+                            painterResource(id = R.drawable.ic_call),
                             contentDescription = "Service client")
                         Spacer(Modifier.width(12.dp))
                         Text(
@@ -207,7 +206,7 @@ class AboutActivity : ApplicationActivity() {
                     }
                     Row(
                         Modifier.fillMaxWidth().height(40.dp).clickable {
-                            Utils.phone.openBrowser(context, url)
+                            Utils.phone.openBrowser(context)
                         },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -216,7 +215,7 @@ class AboutActivity : ApplicationActivity() {
                             contentDescription = "web site")
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = url,
+                            text = "https://trixobase.com",
                             color = Color.White,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,)

@@ -264,6 +264,7 @@ class MainActivity : ApplicationActivity() {
 
         MyItemShare(context, myTextColor)
         MyItemRate(context, myTextColor)
+        MyItemWrite(context, myTextColor)
 
         MyLabel(getString(R.string.menu))
 
@@ -344,6 +345,33 @@ class MainActivity : ApplicationActivity() {
                 coroutineScope?.launch {
                     drawerState?.close()
                     Utils.phone.rateApp(context)
+                }
+            })
+    }
+
+    @Composable
+    private fun MyItemWrite(context: Context, myTextColor: Color) {
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = getString(R.string.write_us),
+                    color = myTextColor,
+                    fontSize = (14.5).sp
+                )
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(id = R.drawable.ic_whatsapp),
+                    contentDescription = "Write us",
+                    tint = myTextColor
+                )
+            },
+            selected = false,
+            onClick = {
+                coroutineScope?.launch {
+                    drawerState?.close()
+                    Utils.phone.sendMessageWhatsApp(context)
                 }
             })
     }
