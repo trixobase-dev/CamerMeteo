@@ -5,12 +5,14 @@ package cm.trixobase.library.common.utils
 import android.app.LocaleManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.os.LocaleList
 import android.preference.PreferenceManager
+import android.telephony.PhoneNumberUtils
 import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.appcompat.app.AppCompatDelegate
@@ -23,6 +25,8 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URLEncoder
 import java.util.Calendar
+import kotlin.io.encoding.Base64
+
 
 /*
  * Powered by Trixobase Enterprise on 06/04/26
@@ -168,37 +172,38 @@ object Utils {
 
     object process {
 
-        fun get(context: Context, key: String, defaultValue: String): String {
-            return PreferenceManager.getDefaultSharedPreferences(context)
+        fun encrypt(world: String): String = Base64.encode(source = world.toByteArray())
+
+        fun decrypt(worldCrypted: String): String = String(Base64.decode(source = worldCrypted))
+
+        fun get(context: Context, key: String, defaultValue: String): String = sharedPreferences(context)
                 .getString(key, defaultValue) ?: defaultValue
-        }
 
-        fun get(context: Context, key: String, defaultValue: Int): Int {
-            return PreferenceManager.getDefaultSharedPreferences(context).getInt(key, defaultValue)
-        }
+        fun get(context: Context, key: String, defaultValue: Int): Int = sharedPreferences(context)
+                .getInt(key, defaultValue)
 
-        fun get(context: Context, key: String, defaultValue: Boolean): Boolean {
-            return PreferenceManager.getDefaultSharedPreferences(context)
+        fun get(context: Context, key: String, defaultValue: Boolean): Boolean = sharedPreferences(context)
                 .getBoolean(key, defaultValue)
-        }
 
         fun set(context: Context, key: String, value: String) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit {
+            sharedPreferences(context).edit {
                 putString(key, value)
             }
         }
 
         fun set(context: Context, key: String, value: Int) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit {
+            sharedPreferences(context).edit {
                 putInt(key, value)
             }
         }
 
         fun set(context: Context, key: String, value: Boolean) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit {
+            sharedPreferences(context).edit {
                 putBoolean(key, value)
             }
         }
+
+        private fun sharedPreferences(context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)!!
 
     }
 
@@ -215,6 +220,12 @@ object Utils {
             for (i in info.indices) {
                 if (info[i]!!.state == NetworkInfo.State.CONNECTED) {
                     Log.d("NetworkCheck", "Available network: ${info[i].typeName}")
+                    //val ipProcess: Process = Thread.currentThread().exec("/system/bin/ping -c 1 8.8.8.8")
+                    //val exitValue = ipProcess.waitFor()
+                    //ipProcess.destroy()
+                    //val exitValue = 0
+                    //Runnable {}.run(exec)
+
                     return true
                 }
             }
@@ -222,27 +233,39 @@ object Utils {
         }
 
         fun launchCall(context: Context, phoneNumber: String = Trixobase_Phone_Number) {
-            context.startActivity(Intent(Intent.ACTION_DIAL, "tel:$phoneNumber".toUri()))
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = "tel:$phoneNumber".toUri()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
         }
 
         fun openBrowser(context: Context, url: String = Trixobase_Web_Site) {
-            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = url.toUri()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
         }
 
         fun sendMessageWhatsApp(context: Context, phoneNumber: String = Trixobase_Phone_Number, message: String = "From trixobase\'s application..") {
-            val intent: Intent = try {
-                Intent(Intent.ACTION_SEND).apply {
-                    this.type = "text/plain"
-                    this.putExtra(Intent.EXTRA_TEXT, message)
-                    this.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber)
-                    val info = context.packageManager.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA)
-                }
+            val number = PhoneNumberUtils.stripSeparators(phoneNumber)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.`package` = "com.whatsapp"
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET or Intent.FLAG_ACTIVITY_NEW_TASK
+            //intent.setComponent(ComponentName("com.whatsapp", "com.whatsapp.Conversation"))
+            intent.putExtra("jid", "$number@s.whatsapp.net")
+            intent.putExtra(Intent.EXTRA_TEXT, message)
+            intent.putExtra(Intent.EXTRA_PHONE_NUMBER, number)
+
+            try {
+                val pm = context.packageManager
+                pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                context.startActivity(intent)
             } catch (e: Exception) {
                 val text = URLEncoder.encode(message, "UTF-8")
                 val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$text"
-                Intent(Intent.ACTION_VIEW, url.toUri())
+                openBrowser(context, url)
             }
-            context.startActivity(intent)
         }
 
         fun shareText(context: Context, text: String) {

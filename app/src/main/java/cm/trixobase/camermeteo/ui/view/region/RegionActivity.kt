@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -93,7 +94,7 @@ class RegionActivity : ApplicationActivity() {
             modifier = Modifier.fillMaxSize(),
             columns = StaggeredGridCells.Fixed(2),
             contentPadding = PaddingValues(15.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(15.dp),
             verticalItemSpacing = 15.dp,
             userScrollEnabled = true
         ) {
@@ -101,11 +102,11 @@ class RegionActivity : ApplicationActivity() {
                 MyItemRegion(it)
             }
         }
-
     }
 
     @Composable
     private fun MyItemRegion(region: Region) {
+        val context = LocalContext.current.applicationContext
         Card(
             modifier = Modifier.clickable(onClick = { goToCitiesOf(region) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -115,7 +116,7 @@ class RegionActivity : ApplicationActivity() {
         ) {
             Column(
                 modifier = Modifier
-                    .width(140.dp)
+                    .width(155.dp)
                     .padding(5.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -126,10 +127,10 @@ class RegionActivity : ApplicationActivity() {
                 ) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = getString(region.display),
+                        text = context.getString(region.display),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.inverseSurface,
-                        fontSize = 19.sp,
+                        fontSize = 17.sp,
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,6 +153,7 @@ class RegionActivity : ApplicationActivity() {
     }
 
     @Preview(
+        locale = "it",
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         device = "spec:width=360dp,height=806dp,dpi=320"
     )

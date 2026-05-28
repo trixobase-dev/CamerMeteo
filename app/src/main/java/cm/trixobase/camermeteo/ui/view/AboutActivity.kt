@@ -121,7 +121,7 @@ class AboutActivity : ApplicationActivity() {
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Image(
-                                        painter = painterResource(id = R.drawable.ic_trixobase),
+                                        painter = painterResource(id = R.drawable.iv_trixobase),
                                         contentDescription = "Trixobase Logo",
                                         modifier = Modifier
                                             .size(25.dp)
@@ -163,7 +163,7 @@ class AboutActivity : ApplicationActivity() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(115.dp),
-                        painter = painterResource(id = R.drawable.ic_trixo_inc),
+                        painter = painterResource(id = R.drawable.iv_trixo_inc),
                         contentDescription = "Trixobase Enterprise Logo"
                     )
                     Text(
@@ -172,6 +172,7 @@ class AboutActivity : ApplicationActivity() {
                         lineHeight = 20.sp,
                         color = Color.White,
                         fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.akt)),
                         textAlign = TextAlign.Justify)
                     Spacer(Modifier.height(15.dp))
                     Row(
@@ -186,6 +187,7 @@ class AboutActivity : ApplicationActivity() {
                             text = location,
                             color = Color.White,
                             fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.roboto)),
                             textAlign = TextAlign.Center,)
                     }
                     Row(
@@ -202,6 +204,7 @@ class AboutActivity : ApplicationActivity() {
                             text = phoneNumber,
                             color = Color.White,
                             fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.roboto)),
                             textAlign = TextAlign.Center,)
                     }
                     Row(
@@ -218,6 +221,7 @@ class AboutActivity : ApplicationActivity() {
                             text = "https://trixobase.com",
                             color = Color.White,
                             fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.roboto)),
                             textAlign = TextAlign.Center,)
                     }
                 }

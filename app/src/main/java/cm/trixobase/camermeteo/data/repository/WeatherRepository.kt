@@ -6,6 +6,7 @@ import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.di.AppModule
 import cm.trixobase.camermeteo.domain.AttributeNames
+import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
@@ -41,7 +42,7 @@ class WeatherRepository {
         emit(RequestResult.Success(data))
     }
 
-    fun getWeather(language: String, latitude: String, longitude: String): Flow<RequestResult<ApiResult>> = flow {
+    fun getWeather(context: Context, language: String, latitude: String, longitude: String): Flow<RequestResult<ApiResult>> = flow {
         try {
             val response = openMeteo.getWeather(
                 lang = language,
@@ -52,12 +53,31 @@ class WeatherRepository {
             )
             val result = when (response.code()) {
                 200 -> RequestResult.Success(response.body())
+                401, 403 -> RequestResult.Error(context.getString(R.string.warning_connection_unauthorized))
+                in 500..505 -> RequestResult.Error(context.getString(R.string.warning_connection_internal_error))
                 else -> RequestResult.Error(response.errorBody()?.source().toString())
             }
             emit(result)
         } catch (e: Exception) {
-            emit(RequestResult.Error(e.message!!))
+            val message = e.message!!
+            val error = when {
+                message.contains("timed out", true)
+                    ->  context.getString(R.string.warning_connection_internet)
+                message.contains("unable to resolve host", true)
+                        -> context.getString(R.string.warning_connection_resolve_host)
+                message.contains("failed to connect", true)
+                        -> context.getString(R.string.warning_connection_failed)
+                else -> message
+            }
+            emit(RequestResult.Error(error))
         }
+    }
+
+    fun getNotification(context: Context): Flow<RequestResult<MutableMap<String, String>>> = flow {
+        val data = mutableMapOf<String, String>()
+        data["notifications"] =
+            Utils.process.get(context, AttributeNames.KEY_APP_NOTIFICATIONS, "")
+        emit(RequestResult.Success(data))
     }
 
     fun getDemo(): Flow<RequestResult<ApiResult>> = flow {

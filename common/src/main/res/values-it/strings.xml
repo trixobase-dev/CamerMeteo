@@ -56,5 +56,5 @@
     <string name="warning_available_soon">Prossimamente.</string>
     <string name="warning_empty_message">Messaggio vuoto.</string>
     <string name="warning_quit_application">Vuoi uscire dall\'applicazione?</string>
-    <string name="warning_internet_connection">Verifica la tua connessione internet.</string>
+    <string name="warning_connection_internet">Verifica la tua connessione internet.</string>
 </resources>

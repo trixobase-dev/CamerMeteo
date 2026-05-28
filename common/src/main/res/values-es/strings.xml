@@ -25,7 +25,7 @@
     <string name="warning_available_soon">Muy pronto.</string>
     <string name="warning_empty_message">Mensaje vacío.</string>
     <string name="warning_quit_application">¿Desea salir de la aplicación?</string>
-    <string name="warning_internet_connection">Por favor, compruebe su conexión a internet.</string>
+    <string name="warning_connection_internet">Por favor, compruebe su conexión a internet.</string>
     <string name="appearance">Apariencia</string>
     <string name="back">Atrás</string>
     <string name="cancel">Cancelar</string>

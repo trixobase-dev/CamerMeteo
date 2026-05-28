@@ -61,6 +61,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.home.Home
 import cm.trixobase.camermeteo.ui.view.home.HomeViewModel
@@ -87,17 +88,8 @@ class MainActivity : ApplicationActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[HomeViewModel::class]
-        /*
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                location.apply {
-                    viewModel.location["city"] = this.city
-                    viewModel.location["latitude"] = this.latitude
-                    viewModel.location["longitude"] = this.longitude
-                }
-            }
-        */
+        viewModel.location = ApplicationManager.getLocation(this)
+        //ApplicationManager.startService(this)
 
         setContent {
             CamerMeteoTheme {

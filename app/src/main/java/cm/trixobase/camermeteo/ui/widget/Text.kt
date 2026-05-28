@@ -64,7 +64,7 @@ fun MyTextError(modifier: Modifier = Modifier, error: String) {
 private fun DarkPreview() {
     ApplicationTheme {
         Surface {
-            MySubTitle("Exemple de text")
+            MyTextError(error = "Exemple de text")
         }
     }
 }

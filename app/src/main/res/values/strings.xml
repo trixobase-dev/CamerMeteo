@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">CamerMétéo</string>
+
+    <string name="notification_rain_1_title">Forte pluie et vents forts</string>
+    <string name="notification_rain_1_content">N\'oublie pas ton parapluie molah.</string>
+
+    <string name="notification_sun_1_title">Ciel dégagé</string>
+    <string name="notification_sun_1_content">Comby, n\'oublie surtout pas de beaucoup boire d\'eau. Va faite très chaud aujourd\'hui.</string>
 </resources>

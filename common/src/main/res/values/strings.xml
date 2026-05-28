@@ -8,6 +8,7 @@
     <string name="about">A propos</string>
     <string name="appearance">Apparence</string>
     <string name="back">Retour</string>
+    <string name="country_cameroun">Cameroun</string>
     <string name="cancel">Annuler</string>
     <string name="information">Information</string>
     <string name="humidity">Humidité</string>
@@ -20,6 +21,7 @@
     <string name="place">Lieu</string>
     <string name="plus">Plus</string>
     <string name="pressure">Préssion</string>
+    <string name="retry">Réessayer</string>
     <string name="settings">Paramètres</string>
     <string name="share">Partager</string>
     <string name="rain">Pluie</string>
@@ -76,8 +78,14 @@
     <string name="thing_chosen">%s séléctionné</string>
     <string name="share_app_message">Météo du Cameroun ou CamerMétéo. L\'application dédiée aux prévisions météorologiques pour les camerounais(es). Clic juste ici:  %s</string>
 
+    <string name="warning_information_title">Oups, un problème est survenu !</string>
+    <string name="warning_empty_notification">Aucune notifiactions recçus.</string>
     <string name="warning_available_soon">Bientôt disponible.</string>
     <string name="warning_empty_message">Message vide.</string>
     <string name="warning_quit_application">Souhaitez-vous quitter l\'application ?</string>
-    <string name="warning_internet_connection">Veuillez vérifier votre connexion internet.</string>
+    <string name="warning_connection_unauthorized">Vous n\'êtes pas autorisé à acccéder à cette resource.</string>
+    <string name="warning_connection_failed">Notre serveur met trop de temps à répondre. Veuillez vérifier votre accès à internet.</string>
+    <string name="warning_connection_internet">Veuillez vérifier votre accès à internet.</string>
+    <string name="warning_connection_resolve_host">Impossible de joindre notre serveur. Veuillez vérifier votre connexion internet.</string>
+    <string name="warning_connection_internal_error">Erreur serveur, veuillez contacter Trixobase Enterprise.</string>
 </resources>

@@ -1,14 +1,22 @@
+@file:Suppress("unused")
+
 package cm.trixobase.camermeteo
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.camermeteo.data.model.Sys
 import cm.trixobase.camermeteo.data.model.Weather
 import cm.trixobase.camermeteo.data.model.Wind
 import cm.trixobase.camermeteo.domain.AttributeNames
+import cm.trixobase.camermeteo.domain.NotificationWeather
+import cm.trixobase.camermeteo.service.MyService
+import cm.trixobase.camermeteo.ui.view.MainActivity
+import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.utils.MyNotification
+import cm.trixobase.library.common.utils.NotificationProcess
 import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
 
@@ -20,16 +28,45 @@ class ApplicationManager : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MyNotification.builder(this)
-            .buildChannel(
+        NotificationProcess.builder(this)
+            .setChannel(
                 AttributeNames.CHANNEL_ID_WEATHER_SUN,
-                AttributeNames.CHANNEL_WEATHER_SUN)
-            .buildChannel(
+                getString(cm.trixobase.library.common.R.string.warning_sun))
+            .setChannel(
                 AttributeNames.CHANNEL_ID_WEATHER_RAIN,
-                AttributeNames.CHANNEL_WEATHER_RAIN)
+                getString(cm.trixobase.library.common.R.string.warning_rain))
     }
 
     companion object {
+
+        fun startService(context: Context) {
+            if (!MyService.isRunning)
+                context.startService(Intent(context, MyService::class.java))
+        }
+
+        fun stopService(context: Context) {
+            if (MyService.isRunning)
+                context.stopService(Intent(context, MyService::class.java))
+        }
+
+        fun getLocation(context: Context): MutableMap<String, String> {
+            val location = mutableMapOf<String, String>()
+            location["city"] = context.getString(cm.trixobase.library.common.R.string.country_cameroun)
+            location["latitude"] = City.YAOUNDE.lon
+            location["longitude"] = City.YAOUNDE.lon
+            /*
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    location.apply {
+                        location["city"] = this.city
+                        location["latitude"] = this.latitude
+                        location["longitude"] = this.longitude
+                    }
+                }
+            */
+            return location
+        }
 
         fun getWeatherDemo(): ApiResult {
             return ApiResult(
@@ -63,26 +100,61 @@ class ApplicationManager : Application() {
         }
 
         fun setWeatherNotification(context: Context, weather: ApiResult) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK }
+            val pendingIntent: PendingIntent =
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
             val time = Calendar.getInstance()
             time.timeInMillis = weather.dt
+
             val rainIsOn = Utils.process.get(context, AttributeNames.KEY_APP_NOTIFICATION_RAIN, true)
             val sunIsOn = Utils.process.get(context, AttributeNames.KEY_APP_NOTIFICATION_SUN, true)
 
-            time.add(Calendar.SECOND, 5)
             val description = weather.weather[0].main
-            if (description.contains("rain", true) && rainIsOn)
-                MyNotification.builder(context)
-                    .setText("Forte pluie et vents forts", "N\'oublie pas ton parapluie molah.")
+            if (description.contains("rain", true) && rainIsOn) {
+                val notification = getRandomNotification(context = context, type = "rain")
+                time.add(Calendar.MINUTE, 3)
+                NotificationProcess.builder(context)
+                    .setText(
+                        tickerTitle = getTitleTicker(context, notification.type),
+                        title = context.getString(notification.title),
+                        content = context.getString(notification.content)
+                    )
+                    .setPictures(R.drawable.iv_logo, R.drawable.iv_logo_ticker)
                     .setTime(time.timeInMillis)
-                    .build(AttributeNames.CHANNEL_ID_WEATHER_RAIN)
+                    .notify(AttributeNames.CHANNEL_ID_WEATHER_RAIN, pendingIntent)
+            }
 
-            time.add(Calendar.MINUTE, 2)
-            if (description.contains("sun", true) && sunIsOn)
-                MyNotification.builder(context)
-                    .setText("Ciel dégagé", "Comby, n\'oublie surtout pas de beaucoup boire d\'eau. Va faite très chaud aujourd\'hui.")
+            if (description.contains("sun", true) && sunIsOn) {
+                val notification = getRandomNotification(context = context, type = "sun")
+                time.add(Calendar.MINUTE, 10)
+                NotificationProcess.builder(context)
+                    .setText(
+                        tickerTitle = getTitleTicker(context, notification.type),
+                        title = context.getString(notification.title),
+                        content = context.getString(notification.content)
+                    )
+                    .setPictures(R.drawable.iv_logo, R.drawable.iv_logo_ticker)
                     .setTime(time.timeInMillis)
-                    .build(AttributeNames.CHANNEL_ID_WEATHER_SUN)
+                    .notify(AttributeNames.CHANNEL_ID_WEATHER_SUN, pendingIntent)
+            }
 
+        }
+
+        private fun getRandomNotification(context: Context, type: String): NotificationWeather {
+            var i = 0
+            var notifications = Utils.process.get(context, AttributeNames.KEY_APP_NOTIFICATIONS, "")
+            val notification = NotificationWeather.entries.filter { type == it.type }.apply { i =(0..<this.size).random() }[i]
+            notifications += if (notifications.isEmpty()) notification.name else ",${notification.name}"
+            Utils.process.set(context, AttributeNames.KEY_APP_NOTIFICATIONS, notifications)
+            return notification
+        }
+
+        private fun getTitleTicker(context: Context, type: String): String {
+            return if (type == "sun")
+                context.getString(cm.trixobase.library.common.R.string.warning_sun)
+            else context.getString(cm.trixobase.library.common.R.string.warning_rain)
         }
 
         fun getWeatherToShare(c: Context, apiResult: ApiResult): String {

@@ -17,6 +17,7 @@
     <string name="about">About us</string>
     <string name="appearance">Appearance</string>
     <string name="back">Back</string>
+    <string name="country_cameroun">Cameroon</string>
     <string name="cancel">Cancel</string>
     <string name="pressure">Pressure</string>
     <string name="settings">Settings</string>
@@ -33,7 +34,7 @@
     <string name="warning_quit_application">Do you want to leave the application?</string>
     <string name="share_app_message">Cameroon Weather or CamerMétéo. The app dedicated to weather forecasts for Cameroonians. Click right here: %s</string>
     <string name="warning_available_soon">Coming soon.</string>
-    <string name="warning_internet_connection">Please check your internet connection.</string>
+    <string name="warning_connection_internet">Please check your internet connection.</string>
 
     <string name="region_cm_adamaoua">Adamaoua</string>
     <string name="region_cm_center">Center</string>

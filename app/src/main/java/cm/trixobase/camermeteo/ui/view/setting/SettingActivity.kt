@@ -184,7 +184,7 @@ class SettingActivity : ApplicationActivity() {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     tint = colors.onSurfaceVariant,
-                    contentDescription = "Temperature unit"
+                    contentDescription = "Temperature icon"
                 )
             }
         }
@@ -252,7 +252,7 @@ class SettingActivity : ApplicationActivity() {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     tint = colors.onSurfaceVariant,
-                    contentDescription = "Temperature unit"
+                    contentDescription = "Language icon"
                 )
             }
         }
@@ -452,7 +452,7 @@ class SettingActivity : ApplicationActivity() {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_map_target),
-                        contentDescription = "Map icon"
+                        contentDescription = "Target icon"
                     )
                 }
                 Text(
@@ -503,7 +503,7 @@ class SettingActivity : ApplicationActivity() {
                     Image(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.iv_icon_demo),
-                        contentDescription = "Sun icon"
+                        contentDescription = "Demo icon"
                     )
                 }
                 Text(

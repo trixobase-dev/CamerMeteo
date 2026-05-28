@@ -33,7 +33,7 @@ import cm.trixobase.library.common.R
  */
 
 @Composable
-fun MyPullToRefreshBox(
+fun RefreshBox(
     list: List<String> = listOf(),
     isRefreshing: Boolean = false,
     onRefresh: () -> Unit,

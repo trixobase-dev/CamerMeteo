@@ -1,4 +1,4 @@
-package cm.trixobase.camermeteo.ui.viewui
+package cm.trixobase.camermeteo.ui.view.home
 
 import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.library.common.constants.Temperature
@@ -9,7 +9,7 @@ import java.util.Calendar
  * Powered by Trixobase Enterprise on 03/04/26
  */
 
-class UiTemp {
+class HomeUiWeatherHour {
 
     private constructor()
 
@@ -24,7 +24,7 @@ class UiTemp {
             instance.temperature = 27
         }
 
-        private val instance = UiTemp()
+        private val instance = HomeUiWeatherHour()
         var hour: Int = 0
 
         fun withHour(hour: Int): Builder {
@@ -33,7 +33,7 @@ class UiTemp {
             return this
         }
 
-        fun withTemperature(temperature: Int): UiTemp {
+        fun withTemperature(temperature: Int): HomeUiWeatherHour {
             instance.temperature = temperature
             instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
             return instance
@@ -53,10 +53,10 @@ class UiTemp {
             return Builder()
         }
 
-        fun getAll(min: Double, max: Double, unity: Temperature): List<UiTemp> {
+        fun getAll(min: Double, max: Double, unity: Temperature): List<HomeUiWeatherHour> {
             val cH = Utils.time.currentDate().get(Calendar.HOUR_OF_DAY)
             val h = if (cH > 10) 10 else cH
-            val temps = mutableListOf<UiTemp>()
+            val temps = mutableListOf<HomeUiWeatherHour>()
             for (i in h..23) {
                 temps.add(
                     builder()

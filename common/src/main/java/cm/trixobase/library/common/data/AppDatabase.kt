@@ -1,20 +1,22 @@
+@file:Suppress("unused")
+
 package cm.trixobase.library.common.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import cm.trixobase.library.common.data.datasource.NotificationDao
-import cm.trixobase.library.common.data.model.Notification
+import cm.trixobase.library.common.data.datasource.AccountDao
+import cm.trixobase.library.common.data.model.Account
 
 /*
  * Powered by Trixobase Enterprise on 22/05/26
  */
 
-@Database(entities = [(Notification::class)], version = 1)
+@Database(entities = [(Account::class)], version = 1)
 abstract class AppDatabase: RoomDatabase() {
 
-    abstract fun notificationDao(): NotificationDao
+    abstract fun accountDao(): AccountDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

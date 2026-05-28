@@ -14,9 +14,6 @@ import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.data.AppDatabase
-import cm.trixobase.library.common.data.model.Notification
-import cm.trixobase.library.common.data.repository.NotificationRepository
 import cm.trixobase.library.common.utils.RequestResult
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.launch
@@ -28,22 +25,19 @@ import kotlinx.coroutines.launch
 @OptIn(InternalComposeApi::class)
 class HomeViewModel : ViewModel() {
 
-    val location = mutableMapOf<String, String>()
     private val repository = WeatherRepository()
+    var location = mutableMapOf<String, String>()
     private val _uiState = MutableLiveData<HomeUiState>()
     val uiState: LiveData<HomeUiState> = _uiState
+    private val _notifications = MutableLiveData<Set<String>>()
+    val notifications: LiveData<Set<String>> = _notifications
 
     fun refreshData(context: Context) {
         viewModelScope.launch {
             repository.getMyData(context).collect {
-                val data = it.data!!
-                val notifications =
-                    NotificationRepository(AppDatabase.getInstance(context)).fetchAll()
-
-                _uiState.value = buildState(data, notifications)
+                _uiState.value = buildState(it.data!!)
             }
         }
-
     }
 
     fun getMyData(context: Context) {
@@ -51,13 +45,9 @@ class HomeViewModel : ViewModel() {
             val state = _uiState.value ?: HomeUiState.started
             repository.getMyData(context).collect {
                 val data = it.data!!
-                val notifications =
-                    NotificationRepository(AppDatabase.getInstance(context)).fetchAll()
 
-                val language = Language.entries.filter { d -> data["language"]!! == d.name }[0]
                 val city = City.entries.filter { d -> data["city"]!! == d.name }[0]
-                val temperature =
-                    Temperature.entries.filter { d -> data["temperature"]!! == d.name }[0]
+                val temperature = Temperature.entries.filter { d -> data["temperature"]!! == d.name }[0]
 
                 val isLocalisation = data["gps"]!!.toBoolean()
                 val isDemo = data["demo"]!!.toBoolean()
@@ -68,7 +58,7 @@ class HomeViewModel : ViewModel() {
                     || (state.isLocalisation != isLocalisation)
                     || (state.isDemo != isDemo)
                 ) {
-                    _uiState.value = buildState(data, notifications)
+                    _uiState.value = buildState(data)
                 }
             }
         }
@@ -77,14 +67,14 @@ class HomeViewModel : ViewModel() {
     fun getWeatherData(context: Context) {
         viewModelScope.launch {
             val state = uiState.value!!
-            val locationIsOn =
-                Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false)
+            val locationIsOn = Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false)
             val latitude = if (locationIsOn) location["latitude"]!! else state.city.lat
             val longitude = if (locationIsOn) location["longitude"]!! else state.city.lon
 
             if (!Utils.phone.hasInternet(context)) _uiState.value =
-                state.error(context.getString(R.string.warning_internet_connection))
+                state.error(context.getString(R.string.warning_connection_internet))
             else repository.getWeather(
+                context = context,
                 language = state.language.unit,
                 latitude = latitude,
                 longitude = longitude
@@ -95,8 +85,22 @@ class HomeViewModel : ViewModel() {
                         ApplicationManager.setWeatherNotification(context, weather)
                         state.update(weather)
                     }
-
                     else -> state.error(result.error)
+                }
+            }
+        }
+    }
+
+    fun getNotificationData(context: Context) {
+        viewModelScope.launch {
+            repository.getNotification(context).collect { result ->
+                _notifications.value = when (result) {
+                    is RequestResult.Success -> {
+                        val notes = mutableSetOf("")
+                        result.data!!["notifications"]!!.split(",").forEach { notes.add(it) }
+                        notes
+                    }
+                    else -> setOf()
                 }
             }
         }
@@ -110,21 +114,16 @@ class HomeViewModel : ViewModel() {
                     is RequestResult.Success -> {
                         val weather = result.data!!
                         ApplicationManager.setWeatherNotification(context, weather)
-                        state.update(result.data!!)
+                        state.update(weather)
                     }
-
                     else -> state.error(result.error)
                 }
             }
         }
     }
 
-    private fun buildState(
-        data: MutableMap<String, String>,
-        notifications: List<Notification>
-    ): HomeUiState {
+    private fun buildState(data: MutableMap<String, String>): HomeUiState {
         return HomeUiState(
-            notifications = notifications,
             language = Language.entries.filter { d -> data["language"]!! == d.name }[0],
             region = Region.entries.filter { d -> data["region"]!! == d.name }[0],
             city = City.entries.filter { d -> data["city"]!! == d.name }[0],

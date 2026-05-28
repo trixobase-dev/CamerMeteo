@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -26,10 +27,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,19 +55,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.domain.AttributeNames
+import cm.trixobase.camermeteo.domain.NotificationWeather
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.region.RegionActivity
-import cm.trixobase.camermeteo.ui.viewui.UiTemp
+import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.camermeteo.ui.widget.MySubTitle
-import cm.trixobase.camermeteo.ui.widget.MyTextError
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.data.model.Notification
-import cm.trixobase.library.common.ui.widget.MyPullToRefreshBox
-import cm.trixobase.library.common.ui.widget.ToastBox
+import cm.trixobase.library.common.ui.widget.MyContentError
+import cm.trixobase.library.common.ui.widget.MyTextErrorSimple
+import cm.trixobase.library.common.ui.widget.RefreshBox
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.delay
 
@@ -83,7 +87,6 @@ private fun MyContent(
     openDrawer: () -> Unit,
     viewModel: HomeViewModel
 ) {
-    val scrollState = rememberScrollState()
     val context = LocalContext.current.applicationContext
     val uiStateObserved = viewModel.uiState.observeAsState()
     val state = uiStateObserved.value!!
@@ -98,7 +101,7 @@ private fun MyContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MyTop(state = state, location = location, openDrawer = openDrawer)
+            MyTop(viewModel = viewModel, location = location, openDrawer = openDrawer)
 
             if (state.isLoading) {
                 CircularProgressIndicator(
@@ -111,8 +114,11 @@ private fun MyContent(
             } else
                 state.apply {
                     if (!this.error.isEmpty())
-                        MyContentError(viewModel = viewModel, error = this.error)
+                        MyContentError(error = this.error) {
+                            viewModel.refreshData(context)
+                        }
                     else {
+                        val scrollState = rememberScrollState()
                         val weather = this.weather!!
                         MyWeatherPicture(weather, viewModel)
                         Column(
@@ -133,20 +139,10 @@ private fun MyContent(
     }
 }
 
-@Composable
-fun MyContentError(viewModel: HomeViewModel, error: String) {
-    val context = LocalContext.current.applicationContext
-    Box(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        MyPullToRefreshBox { viewModel.refreshData(context) }
-        MyTextError(error =error)
-    }
-}
-
+@Suppress("AssignedValueIsNeverRead")
 @Composable
 private fun MyTop(
-    state: HomeUiState,
+    viewModel: HomeViewModel,
     location: String,
     openDrawer: () -> Unit) {
     val context = LocalContext.current.applicationContext
@@ -165,11 +161,9 @@ private fun MyTop(
         ) {
             Image(
                 painterResource(id = R.drawable.iv_icon_cloche),
-                contentDescription = "Notification",
-                modifier = Modifier.clickable(onClick = {
-                    //showNotifications = true
-                    ToastBox.builder(context).showSoonMessage()
-                }))
+                contentDescription = "Image alarm",
+                modifier = Modifier.clickable(onClick = { showNotifications = true })
+            )
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                 modifier = Modifier,
@@ -208,8 +202,8 @@ private fun MyTop(
     }
 
     MyNotifications(
+        viewModel,
         showNotifications,
-        state.notifications,
         onDismiss = { showNotifications = false }
     )
 }
@@ -226,21 +220,20 @@ private fun MyWeatherPicture(weather: HomeUiWeather, viewModel: HomeViewModel) {
     }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(180.dp).padding(vertical = 15.dp)
     ) {
-        MyPullToRefreshBox {
+        RefreshBox {
             viewModel.refreshData(context)
         }
         MySection(hour)
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 15.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
+            MyLine(Modifier.width(30.dp).height(3.dp))
             Image(
-                modifier = Modifier.size(110.dp),
+                modifier = Modifier.size(160.dp).padding(top = 35.dp),
                 painter = painterResource(id = weather.getMainPicture()),
                 contentDescription = "Weather day"
             )
@@ -257,7 +250,7 @@ private fun MyWeatherDegree(weather: HomeUiWeather) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .padding(bottom = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -271,7 +264,9 @@ private fun MyWeatherDegree(weather: HomeUiWeather) {
                 textAlign = TextAlign.Center,
                 color = colorWhite)
             Text(
-                modifier= Modifier.width(230.dp).align(Alignment.BottomEnd),
+                modifier= Modifier
+                    .width(230.dp)
+                    .align(Alignment.BottomEnd),
                 text = weather.getUnity(),
                 fontSize = 45.sp,
                 fontWeight = FontWeight.Bold,
@@ -463,7 +458,7 @@ private fun MyWeatherHours(weather: HomeUiWeather) {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(weather.getDetails()) { temp ->
-                MyItemHour(temp = temp)
+                MyItemWeatherHour(temp = temp)
             }
         }
     }
@@ -518,8 +513,121 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyItemHour(temp: UiTemp) {
+private fun MyNotifications(
+    viewModel: HomeViewModel,
+    showNotifications: Boolean,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current.applicationContext
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val notificationState = viewModel.notifications.observeAsState()
+    val notifications = notificationState.value?: listOf()
+    viewModel.getNotificationData(context)
+
+    if (showNotifications) {
+        ModalBottomSheet(
+            modifier = Modifier.wrapContentHeight(),
+            sheetState = sheetState,
+            onDismissRequest = { onDismiss() }
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 15.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(id = R.drawable.iv_icon_cloche),
+                    contentDescription = "Icon alarm"
+                )
+                Text(
+                    modifier = Modifier.padding(start = 5.dp),
+                    text = context.getString(R.string.notifications),
+                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+
+            val notes = mutableListOf<NotificationWeather>()
+            notifications.forEach { name ->
+                val filtersNote = NotificationWeather.entries.filter { name == it.name }
+                if (filtersNote.isNotEmpty())
+                    notes.add(filtersNote[0])
+            }
+
+            if (notes.isNotEmpty())
+                notes.forEach { notification ->
+                    MyItemNotification(notification)
+                }
+            else MyTextErrorSimple(context.getString(R.string.warning_empty_notification))
+        }
+    }
+}
+
+@Composable
+private fun MyItemNotification(notification: NotificationWeather) {
+    val context = LocalContext.current.applicationContext
+
+    Column (
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+        horizontalAlignment = Alignment.Start,
+    )  {
+        Row(
+            modifier = Modifier.padding(5.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.Top
+        ) {
+            Box(
+                modifier = Modifier.size(30.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(10.dp),
+                    painter = painterResource(id = R.drawable.ic_circle),
+                    contentDescription = "Circle",
+                    tint = Color(0xFF046E1E)
+                )
+            }
+            Column(
+                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = if ("sun" == notification.type) R.drawable.iv_icon_sun else R.drawable.iv_icon_rain),
+                        contentDescription = "Rain icon"
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 5.dp),
+                        text = context.getString(notification.title),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily(Font(R.font.akt))
+                    )
+                }
+                Text(
+                    modifier = Modifier.padding(top = 5.dp, bottom = 15.dp),
+                    text = context.getString(notification.content),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Justify,
+                    fontFamily = FontFamily(Font(R.font.inter)),
+                )
+            }
+        }
+        MyLine(color = Color.LightGray)
+    }
+}
+
+@Composable
+private fun MyItemWeatherHour(temp: HomeUiWeatherHour) {
     Card(
         modifier = Modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -577,21 +685,7 @@ private fun MySection(title: String) {
     }
 }
 
-@Composable
-private fun MyNotifications(
-    showNotifications: Boolean,
-    notifications: List<Notification>,
-    onDismiss: () -> Unit
-) {
-    val context = LocalContext.current.applicationContext
-    val colors = MaterialTheme.colorScheme
-
-    if (showNotifications) {
-
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, locale = "it")
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DarkPreview() {
     val weather = ApplicationManager.getWeatherDemo()
@@ -613,10 +707,10 @@ private fun DarkPreview() {
                 //MyWeatherDegree(state.weather)
                 //MyOverview(state.weather)
                 //MyWeatherHours(state.weather)
-                MyWeatherShare(HomeUiWeather(
-                    apiResult = weather,
-                    temperature = Temperature.CELSIUS
-                ))
+//                MyWeatherShare(HomeUiWeather(
+//                    apiResult = weather,
+//                    temperature = Temperature.CELSIUS
+//                ))
             }
         }
     }

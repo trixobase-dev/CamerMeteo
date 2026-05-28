@@ -2,7 +2,6 @@ package cm.trixobase.camermeteo.ui.view.home
 
 import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.datasource.ApiResult
-import cm.trixobase.camermeteo.ui.viewui.UiTemp
 import cm.trixobase.library.common.constants.Temperature
 
 /*
@@ -51,7 +50,7 @@ class HomeUiWeather {
 
     fun getVisibility(): String = getVisibility(apiResult.visibility)
 
-    fun getDetails(): List<UiTemp> = UiTemp.getAll(apiResult.main.temp_min, apiResult.main.temp_max, temperature)
+    fun getDetails(): List<HomeUiWeatherHour> = HomeUiWeatherHour.getAll(apiResult.main.temp_min, apiResult.main.temp_max, temperature)
 
     fun getTemperatureMain(): String = getTemperature(apiResult.main.temp) + "°"
 

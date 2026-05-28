@@ -4,22 +4,22 @@ package cm.trixobase.library.common.data.repository
 
 import android.util.Log
 import cm.trixobase.library.common.data.AppDatabase
-import cm.trixobase.library.common.data.model.Notification
+import cm.trixobase.library.common.data.model.Account
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 /*
- * Powered by Trixobase Enterprise on 22/05/26
+ * Powered by Trixobase Enterprise on 25/05/26
  */
 
-class NotificationRepository(db: AppDatabase) {
+class AccountRepository(db: AppDatabase) {
 
-    private val dao = db.notificationDao()
+    private val dao = db.accountDao()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    fun fetchAll(): List<Notification> {
+    fun fetchAll(): List<Account> {
         try {
-            val entities = mutableListOf<Notification>()
+            val entities = mutableListOf<Account>()
             val response = dao.fetchAll()
             response.value?.let { entities.addAll(it) }
             return entities
@@ -29,7 +29,7 @@ class NotificationRepository(db: AppDatabase) {
         }
     }
 
-    fun fetchBy(id: Int): Notification? {
+    fun fetchBy(id: Int): Account? {
         try {
             val response = dao.fetchBy(id)
             val entity = response.value
@@ -40,9 +40,9 @@ class NotificationRepository(db: AppDatabase) {
         }
     }
 
-    fun add(notification: Notification): Boolean {
+    fun add(entity: Account): Boolean {
         try {
-            dao.add(notification)
+            dao.add(entity)
             return true
         } catch (e: Exception) {
             showLog(e.message!!)
@@ -50,9 +50,9 @@ class NotificationRepository(db: AppDatabase) {
         }
     }
 
-    fun edit(notification: Notification): Boolean {
+    fun edit(entity: Account): Boolean {
         try {
-            dao.edit(notification)
+            dao.edit(entity)
             return true
         } catch (e: Exception) {
             showLog(e.message!!)
@@ -71,7 +71,7 @@ class NotificationRepository(db: AppDatabase) {
     }
 
     private fun showLog(message: String) {
-        Log.e("NotificationRepository", message)
+        Log.e("AccountRepository", message)
     }
 
 }

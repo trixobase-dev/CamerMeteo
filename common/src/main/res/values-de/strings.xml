@@ -65,5 +65,5 @@
     <string name="warning_available_soon">Kommt bald.</string>
     <string name="warning_empty_message">Leere Nachricht.</string>
     <string name="warning_quit_application">Möchten Sie die Anwendung verlassen?</string>
-    <string name="warning_internet_connection">Bitte überprüfen Sie Ihre Internetverbindung.</string>
+    <string name="warning_connection_internet">Bitte überprüfen Sie Ihre Internetverbindung.</string>
 </resources>

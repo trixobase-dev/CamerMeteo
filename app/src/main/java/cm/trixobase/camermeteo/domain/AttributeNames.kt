@@ -10,9 +10,6 @@ object AttributeNames: BaseNames() {
 
     const val CHANNEL_ID_WEATHER_SUN = "trixobase_channel_id_weather_sun"
     const val CHANNEL_ID_WEATHER_RAIN = "trixobase_channel_id_weather_rain"
-    const val CHANNEL_WEATHER_SUN = "Rappel canicule"
-    const val CHANNEL_WEATHER_RAIN = "Alerte pluie"
-
 
     const val KEY_APP_DEMO_CONFIGURATION: String = "key_app_demo"
     const val KEY_APP_NOTIFICATION_RAIN: String = "key_app_notification_rain"
@@ -22,5 +19,6 @@ object AttributeNames: BaseNames() {
     const val KEY_APP_REGION: String = "key_app_region"
     const val KEY_APP_CITY: String = "key_app_city"
     const val KEY_APP_LANGUAGE: String = "key_app_language"
+    const val KEY_APP_NOTIFICATIONS: String = "key_app_notifications"
 
 }

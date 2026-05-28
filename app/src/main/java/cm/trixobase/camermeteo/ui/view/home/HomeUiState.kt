@@ -5,7 +5,6 @@ import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.data.model.Notification
 
 /*
  * Powered by Trixobase Enterprise on 12/04/26
@@ -13,7 +12,6 @@ import cm.trixobase.library.common.data.model.Notification
 
 data class HomeUiState(
     val weather: HomeUiWeather? = null,
-    var notifications: List<Notification> = mutableListOf(),
     val language: Language,
     val region: Region,
     val city: City,
@@ -27,7 +25,6 @@ data class HomeUiState(
 
     fun update(weather: ApiResult): HomeUiState {
         return HomeUiState(
-            notifications = this.notifications,
             language = this.language,
             region = this.region,
             city = this.city,
@@ -42,7 +39,6 @@ data class HomeUiState(
 
     fun error(error: String): HomeUiState {
         return HomeUiState(
-            notifications = this.notifications,
             language = this.language,
             region = this.region,
             city = this.city,
