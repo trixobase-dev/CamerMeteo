@@ -59,6 +59,7 @@
     <string name="app_tonalities">Tonalités de l\'application</string>
     <string name="confidentials_policies">Politique de confidentialité</string>
     <string name="localisation_auto">Localisation automatique</string>
+    <string name="my_position">Position actuelle</string>
     <string name="rate_us">Notez-nous</string>
     <string name="refresh_automatic">Actualisation automatique</string>
     <string name="rules_for_use">Conditions d\'utilisation</string>
@@ -86,6 +87,7 @@
     <string name="warning_connection_unauthorized">Vous n\'êtes pas autorisé à acccéder à cette resource.</string>
     <string name="warning_connection_failed">Notre serveur met trop de temps à répondre. Veuillez vérifier votre accès à internet.</string>
     <string name="warning_connection_internet">Veuillez vérifier votre accès à internet.</string>
+    <string name="warning_connection_time_out">Je dis hein.. tu es sûr que tu as des Mégas?\nVérifie un peu ta connexion.</string>
     <string name="warning_connection_resolve_host">Impossible de joindre notre serveur. Veuillez vérifier votre connexion internet.</string>
     <string name="warning_connection_internal_error">Erreur serveur, veuillez contacter Trixobase Enterprise.</string>
 </resources>

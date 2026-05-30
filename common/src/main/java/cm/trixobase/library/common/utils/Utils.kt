@@ -2,11 +2,13 @@
 
 package cm.trixobase.library.common.utils
 
+import android.Manifest
 import android.app.LocaleManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
@@ -16,14 +18,18 @@ import android.telephony.PhoneNumberUtils
 import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import cm.trixobase.library.common.R
+import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.ui.domain.ExitActivity
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.net.URLEncoder
 import java.util.Calendar
 import kotlin.io.encoding.Base64
 
@@ -36,6 +42,7 @@ object Utils {
 
     const val Trixobase_Phone_Number = "+237686820828"
     const val Trixobase_Web_Site = "https://trixobase.com"
+    const val Trixobase_WhatsApp_Link = "https://wa.me/qr/5YJXYGUOSGPCN1"
 
     object maths {
 
@@ -203,6 +210,10 @@ object Utils {
             }
         }
 
+        fun showLog(classe: Any, method: String, message: String) {
+            Log.e("Trixobase", "${classe::class.java}.$method(): $message")
+        }
+
         private fun sharedPreferences(context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)!!
 
     }
@@ -213,19 +224,19 @@ object Utils {
             val connectivity = context
                 .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
             if (connectivity == null) {
-                Log.d("NetworkCheck", "No available network")
+                process.showLog(this, "hasInternet", "No available network")
                 return false
             }
             val info = connectivity.allNetworkInfo
             for (i in info.indices) {
                 if (info[i]!!.state == NetworkInfo.State.CONNECTED) {
-                    Log.d("NetworkCheck", "Available network: ${info[i].typeName}")
-                    //val ipProcess: Process = Thread.currentThread().exec("/system/bin/ping -c 1 8.8.8.8")
-                    //val exitValue = ipProcess.waitFor()
-                    //ipProcess.destroy()
-                    //val exitValue = 0
-                    //Runnable {}.run(exec)
-
+                    process.showLog(this, "hasInternet", "Available network: ${info[i].typeName}")
+//                    if (ConnectivityManager.TYPE_MOBILE == info[i].type) {
+//                        val p1: Process = Runtime.getRuntime().exec("ping -n 1 8.8.8.8")
+//                        val exitValue = p1.waitFor()
+//                        p1.destroy()
+//                        return exitValue == 0
+//                    }
                     return true
                 }
             }
@@ -246,26 +257,42 @@ object Utils {
             context.startActivity(intent)
         }
 
-        fun sendMessageWhatsApp(context: Context, phoneNumber: String = Trixobase_Phone_Number, message: String = "From trixobase\'s application..") {
-            val number = PhoneNumberUtils.stripSeparators(phoneNumber)
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "text/plain"
-            intent.`package` = "com.whatsapp"
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET or Intent.FLAG_ACTIVITY_NEW_TASK
-            //intent.setComponent(ComponentName("com.whatsapp", "com.whatsapp.Conversation"))
-            intent.putExtra("jid", "$number@s.whatsapp.net")
-            intent.putExtra(Intent.EXTRA_TEXT, message)
-            intent.putExtra(Intent.EXTRA_PHONE_NUMBER, number)
-
-            try {
-                val pm = context.packageManager
-                pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
-                context.startActivity(intent)
+        fun sendMessageWhatsApp(context: Context, number: String = Trixobase_Phone_Number, message: String = "From trixobase\'s application..") {
+            var phoneNumber = PhoneNumberUtils.stripSeparators(number)
+            val phoneMessage: String = message
+            phoneNumber = phoneNumber.replace("+", "")
+            
+            val pm = context.packageManager
+            var whatsAppIsInstalled = false
+            
+            val intent = try {
+                Intent(Intent.ACTION_SEND).apply {
+                    pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                    this.`package` = "com.whatsapp"
+                    whatsAppIsInstalled = true
+                }
             } catch (e: Exception) {
-                val text = URLEncoder.encode(message, "UTF-8")
-                val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$text"
-                openBrowser(context, url)
+                try {
+                    Intent(Intent.ACTION_SEND).apply {
+                        pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES)
+                        this.`package` = "com.whatsapp.w4b"
+                        whatsAppIsInstalled = true
+                    }
+                } catch (e: Exception) {
+                    whatsAppIsInstalled = false
+                    Intent(Intent.ACTION_SEND)
+                }
             }
+            
+            if (!whatsAppIsInstalled) {
+                intent.action = Intent.ACTION_SEND
+                intent.type = "text/plain"
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET or Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.putExtra("jid", "$phoneNumber@s.whatsapp.net")
+                intent.putExtra(Intent.EXTRA_TEXT, phoneMessage)
+                context.startActivity(intent)
+            } else 
+                openBrowser(context, Trixobase_WhatsApp_Link)
         }
 
         fun shareText(context: Context, text: String) {
@@ -280,15 +307,14 @@ object Utils {
 
         fun rateApp(context: Context) {
             try {
-                val uri = "market://details?id=${context.packageName}/".toUri()
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val url = "market://details?id=${context.packageName}"
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = url.toUri()
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
             } catch (e: Exception) {
-                val uri = "https://play.google.com/?id=${context.packageName}/".toUri()
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
+                val url = "https://play.google.com/store/apps/details?id=${context.packageName}"
+                openBrowser(context, url)
             }
         }
 
@@ -314,6 +340,27 @@ object Utils {
                 )
                 AppCompatDelegate.setApplicationLocales(localeList)
             }
+        }
+
+        fun getLocation(context: Context): MutableMap<String, String> {
+            val myLocation = mutableMapOf<String, String>()
+            myLocation["city"] = context.getString(R.string.my_position)
+            myLocation["latitude"] = City.YAOUNDE.lon
+            myLocation["longitude"] = City.YAOUNDE.lon
+
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+                    .addOnSuccessListener { location : Location? ->
+                        location.let {
+                            myLocation["latitude"] = location?.latitude.toString()
+                            myLocation["longitude"] = location?.longitude.toString()
+                        }
+                    }
+            }
+            return myLocation
         }
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.JELLY_BEAN)

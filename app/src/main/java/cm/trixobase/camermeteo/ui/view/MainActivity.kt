@@ -61,7 +61,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cm.trixobase.camermeteo.ApplicationActivity
-import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.home.Home
 import cm.trixobase.camermeteo.ui.view.home.HomeViewModel
@@ -88,8 +87,6 @@ class MainActivity : ApplicationActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[HomeViewModel::class]
-        viewModel.location = ApplicationManager.getLocation(this)
-        //ApplicationManager.startService(this)
 
         setContent {
             CamerMeteoTheme {

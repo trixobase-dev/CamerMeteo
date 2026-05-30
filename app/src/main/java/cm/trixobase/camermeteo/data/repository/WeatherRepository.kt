@@ -62,7 +62,7 @@ class WeatherRepository {
             val message = e.message!!
             val error = when {
                 message.contains("timed out", true)
-                    ->  context.getString(R.string.warning_connection_internet)
+                    ->  context.getString(R.string.warning_connection_time_out)
                 message.contains("unable to resolve host", true)
                         -> context.getString(R.string.warning_connection_resolve_host)
                 message.contains("failed to connect", true)

@@ -38,8 +38,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.view.region.RegionActivity"
-            android:exported="false"
-            android:noHistory="true" />
+            android:exported="false" />
         <activity
             android:name=".ui.view.AboutActivity"
             android:exported="false" />

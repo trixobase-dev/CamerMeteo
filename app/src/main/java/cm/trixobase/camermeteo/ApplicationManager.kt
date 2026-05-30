@@ -14,7 +14,6 @@ import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.domain.NotificationWeather
 import cm.trixobase.camermeteo.service.MyService
 import cm.trixobase.camermeteo.ui.view.MainActivity
-import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.utils.NotificationProcess
 import cm.trixobase.library.common.utils.Utils
@@ -47,25 +46,6 @@ class ApplicationManager : Application() {
         fun stopService(context: Context) {
             if (MyService.isRunning)
                 context.stopService(Intent(context, MyService::class.java))
-        }
-
-        fun getLocation(context: Context): MutableMap<String, String> {
-            val location = mutableMapOf<String, String>()
-            location["city"] = context.getString(cm.trixobase.library.common.R.string.country_cameroun)
-            location["latitude"] = City.YAOUNDE.lon
-            location["longitude"] = City.YAOUNDE.lon
-            /*
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    location.apply {
-                        location["city"] = this.city
-                        location["latitude"] = this.latitude
-                        location["longitude"] = this.longitude
-                    }
-                }
-            */
-            return location
         }
 
         fun getWeatherDemo(): ApiResult {
@@ -263,7 +243,7 @@ class ApplicationManager : Application() {
 
         private fun nightEvening(humidity: Int, hasWind: Boolean): Int {
             if (humidity < 30)
-                return R.drawable.iv_meteo_night_nuage_sun
+                return R.drawable.iv_meteo_night_nuage
             return if (hasWind)
                 R.drawable.iv_meteo_night_vent
             else R.drawable.iv_meteo_night_nuage_sun

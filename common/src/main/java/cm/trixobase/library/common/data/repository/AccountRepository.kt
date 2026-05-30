@@ -2,9 +2,9 @@
 
 package cm.trixobase.library.common.data.repository
 
-import android.util.Log
 import cm.trixobase.library.common.data.AppDatabase
 import cm.trixobase.library.common.data.model.Account
+import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -24,7 +24,7 @@ class AccountRepository(db: AppDatabase) {
             response.value?.let { entities.addAll(it) }
             return entities
         } catch (e: Exception) {
-            showLog(e.message!!)
+            showLog("fetchAll", e.message!!)
             return listOf()
         }
     }
@@ -35,7 +35,7 @@ class AccountRepository(db: AppDatabase) {
             val entity = response.value
             return entity
         } catch (e: Exception) {
-            showLog(e.message!!)
+            showLog("fetchBy", e.message!!)
             return null
         }
     }
@@ -45,7 +45,7 @@ class AccountRepository(db: AppDatabase) {
             dao.add(entity)
             return true
         } catch (e: Exception) {
-            showLog(e.message!!)
+            showLog("add", e.message!!)
             return false
         }
     }
@@ -55,7 +55,7 @@ class AccountRepository(db: AppDatabase) {
             dao.edit(entity)
             return true
         } catch (e: Exception) {
-            showLog(e.message!!)
+            showLog("edit", e.message!!)
             return false
         }
     }
@@ -65,13 +65,13 @@ class AccountRepository(db: AppDatabase) {
             dao.delete(id)
             return true
         } catch (e: Exception) {
-            showLog(e.message!!)
+            showLog("delete", e.message!!)
             return false
         }
     }
 
-    private fun showLog(message: String) {
-        Log.e("AccountRepository", message)
+    private fun showLog(method: String, message: String) {
+        Utils.process.showLog(this, method, message)
     }
 
 }

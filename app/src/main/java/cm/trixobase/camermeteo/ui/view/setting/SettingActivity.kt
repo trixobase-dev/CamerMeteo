@@ -237,6 +237,7 @@ class SettingActivity : ApplicationActivity() {
                 Text(
                     modifier = Modifier.width(170.dp),
                     text = getString(R.string.language),
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
             }
@@ -328,7 +329,7 @@ class SettingActivity : ApplicationActivity() {
                 Text(
                     modifier = Modifier.width(170.dp),
                     text = context.getString(R.string.warning_sun),
-                    fontFamily = FontFamily(Font(R.font.akt)),
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
             }
@@ -380,7 +381,7 @@ class SettingActivity : ApplicationActivity() {
                 Text(
                     modifier = Modifier.width(170.dp),
                     text = getString(R.string.warning_rain),
-                    fontFamily = FontFamily(Font(R.font.roboto)),
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
             }
@@ -458,6 +459,7 @@ class SettingActivity : ApplicationActivity() {
                 Text(
                     modifier = Modifier.width(170.dp),
                     text = context.getString(R.string.localisation_auto),
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
             }
@@ -465,7 +467,6 @@ class SettingActivity : ApplicationActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Switch(
-                    enabled = false,
                     checked = localisationAutoIsOn.value,
                     onCheckedChange = {
                         localisationAutoIsOn.value = it
@@ -509,6 +510,7 @@ class SettingActivity : ApplicationActivity() {
                 Text(
                     modifier = Modifier.width(170.dp),
                     text = "Mode démo",
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
             }

@@ -10,7 +10,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.content.ContextCompat
@@ -97,7 +96,7 @@ class NotificationProcess {
             channel.description = description
             manager.createNotificationChannel(channel)
         } catch (e: Exception) {
-            Log.d("Notification", "Build channel error: $e")
+            showLog("setChannel", e.message!!)
         }
     }
 
@@ -111,7 +110,7 @@ class NotificationProcess {
                 manager.notify(APPLICATION_NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
-            Log.d("Notification", "Build notification error: $e")
+            showLog("setNotification", e.message!!)
         }
     }
 
@@ -131,6 +130,10 @@ class NotificationProcess {
             .setAutoCancel(false)
             .setWhen(time)
             .build()
+    }
+
+    private fun showLog(method: String, message: String) {
+        Utils.process.showLog(this, method, message)
     }
 
 }

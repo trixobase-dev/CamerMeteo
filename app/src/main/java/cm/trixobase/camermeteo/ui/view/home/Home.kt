@@ -66,6 +66,7 @@ import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.ui.widget.MyContentError
+import cm.trixobase.library.common.ui.widget.MyPermissionNotification
 import cm.trixobase.library.common.ui.widget.MyTextErrorSimple
 import cm.trixobase.library.common.ui.widget.RefreshBox
 import cm.trixobase.library.common.utils.Utils
@@ -488,11 +489,13 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
                 Text(
                     text = context.getString(R.string.share_weather),
                     style = MaterialTheme.typography.titleSmall,
+                    fontFamily = FontFamily(Font(R.font.akt)),
                     textAlign = TextAlign.Start,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = context.getString(R.string.share_weather_friends),
+                    fontFamily = FontFamily(Font(R.font.inter)),
                     style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Start,
                 )
@@ -502,8 +505,8 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
                 onClick = { Utils.phone.shareText(context, ApplicationManager.getWeatherToShare(context, weather.apiResult)) },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.onPrimary,
-                    contentColor = colors.primary
+                    containerColor = Color(0xFF046E1E),
+                    contentColor = Color.White
                 )
             ) {
                 Text(text = context.getString(R.string.share))
@@ -520,13 +523,16 @@ private fun MyNotifications(
     showNotifications: Boolean,
     onDismiss: () -> Unit
 ) {
-    val context = LocalContext.current.applicationContext
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-    val notificationState = viewModel.notifications.observeAsState()
-    val notifications = notificationState.value?: listOf()
-    viewModel.getNotificationData(context)
+    val response = MyPermissionNotification()
+    val displayNotification by remember { mutableStateOf(response) }
 
-    if (showNotifications) {
+    if (displayNotification && showNotifications) {
+        val context = LocalContext.current.applicationContext
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+        val notificationState = viewModel.notifications.observeAsState()
+        val notifications = notificationState.value?: listOf()
+        viewModel.getNotificationData(context)
+
         ModalBottomSheet(
             modifier = Modifier.wrapContentHeight(),
             sheetState = sheetState,
