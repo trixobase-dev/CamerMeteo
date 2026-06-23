@@ -1,6 +1,6 @@
 package cm.trixobase.camermeteo.ui.view.home
 
-import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.camermeteo.App
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.utils.Utils
 import java.util.Calendar
@@ -35,7 +35,7 @@ class HomeUiWeatherHour {
 
         fun withTemperature(temperature: Int): HomeUiWeatherHour {
             instance.temperature = temperature
-            instance.picture = ApplicationManager.getWeatherPicture(temperature, hour)
+            instance.picture = App.getWeatherPicture(temperature, hour)
             return instance
         }
 
@@ -69,7 +69,7 @@ class HomeUiWeatherHour {
 
         private fun getTemp(min: Double, max: Double, temperature: Temperature): Int {
             val t: Int = (min.toInt()..max.toInt()).random()
-            val r = ApplicationManager.convert(t.toDouble(), temperature)
+            val r = App.convert(t.toDouble(), temperature)
             val v = r.toDouble().toInt()
             return v
         }

@@ -5,6 +5,8 @@ package cm.trixobase.camermeteo.data.model
  */
 
 data class Weather(
+    val id: Int,
+    val icon: String,
     val main: String,
     val description: String
 )

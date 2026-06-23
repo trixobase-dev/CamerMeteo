@@ -45,24 +45,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cm.trixobase.camermeteo.ApplicationActivity
-import cm.trixobase.camermeteo.ui.widget.MyLine
-import cm.trixobase.camermeteo.ui.widget.MyToolbar
+import cm.trixobase.camermeteo.AppActivity
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.ui.theme.ApplicationTheme
+import cm.trixobase.library.common.ui.widget.MyLine
+import cm.trixobase.library.common.ui.widget.MyPermissionLocalisation
+import cm.trixobase.library.common.ui.widget.MySubTitle
+import cm.trixobase.library.common.ui.widget.MyToolbar
 
 /*
  * Powered by Trixobase Enterprise on 06/04/26
  */
 
-class SettingActivity : ApplicationActivity() {
+class SettingActivity : AppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,7 +117,7 @@ class SettingActivity : ApplicationActivity() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
-            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.appearance))
+            MySubTitle(subTitle = getString(R.string.appearance))
             Card(
                 modifier = Modifier.padding(top = 8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -137,7 +140,7 @@ class SettingActivity : ApplicationActivity() {
         val temperature = Temperature.entries.filter { doGetConfigTemperature() == it.name }[0]
         val colors = MaterialTheme.colorScheme
         var showDialogTemperature by remember { mutableStateOf(false) }
-        var myUnity by remember { mutableStateOf(temperature.display) }
+        var myUnity by remember { mutableStateOf(temperature.unity) }
 
         Row(
             modifier = Modifier
@@ -193,7 +196,7 @@ class SettingActivity : ApplicationActivity() {
             showDialogTemperature,
             onConfirm = {
                 doConfigTemperature(temperature = it)
-                myUnity = it.display
+                myUnity = it.unity
                 showDialogTemperature = false
             },
             onDismiss = { showDialogTemperature = false },
@@ -277,7 +280,7 @@ class SettingActivity : ApplicationActivity() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
-            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.notifications))
+            MySubTitle(subTitle = getString(R.string.notifications))
             Card(
                 modifier = Modifier.padding(top = 8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -380,7 +383,7 @@ class SettingActivity : ApplicationActivity() {
                 }
                 Text(
                     modifier = Modifier.width(170.dp),
-                    text = getString(R.string.warning_rain),
+                    text = stringResource(R.string.warning_rain),
                     fontFamily = FontFamily(Font(R.font.inter)),
                     textAlign = TextAlign.Start
                 )
@@ -407,7 +410,7 @@ class SettingActivity : ApplicationActivity() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 15.dp),
         ) {
-            cm.trixobase.camermeteo.ui.widget.MySubTitle(subTitle = getString(R.string.location))
+            MySubTitle(subTitle = getString(R.string.location))
             Card(
                 modifier = Modifier.padding(top = 8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -427,8 +430,20 @@ class SettingActivity : ApplicationActivity() {
 
     @Composable
     private fun MyConfigLocalisation(configLocalisation: Boolean) {
-        val localisationAutoIsOn = remember { mutableStateOf(configLocalisation) }
         val context = LocalContext.current.applicationContext
+
+        val localisationAutoIsOn = remember { mutableStateOf(configLocalisation) }
+        var hasPermission by remember { mutableStateOf(doGetNotificationPermissionState()) }
+        var askPermission by remember { mutableStateOf(false) }
+
+        if (askPermission) {
+            val response = MyPermissionLocalisation()
+            if (response) {
+                doConfigNotificationPermissionState()
+                hasPermission = true
+                askPermission = false
+            }
+        }
 
         Row(
             modifier = Modifier
@@ -467,10 +482,14 @@ class SettingActivity : ApplicationActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Switch(
+                    modifier = if (hasPermission) Modifier else Modifier.clickable{ askPermission = true },
+                    enabled = hasPermission,
                     checked = localisationAutoIsOn.value,
                     onCheckedChange = {
-                        localisationAutoIsOn.value = it
-                        doConfigLocalisationAuto(it)
+                        if (hasPermission) {
+                            localisationAutoIsOn.value = it
+                            doConfigLocalisationAuto(it)
+                        }
                     }
                 )
             }
@@ -570,7 +589,7 @@ class SettingActivity : ApplicationActivity() {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(option.name.lowercase().replaceFirstChar { it.uppercase() })
+                                Text(context.getString(option.display))
                                 RadioButton(
                                     selected = option.name == selectedOption,
                                     onClick = { selectedOption = option.name })

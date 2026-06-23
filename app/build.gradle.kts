@@ -55,9 +55,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui.text.google.fonts)
-    implementation(libs.androidx.navigation.compose.android)
-    //implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,20 +63,28 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Nav drawer
+    implementation(libs.androidx.navigation.compose.android)
+
+    // Google Fonts
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+
+    // Web request
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    //Implement viewModel
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    //implementation(libs.hilt.android)
-   // ksp(libs.hilt.android.compiler)
-
+    // Image asynchronous
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-
     implementation(libs.kotlinx.coroutines.android)
+
+    // Background Work
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     implementation(project(":common"))
 

@@ -39,19 +39,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.AppActivity
+import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.town.CityActivity
-import cm.trixobase.camermeteo.ui.widget.MyLine
-import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.Region
+import cm.trixobase.library.common.ui.widget.MyLine
+import cm.trixobase.library.common.ui.widget.MyToolbar
 
 /*
  * Powered by Trixobase Enterprise on 01/05/26
  */
 
-class RegionActivity : ApplicationActivity() {
+class RegionActivity : AppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +72,14 @@ class RegionActivity : ApplicationActivity() {
                     }
                 )
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (AttributeNames.STATE_PLACE_CLOSED == getState(AttributeNames.PLACE_ACTIVITY_REGION)) {
+            setState(AttributeNames.PLACE_ACTIVITY_REGION, AttributeNames.STATE_PLACE_STARTED)
+            finish()
         }
     }
 

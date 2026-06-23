@@ -1,6 +1,5 @@
 package cm.trixobase.camermeteo.ui.view.town
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -22,10 +21,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,20 +40,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.AppActivity
+import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
-import cm.trixobase.camermeteo.ui.view.MainActivity
-import cm.trixobase.camermeteo.ui.widget.MyLine
-import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Region
+import cm.trixobase.library.common.ui.widget.MyLine
+import cm.trixobase.library.common.ui.widget.MyToolbar
 
 /*
  * Powered by Trixobase Enterprise on 07/04/26
  */
 
-class CityActivity : ApplicationActivity() {
+class CityActivity : AppActivity() {
 
     private var region = Region.CENTRE
 
@@ -111,7 +110,7 @@ class CityActivity : ApplicationActivity() {
 
     @Composable
     private fun MyItemCity(myCity: String, city: City) {
-        Card(
+        OutlinedCard(
             modifier = Modifier.clickable(onClick = { setCity(city) }),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -157,12 +156,11 @@ class CityActivity : ApplicationActivity() {
     }
 
     private fun setCity(city: City) {
+        setState(AttributeNames.PLACE_ACTIVITY_REGION, AttributeNames.STATE_PLACE_CLOSED)
         doConfigRegion(region)
         doConfigCity(city)
         showMessage(String.format(getString(R.string.thing_chosen), city.display))
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
+        onBackPressedDispatcher.onBackPressed()
     }
 
     @Preview

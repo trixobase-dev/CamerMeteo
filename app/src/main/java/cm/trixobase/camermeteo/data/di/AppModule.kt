@@ -1,5 +1,6 @@
 package cm.trixobase.camermeteo.data.di
 
+import cm.trixobase.camermeteo.App
 import cm.trixobase.camermeteo.data.datasource.ApiWeather
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,9 +11,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object AppModule {
 
-    const val API_WEATHER_KEY_ID: String = "79481cd4c6034c853f7e1d9e6315bed2"
-    const val API_WEATHER_BASE_URL: String = "https://api.openweathermap.org/data/2.5/weather/"
-
     val weatherApi: ApiWeather = buildWeatherApi()
 
     private fun buildWeatherApi(): ApiWeather {
@@ -21,7 +19,7 @@ object AppModule {
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(API_WEATHER_BASE_URL)
+            .baseUrl(App.API_WEATHER_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

@@ -14,8 +14,6 @@ enum class NotificationWeather(val type: String, val title: Int, val content: In
         content = R.string.notification_rain_1_content
     ),
 
-
-
     SUN_1(
         type = "sun",
         title = R.string.notification_sun_1_title,

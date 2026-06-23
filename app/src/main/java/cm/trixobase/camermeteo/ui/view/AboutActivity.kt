@@ -39,18 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.AppActivity
+import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
-import cm.trixobase.camermeteo.ui.widget.MyLine
-import cm.trixobase.camermeteo.ui.widget.MyToolbar
 import cm.trixobase.library.common.R
+import cm.trixobase.library.common.ui.widget.MyLine
+import cm.trixobase.library.common.ui.widget.MyToolbar
 import cm.trixobase.library.common.utils.Utils
 
 /*
  * Powered by Trixobase Enterprise on 05/05/26
  */
 
-class AboutActivity : ApplicationActivity() {
+class AboutActivity : AppActivity() {
 
     private var showDialog = mutableStateOf(false)
 
@@ -181,7 +182,8 @@ class AboutActivity : ApplicationActivity() {
                     ) {
                         Icon(
                             painterResource(id = R.drawable.ic_location),
-                            contentDescription = "Localisation")
+                            contentDescription = "Localisation",
+                            tint = Color.White)
                         Spacer(Modifier.width(12.dp))
                         Text(
                             text = location,
@@ -192,13 +194,14 @@ class AboutActivity : ApplicationActivity() {
                     }
                     Row(
                         Modifier.fillMaxWidth().height(40.dp).clickable {
-                            Utils.phone.launchCall(context)
+                            Utils.phone.launchCall(context, AttributeNames.ENTERPRISE_PHONE_NUMBER)
                         },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painterResource(id = R.drawable.ic_call),
-                            contentDescription = "Service client")
+                            contentDescription = "Service client",
+                            tint = Color.White)
                         Spacer(Modifier.width(12.dp))
                         Text(
                             text = phoneNumber,
@@ -209,13 +212,14 @@ class AboutActivity : ApplicationActivity() {
                     }
                     Row(
                         Modifier.fillMaxWidth().height(40.dp).clickable {
-                            Utils.phone.openBrowser(context)
+                            Utils.phone.openBrowser(context, AttributeNames.ENTERPRISE_LINK_WEB_SITE)
                         },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painterResource(id = R.drawable.ic_web),
-                            contentDescription = "web site")
+                            contentDescription = "web site",
+                            tint = Color.White)
                         Spacer(Modifier.width(12.dp))
                         Text(
                             text = "https://trixobase.com",

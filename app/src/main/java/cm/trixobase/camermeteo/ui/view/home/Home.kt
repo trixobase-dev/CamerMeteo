@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,20 +55,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.trixobase.camermeteo.ApplicationManager
-import cm.trixobase.camermeteo.domain.AttributeNames
+import cm.trixobase.camermeteo.App
 import cm.trixobase.camermeteo.domain.NotificationWeather
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.region.RegionActivity
-import cm.trixobase.camermeteo.ui.widget.MyLine
-import cm.trixobase.camermeteo.ui.widget.MySubTitle
 import cm.trixobase.library.common.R
-import cm.trixobase.library.common.constants.City
-import cm.trixobase.library.common.constants.Language
-import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
 import cm.trixobase.library.common.ui.widget.MyContentError
+import cm.trixobase.library.common.ui.widget.MyLine
 import cm.trixobase.library.common.ui.widget.MyPermissionNotification
+import cm.trixobase.library.common.ui.widget.MySliderDots
+import cm.trixobase.library.common.ui.widget.MySubTitle
 import cm.trixobase.library.common.ui.widget.MyTextErrorSimple
 import cm.trixobase.library.common.ui.widget.RefreshBox
 import cm.trixobase.library.common.utils.Utils
@@ -92,8 +91,8 @@ private fun MyContent(
     val uiStateObserved = viewModel.uiState.observeAsState()
     val state = uiStateObserved.value!!
 
-    val location = if (Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false))
-        viewModel.location["city"]!! else state.city.display
+    val location = if (state.isLocalisation)
+        context.getString(R.string.my_position) else state.city.display
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -108,9 +107,10 @@ private fun MyContent(
                 CircularProgressIndicator(
                     modifier = Modifier.padding(top = 25.dp),
                     color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant)
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
                 if (state.isDemo)
-                    viewModel.getWeatherDemo(context)
+                    viewModel.getWeatherDemo()
                 else viewModel.getWeatherData(context)
             } else
                 state.apply {
@@ -130,7 +130,7 @@ private fun MyContent(
                             verticalArrangement = Arrangement.Center
                         ) {
                             MyWeatherDegree(weather)
-                            MyOverview(weather)
+                            MyWeatherDetails(weather)
                             MyWeatherHours(weather)
                             MyWeatherShare(weather)
                         }
@@ -145,7 +145,8 @@ private fun MyContent(
 private fun MyTop(
     viewModel: HomeViewModel,
     location: String,
-    openDrawer: () -> Unit) {
+    openDrawer: () -> Unit
+) {
     val context = LocalContext.current.applicationContext
     var showNotifications by remember { mutableStateOf(false) }
 
@@ -166,6 +167,7 @@ private fun MyTop(
                 modifier = Modifier.clickable(onClick = { showNotifications = true })
             )
             Button(
+                enabled = (location != context.getString(R.string.my_position)),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                 modifier = Modifier,
                 onClick = {
@@ -178,7 +180,7 @@ private fun MyTop(
                     modifier = Modifier.size(8.dp),
                     painter = painterResource(id = R.drawable.ic_circle),
                     contentDescription = "Circle",
-                    tint = if (Utils.phone.hasInternet(context)) Color.Green else Color.Red
+                    tint = if (Utils.phone.isConnected(context)) Color.Green else Color.Red
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -186,12 +188,13 @@ private fun MyTop(
                     fontSize = 22.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Icon(
-                    modifier = Modifier.size(15.dp),
-                    painter = painterResource(id = R.drawable.ic_arrow_bottom),
-                    contentDescription = "Arrow select",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                if (stringResource(R.string.my_position) != location)
+                    Icon(
+                        modifier = Modifier.size(15.dp),
+                        painter = painterResource(id = R.drawable.ic_arrow_bottom),
+                        contentDescription = "Arrow select",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
             }
             Image(
                 painter = painterResource(id = R.drawable.iv_icon_setting),
@@ -212,7 +215,7 @@ private fun MyTop(
 @Composable
 private fun MyWeatherPicture(weather: HomeUiWeather, viewModel: HomeViewModel) {
     val context = LocalContext.current.applicationContext
-    var hour by remember { mutableStateOf( Utils.time.getCurrentHour()) }
+    var hour by remember { mutableStateOf(Utils.time.getCurrentHour()) }
     LaunchedEffect(key1 = hour) {
         while (true) {
             delay(6000)
@@ -221,7 +224,10 @@ private fun MyWeatherPicture(weather: HomeUiWeather, viewModel: HomeViewModel) {
     }
 
     Box(
-        modifier = Modifier.fillMaxWidth().height(180.dp).padding(vertical = 15.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp)
+            .padding(vertical = 15.dp)
     ) {
         RefreshBox {
             viewModel.refreshData(context)
@@ -232,9 +238,13 @@ private fun MyWeatherPicture(weather: HomeUiWeather, viewModel: HomeViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            MyLine(Modifier.width(30.dp).height(3.dp))
+            MyLine(Modifier
+                .width(30.dp)
+                .height(3.dp))
             Image(
-                modifier = Modifier.size(160.dp).padding(top = 35.dp),
+                modifier = Modifier
+                    .size(160.dp)
+                    .padding(top = 35.dp),
                 painter = painterResource(id = weather.getMainPicture()),
                 contentDescription = "Weather day"
             )
@@ -263,9 +273,10 @@ private fun MyWeatherDegree(weather: HomeUiWeather) {
                 fontWeight = FontWeight.Bold,
                 fontFamily = comic,
                 textAlign = TextAlign.Center,
-                color = colorWhite)
+                color = colorWhite
+            )
             Text(
-                modifier= Modifier
+                modifier = Modifier
                     .width(230.dp)
                     .align(Alignment.BottomEnd),
                 text = weather.getUnity(),
@@ -273,7 +284,8 @@ private fun MyWeatherDegree(weather: HomeUiWeather) {
                 fontWeight = FontWeight.Bold,
                 fontFamily = comic,
                 textAlign = TextAlign.End,
-                color = colorWhite)
+                color = colorWhite
+            )
         }
         Text(
             text = weather.getDescription(),
@@ -282,164 +294,110 @@ private fun MyWeatherDegree(weather: HomeUiWeather) {
             fontFamily = comic,
             textAlign = TextAlign.Center,
             color = colorWhite,
-            style = MaterialTheme.typography.labelMedium,)
+            style = MaterialTheme.typography.labelMedium,
+        )
         Text(
             text = weather.getTemperatureInterval(),
             fontSize = 18.sp,
             fontFamily = comic,
             textAlign = TextAlign.Center,
-            color = colorSoft)
+            color = colorSoft
+        )
+    }
+}
+
+@Composable
+private fun MyWeatherDetails(weather: HomeUiWeather) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(235.dp)
+            .padding(15.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        MySliderDots(
+            modifier = Modifier.fillMaxHeight().width(140.dp),
+            pictures = App.getPubHomeTop())
+        MyOverview(
+            weather = weather)
     }
 }
 
 @Composable
 private fun MyOverview(weather: HomeUiWeather) {
-    val context = LocalContext.current.applicationContext
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 15.dp),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize().padding(start = 15.dp),
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Card(
-                modifier = Modifier.width(130.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        modifier = Modifier.size(35.dp),
-                        painter = painterResource(id = R.drawable.iv_icon_goutte),
-                        contentDescription = "Icon rain"
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = weather.getHumidity(),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        fontSize = 13.sp,
-                        text = context.getString(R.string.humidity).uppercase(),
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
-            Card(
-                modifier = Modifier.width(130.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        modifier = Modifier.size(35.dp),
-                        painter = painterResource(id = R.drawable.iv_icon_wind),
-                        contentDescription = "Map icon"
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = weather.getWind(),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        fontSize = 13.sp,
-                        text = context.getString(R.string.wind).uppercase(),
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
+            MyCard(
+                icon = R.drawable.iv_icon_goutte,
+                label = R.string.humidity,
+                value = weather.getHumidity()
+            )
+            MyCard(
+                modifier = Modifier.padding(start = 10.dp),
+                icon = R.drawable.iv_icon_wind,
+                label = R.string.wind,
+                value = weather.getWind()
+            )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 30.dp),
+                .padding(top = 20.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Card(
-                modifier = Modifier.width(130.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        modifier = Modifier.size(35.dp),
-                        painter = painterResource(id = R.drawable.iv_icon_temperature),
-                        contentDescription = "Icon pressure"
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = weather.getPressure(),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        fontSize = 13.sp,
-                        text = context.getString(R.string.pressure).uppercase(),
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
-            Card(
-                modifier = Modifier.width(130.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(10.dp),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        modifier = Modifier.size(35.dp),
-                        painter = painterResource(id = R.drawable.iv_icon_eye),
-                        contentDescription = "Eye icon"
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp),
-                        text = weather.getVisibility(),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        fontSize = 13.sp,
-                        text = context.getString(R.string.visibility).uppercase(),
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
+            MyCard(
+                icon = R.drawable.iv_icon_temperature,
+                label = R.string.pressure,
+                value = weather.getPressure()
+            )
+            MyCard(
+                modifier = Modifier.padding(start = 10.dp),
+                icon = R.drawable.iv_icon_eye,
+                label = R.string.visibility,
+                value = weather.getVisibility()
+            )
+        }
+    }
+}
+
+@Composable
+private fun MyCard(modifier: Modifier = Modifier, icon: Int, label: Int, value: String) {
+    Card(
+        modifier = modifier.width(85.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(5.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(6.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier.size(25.dp),
+                painter = painterResource(id = icon),
+                contentDescription = "Icon"
+            )
+            Text(
+                modifier = Modifier.padding(top = 5.dp),
+                text = value,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Start
+            )
+            Text(
+                fontSize = 12.sp,
+                text = stringResource(label).uppercase(),
+                textAlign = TextAlign.Start
+            )
         }
     }
 }
@@ -468,7 +426,6 @@ private fun MyWeatherHours(weather: HomeUiWeather) {
 @Composable
 private fun MyWeatherShare(weather: HomeUiWeather) {
     val context = LocalContext.current.applicationContext
-    val colors = MaterialTheme.colorScheme
     Card(
         modifier = Modifier
             .padding(start = 15.dp, end = 15.dp, bottom = 25.dp)
@@ -477,7 +434,7 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
         shape = RoundedCornerShape(10.dp),
     ) {
         Row(
-            modifier =Modifier.padding(vertical = 8.dp, horizontal = 15.dp),
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -502,7 +459,12 @@ private fun MyWeatherShare(weather: HomeUiWeather) {
             }
             Button(
                 modifier = Modifier.width(140.dp),
-                onClick = { Utils.phone.shareText(context, ApplicationManager.getWeatherToShare(context, weather.apiResult)) },
+                onClick = {
+                    Utils.phone.shareText(
+                        context,
+                        App.getWeatherToShare(context, weather.apiResult)
+                    )
+                },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF046E1E),
@@ -530,7 +492,7 @@ private fun MyNotifications(
         val context = LocalContext.current.applicationContext
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
         val notificationState = viewModel.notifications.observeAsState()
-        val notifications = notificationState.value?: listOf()
+        val notifications = notificationState.value ?: listOf()
         viewModel.getNotificationData(context)
 
         ModalBottomSheet(
@@ -539,7 +501,9 @@ private fun MyNotifications(
             onDismissRequest = { onDismiss() }
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 15.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -576,10 +540,12 @@ private fun MyNotifications(
 private fun MyItemNotification(notification: NotificationWeather) {
     val context = LocalContext.current.applicationContext
 
-    Column (
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
         horizontalAlignment = Alignment.Start,
-    )  {
+    ) {
         Row(
             modifier = Modifier.padding(5.dp),
             horizontalArrangement = Arrangement.Start,
@@ -609,7 +575,7 @@ private fun MyItemNotification(notification: NotificationWeather) {
                     Image(
                         modifier = Modifier.size(20.dp),
                         painter = painterResource(id = if ("sun" == notification.type) R.drawable.iv_icon_sun else R.drawable.iv_icon_rain),
-                        contentDescription = "Rain icon"
+                        contentDescription = "Weather icon"
                     )
                     Text(
                         modifier = Modifier.padding(start = 5.dp),
@@ -694,24 +660,21 @@ private fun MySection(title: String) {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DarkPreview() {
-    val weather = ApplicationManager.getWeatherDemo()
-    val state = HomeUiState(
-        language = Language.FRENCH,
-        region = Region.CENTRE,
-        city = City.YAOUNDE,
-        temperature = Temperature.CELSIUS,
-    )
-    state.update(weather)
     CamerMeteoTheme {
         Surface {
+            val uiWeather = HomeUiWeather(
+                apiResult = App.getWeatherDemo(),
+                temperature = Temperature.CELSIUS
+            )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //MyTop(state = state, location = state.city.display) { }
+                //MyTop(state = state, location = state.city.unity) { }
                 //MyWeatherPicture(state.weather)
                 //MyWeatherDegree(state.weather)
-                //MyOverview(state.weather)
+                MyWeatherDetails(uiWeather)
                 //MyWeatherHours(state.weather)
 //                MyWeatherShare(HomeUiWeather(
 //                    apiResult = weather,

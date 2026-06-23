@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 rootProject.name = "CamerMétéo"
 include(":app")
 include(":common")
+project(":common").projectDir = File(rootDir, "../Libraries/common")

@@ -1,6 +1,6 @@
 package cm.trixobase.camermeteo.ui.view.home
 
-import cm.trixobase.camermeteo.ApplicationManager
+import cm.trixobase.camermeteo.App
 import cm.trixobase.camermeteo.data.datasource.ApiResult
 import cm.trixobase.library.common.constants.Temperature
 
@@ -38,7 +38,7 @@ class HomeUiWeather {
         
     }
     
-    fun getMainPicture(): Int = ApplicationManager.getWeatherPicture(apiResult)
+    fun getMainPicture(): Int = App.getWeatherPicture(apiResult)
 
     fun getDescription(): String = apiResult.weather[0].description
 
@@ -54,7 +54,7 @@ class HomeUiWeather {
 
     fun getTemperatureMain(): String = getTemperature(apiResult.main.temp) + "°"
 
-    fun getUnity(): String = this.temperature.display
+    fun getUnity(): String = this.temperature.unity
 
     fun getTemperatureInterval(): String = getTemperature(apiResult.main.temp_min) + "° / " + getTemperature(apiResult.main.temp_max) + "°"
 
@@ -63,7 +63,7 @@ class HomeUiWeather {
     }
 
     private fun getTemperature(temperature: Double): String  {
-        return ApplicationManager.convert(temperature, this.temperature)
+        return App.convert(temperature, this.temperature)
     }
 
 }

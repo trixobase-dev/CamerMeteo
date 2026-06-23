@@ -1,19 +1,14 @@
 package cm.trixobase.camermeteo.ui.view
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,10 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,38 +28,34 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cm.trixobase.camermeteo.ApplicationActivity
+import cm.trixobase.camermeteo.App
+import cm.trixobase.camermeteo.AppActivity
 import cm.trixobase.camermeteo.ui.theme.CamerMeteoTheme
 import cm.trixobase.camermeteo.ui.view.home.Home
 import cm.trixobase.camermeteo.ui.view.home.HomeViewModel
 import cm.trixobase.camermeteo.ui.view.region.RegionActivity
 import cm.trixobase.camermeteo.ui.view.setting.SettingActivity
-import cm.trixobase.camermeteo.ui.view.terms.Terms
-import cm.trixobase.camermeteo.ui.widget.MyLine
 import cm.trixobase.library.common.R
+import cm.trixobase.library.common.ui.widget.MyDialogExit
+import cm.trixobase.library.common.ui.widget.MyLine
+import cm.trixobase.library.common.ui.widget.MyPermissionNotification
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -77,10 +64,11 @@ import kotlinx.coroutines.launch
  * Powered by Trixobase Enterprise on 01/04/26
  */
 
-class MainActivity : ApplicationActivity() {
+class MainActivity : AppActivity() {
 
     private var viewModel = HomeViewModel()
     private var coroutineScope: CoroutineScope? = null
+
     private var drawerState: DrawerState? = null
     private var showDialogExit = mutableStateOf(false)
 
@@ -90,9 +78,8 @@ class MainActivity : ApplicationActivity() {
 
         setContent {
             CamerMeteoTheme {
-                MyPermission()
-                MyNavDrawer()
-                MyContent()
+                MyConfig()
+                MyDrawer()
             }
         }
     }
@@ -102,95 +89,26 @@ class MainActivity : ApplicationActivity() {
         viewModel.getMyData(this)
     }
 
-    @Suppress("UseExpressionBody", "OVERRIDE_DEPRECATION", "deprecation")
-    @SuppressLint("GestureBackNavigation", "MissingSuperCall")
-    override fun onBackPressed() {
-        showDialogExit.value = true
-    }
-
-    @Suppress("VariableNeverRead", "AssignedValueIsNeverRead")
     @Composable
-    fun MyPermission() {
+    fun MyConfig() {
         val context = LocalContext.current.applicationContext
-        var isNotificationGranted: Boolean by remember {
-            if (Utils.phone.isTiramisu()) {
-                mutableStateOf(
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
-                )
-            } else mutableStateOf(true)
-        }
 
-        val permissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                isNotificationGranted = isGranted
-            }
-        )
-
-        LaunchedEffect(key1 = Unit) {
-            if (Utils.phone.isTiramisu())
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-    }
-
-    @Composable
-    fun MyContent() {
+        // DialogExit
         showDialogExit = remember { mutableStateOf(false) }
-        MyDialogExit(showDialogExit.value)
-    }
+        MyDialogExit(
+            isShowing = showDialogExit.value,
+            onDismiss = { showDialogExit.value = false },
+            onConfirm = { Utils.phone.stopApp(context) })
+        BackHandler { showDialogExit.value = true }
 
-    @Composable
-    fun MyDialogExit(isShowing: Boolean) {
-        val context = LocalContext.current.applicationContext
-        val colors = MaterialTheme.colorScheme
-        if (isShowing) {
-            AlertDialog(
-                onDismissRequest = { showDialogExit.value = false },
-                title = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp),
-                        text = context.getString(R.string.warning_quit_application),
-                        textAlign = TextAlign.Start,
-                        color = colors.primary
-                    )
-                },
-                confirmButton = {
-                    Box(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        Button(
-                            modifier = Modifier.width(95.dp),
-                            onClick = { Utils.phone.stopApp(context) },
-                            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = context.getString(R.string.yes), color = colors.onPrimary)
-                        }
-                    }
-                },
-                dismissButton = {
-                    Box(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        Button(
-                            modifier = Modifier.width(95.dp),
-                            onClick = { showDialogExit.value = false },
-                            colors = ButtonDefaults.buttonColors(containerColor = colors.secondary),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(text = context.getString(R.string.no), color = colors.onSecondary)
-                        }
-                    }
-                }
-            )
-        }
+        // Permission for notification
+        MyPermissionNotification()
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun MyNavDrawer() {
+    private fun MyDrawer() {
         val navController = rememberNavController()
         coroutineScope = rememberCoroutineScope()
         drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -205,7 +123,7 @@ class MainActivity : ApplicationActivity() {
                 ) {
                     MyDrawerHead()
                     Spacer(15.dp)
-                    MyDrawerBody(navController)
+                    MyDrawerBody()
 
                 }
             }) {
@@ -214,8 +132,9 @@ class MainActivity : ApplicationActivity() {
                     navController = navController,
                     startDestination = Screens.Home.screen
                 ) {
-                    composable(Screens.Home.screen) { Home(openDrawer = { openDrawer() }, viewModel) }
-                    composable(Screens.Policies.screen) { Terms(action = { backToHome(navController) })
+                    composable(Screens.Home.screen) {
+                        Home(openDrawer = { coroutineScope?.launch { drawerState?.open() } },
+                        viewModel)
                     }
                 }
             }
@@ -247,23 +166,22 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyDrawerBody(navController: NavHostController) {
-        val context = LocalContext.current.applicationContext
+    private fun MyDrawerBody() {
         val myTextColor = MaterialTheme.colorScheme.onSurface
 
-        MyItemShare(context, myTextColor)
-        MyItemRate(context, myTextColor)
-        MyItemWrite(context, myTextColor)
+        MyItemShare(myTextColor)
+        MyItemRate(myTextColor)
+        MyItemWrite(myTextColor)
 
         MyLabel(getString(R.string.menu))
 
-        MyItemCity(context, myTextColor)
-        MyItemSetting(context, myTextColor)
+        MyItemCity(myTextColor)
+        MyItemSetting(myTextColor)
 
         MyLabel(getString(R.string.information))
 
-        MyItemPolicy(navController, myTextColor)
-        MyItemAbout(context, myTextColor)
+        MyItemPolicy(myTextColor)
+        MyItemAbout(myTextColor)
     }
 
     @Composable
@@ -280,7 +198,8 @@ class MainActivity : ApplicationActivity() {
     }
 
     @Composable
-    private fun MyItemShare(context: Context, myTextColor: Color) {
+    private fun MyItemShare(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -300,19 +219,15 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
+                    Utils.phone.shareApp(context, R.string.share_app_message)
                     drawerState?.close()
-                    Utils.phone.shareText(
-                        context, String.format(
-                            context.getString(R.string.share_app_message),
-                            "https://play.google.com/?id=${context.packageName}/"
-                        )
-                    )
                 }
             })
     }
 
     @Composable
-    private fun MyItemRate(context: Context, myTextColor: Color) {
+    private fun MyItemRate(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -332,14 +247,15 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
-                    drawerState?.close()
                     Utils.phone.rateApp(context)
+                    drawerState?.close()
                 }
             })
     }
 
     @Composable
-    private fun MyItemWrite(context: Context, myTextColor: Color) {
+    private fun MyItemWrite(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -359,22 +275,28 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
-                    drawerState?.close()
                     Utils.phone.sendMessageWhatsApp(context)
+                    drawerState?.close()
                 }
             })
     }
 
     @Composable
-    private fun MyItemCity(context: Context, myTextColor: Color) {
-        val uiState = viewModel.uiState.observeAsState()
+    private fun MyItemCity(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
+        val localisationIsOn = App.localisationIsOn(context)
+
+        val location = if (!localisationIsOn) {
+            val uiState = viewModel.uiState.observeAsState()
+            String.format(getString(R.string.my_city), uiState.value!!.city.display.uppercase())
+        } else context.getString(R.string.my_position)
+
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = String.format(getString(R.string.my_city), uiState.value!!.city.display.uppercase()),
+                    text = location,
                     color = myTextColor,
-                    fontSize = (14.5).sp
-                )
+                    fontSize = (14.5).sp)
             },
             icon = {
                 Icon(
@@ -387,16 +309,16 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
+                    if (!localisationIsOn)
+                        context.startActivity(Intent(context, RegionActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     drawerState?.close()
-                    val intent = Intent(context, RegionActivity::class.java)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
                 }
             })
     }
 
     @Composable
-    private fun MyItemPolicy(controller: NavHostController, myTextColor: Color) {
+    private fun MyItemPolicy(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -416,14 +338,15 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
+                    Utils.phone.openBrowser(context, App.APP_URL_POLICY)
                     drawerState?.close()
-                    controller.goTo(Screens.Policies.screen)
                 }
             })
     }
 
     @Composable
-    private fun MyItemSetting(context: Context, myTextColor: Color) {
+    private fun MyItemSetting(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -443,16 +366,15 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
+                    context.startActivity(Intent(context, SettingActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     drawerState?.close()
-                    val intent = Intent(context, SettingActivity::class.java)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
                 }
             })
     }
 
     @Composable
-    private fun MyItemAbout(context: Context, myTextColor: Color) {
+    private fun MyItemAbout(myTextColor: Color) {
+        val context = LocalContext.current.applicationContext
         NavigationDrawerItem(
             label = {
                 Text(
@@ -472,10 +394,8 @@ class MainActivity : ApplicationActivity() {
             selected = false,
             onClick = {
                 coroutineScope?.launch {
+                    context.startActivity(Intent(context, AboutActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     drawerState?.close()
-                    val intent = Intent(context, AboutActivity::class.java)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
                 }
             })
     }
@@ -489,32 +409,15 @@ class MainActivity : ApplicationActivity() {
         )
     }
 
-    private fun openDrawer() {
-        coroutineScope?.launch {
-            drawerState?.open()
-        }
-    }
-
-    private fun backToHome(controller: NavHostController) {
-        coroutineScope?.launch {
-            controller.goTo(Screens.Home.screen)
-        }
-    }
-
-    private fun NavHostController.goTo(route: String) {
-        coroutineScope?.launch {
-            drawerState?.close()
-        }
-        this.navigate(route) {
-            popUpTo(0)
-        }
+    private fun showLog(method: String, message: String) {
+        showLog("MainActivity", method, message)
     }
 
     @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, locale = "de")
     @Composable
     private fun PreviewDarkTheme() {
         CamerMeteoTheme {
-            MyDialogExit(true)
+            MyDialogExit(true, {}) {}
         }
     }
 
@@ -523,6 +426,5 @@ class MainActivity : ApplicationActivity() {
 sealed class Screens(val screen: String) {
 
     data object Home : Screens("Home")
-    data object Policies : Screens("Policies")
 
 }

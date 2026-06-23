@@ -6,15 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.trixobase.camermeteo.ApplicationManager
 import cm.trixobase.camermeteo.data.repository.WeatherRepository
-import cm.trixobase.camermeteo.domain.AttributeNames
 import cm.trixobase.library.common.R
 import cm.trixobase.library.common.constants.City
 import cm.trixobase.library.common.constants.Language
 import cm.trixobase.library.common.constants.Region
 import cm.trixobase.library.common.constants.Temperature
-import cm.trixobase.library.common.utils.RequestResult
+import cm.trixobase.library.common.domain.RequestResult
 import cm.trixobase.library.common.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -26,7 +24,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
 
     private val repository = WeatherRepository()
-    var location = mutableMapOf<String, String>()
     private val _uiState = MutableLiveData<HomeUiState>()
     val uiState: LiveData<HomeUiState> = _uiState
     private val _notifications = MutableLiveData<Set<String>>()
@@ -67,22 +64,13 @@ class HomeViewModel : ViewModel() {
     fun getWeatherData(context: Context) {
         viewModelScope.launch {
             val state = uiState.value!!
-            val locationIsOn = Utils.process.get(context, AttributeNames.KEY_APP_LOCALISATION_AUTO, false)
-            val latitude = if (locationIsOn) location["latitude"]!! else state.city.lat
-            val longitude = if (locationIsOn) location["longitude"]!! else state.city.lon
 
             if (!Utils.phone.hasInternet(context)) _uiState.value =
                 state.error(context.getString(R.string.warning_connection_internet))
-            else repository.getWeather(
-                context = context,
-                language = state.language.unit,
-                latitude = latitude,
-                longitude = longitude
-            ).collect { result ->
+            else repository.getWeather(context).collect { result ->
                 _uiState.value = when (result) {
                     is RequestResult.Success -> {
                         val weather = result.data!!
-                        ApplicationManager.setWeatherNotification(context, weather)
                         state.update(weather)
                     }
                     else -> state.error(result.error)
@@ -106,14 +94,13 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun getWeatherDemo(context: Context) {
+    fun getWeatherDemo() {
         viewModelScope.launch {
             val state = uiState.value!!
             repository.getDemo().collect { result ->
                 _uiState.value = when (result) {
                     is RequestResult.Success -> {
                         val weather = result.data!!
-                        ApplicationManager.setWeatherNotification(context, weather)
                         state.update(weather)
                     }
                     else -> state.error(result.error)
