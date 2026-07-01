@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CamerMétéo - Politique & CGU</title>
+<style>
+  :root {
+    --primary: #046E1E; /* Vert foncé */
+    --accent: #97F593;  /* Vert clair */
+    --dark: #034a15;    /* Vert très foncé pour header */
+    --bg: #f2fbf3;
+    --card: #ffffff;
+    --text: #1b2621;
+    --muted: #5a6b62;
+  }
+    * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    background: linear-gradient(180deg, var(--bg) 0%, #fff 100%);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+    color: white;
+    padding: 40px 20px 60px;
+    text-align: center;
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
+    box-shadow: 0 8px 24px rgba(4, 110, 30, 0.35);
+  }
+  .logo {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 12px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid var(--accent);
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(4px);
+  }
+  .app-name {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .app-tagline {
+    opacity: 0.95;
+    font-size: 14px;
+    margin-top: 4px;
+    color: var(--accent);
+  }
+  .container {
+    max-width: 780px;
+    margin: -40px auto 0;
+    padding: 0 16px 40px;
+    position: relative;
+    z-index: 2;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 24px;
+    border: 1px solid #e6f5e8;
+    box-shadow: 0 10px 30px rgba(4, 110, 30, 0.08);
+  }
+  /* Onglets style pill vert */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    background: #eaf7ec;
+    padding: 6px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.25s ease;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    box-shadow: 0 4px 12px rgba(4, 110, 30, 0.4);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fade 0.3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  
+  h2 { color: var(--dark); font-size: 22px; margin: 0 0 12px; }
+  h3 { color: var(--primary); font-size: 16px; margin: 20px 0 8px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--primary); text-decoration: none; font-weight: 700; }
+  a:hover { text-decoration: underline; }
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .badge {
+    display: inline-block;
+    background: #eaf7ec;
+    color: var(--dark);
+    border: 1px solid var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="logo">
+      <!-- Logo -->
+      <img src="iv_logo.png" alt="Logo CamerMétéo">
+    </div>
+    <h1 class="app-name">CamerMétéo</h1>
+    <p class="app-tagline">La météo de nos régions</p>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('privacy', this)">Politique de confidentialité</button>
+        <button class="tab-btn" onclick="openTab('terms', this)">Conditions d'utilisation</button>
+      </div>
+
+      <!-- Onglet 1: Politique de confidentialité -->
+      <div id="privacy" class="tab-content active">
+        <span class="badge">Dernière mise à jour: 04/09/2026</span>
+        <h2>Votre vie privée dans CamerMétéo</h2>
+        <p>Trixobase Enterprise édite l'application "CamerMétéo". Nous respectons la confidentialité de vos données conformément à la législation en vigueur.</p>
+
+        <h3>1. Données collectées</h3>
+        <ul>
+          <li><strong>Localisation</strong> : Activée uniquement si vous l’autorisez. Elle sert à afficher la météo de votre ville : Douala, Yaoundé, Bafoussam, Garoua, etc. Vous pouvez refuser et sélectionner une ville manuellement.</li>
+          <li><strong>Données techniques anonymes</strong> : Version Android, rapports de crash, pour améliorer la stabilité. Aucune information personnelle n’est collectée.</li>
+        </ul>
+
+        <h3>2. Utilisation et stockage</h3>
+        <p>Votre localisation est utilisée uniquement pour interroger le service météo et n’est pas conservée sur nos serveurs. Les données météo sont mises en cache localement sur votre appareil pour le mode hors-ligne.</p>
+
+        <h3>3. Partage avec des tiers</h3>
+        <p>Nous n’utilisons pas vos données à des fins publicitaires ciblées. Les API météo tierces utilisées par l’application sont soumises à leurs propres politiques de confidentialité.</p>
+        
+        <h3>4. Vos droits</h3>
+        <p>Vous pouvez retirer l’accès à la localisation à tout moment : Paramètres > Applications > CamerMétéo> Permissions.</p>
+
+        <h3>5. Contact</h3>
+        <p>Pour toute question relative à vos données : <a href="mailto: trixobase.ets@gmail.com">trixobase.ets@gmail.com</a></p>
+      </div>
+
+      <!-- Onglet 2: Conditions d'utilisation -->
+      <div id="terms" class="tab-content">
+        <span class="badge">Dernière mise à jour: 01/07/2026</span>
+        <h2>Conditions d'utilisation</h2>
+
+        <h3>1. Acceptation</h3>
+        <p>L’utilisation de l’application "CamerMétéo" implique l’acceptation pleine et entière de ces conditions.</p>
+
+        <h3>2. Nature du service</h3>
+        <p>L’application fournit des prévisions météorologiques à titre informatif pour le territoire camerounais. Les données proviennent de sources externes et peuvent comporter des marges d’erreur.</p>
+
+        <h3>3. Responsabilité</h3>
+        <p>Trixobase Enterprise ne pourra être tenu responsable des dommages directs ou indirects résultant de l’utilisation des informations météorologiques fournies.</p>
+
+        <h3>4. Propriété intellectuelle</h3>
+        <p>L’application "CamerMétéo", son logo et son contenu sont la propriété exclusive de Trixobase Enterprise. Toute reproduction est interdite.</p>
+
+        <h3>5. Modifications</h3>
+        <p>Les présentes conditions peuvent être modifiées à tout moment. L’utilisateur est invité à les consulter régulièrement.</p>
+
+        <h3>6. Contact</h3>
+        <p>Support utilisateur : <a href="mailto:trixobase.ets@gmail.com">trixobase.ets@gmail.com</a></p>
+      </div>
+      
+      <div class="footer">
+        © 2026 Trixobase Enterprise. Tous droits réservés.
+      </div>
+    </div>
+  </main>
+
+<script>
+  function openTab(tabName, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+</body>
+  </html>
